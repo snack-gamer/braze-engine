@@ -130,6 +130,20 @@ acceptance contract must not be retroactively labeled passed by these tests.
 
 ## Latest change acceptance
 
+README editor screenshot, 2026-10-21, based on `e6807a1`:
+
+- Added the user-supplied editor capture below the repository introduction, with
+  descriptive alt text and a link to the original-resolution image. The 329 KB
+  PNG is stored under `docs/images` and remains outside runtime bundles.
+- Acceptance is documentation presentation and image-link verification. No
+  engine behavior changed, so gameplay, public-tool authoring and export
+  acceptance are not applicable to this documentation-only change.
+- Inspected the supplied image, verified its copied bytes and relative README
+  target. Docs, architecture, TypeScript, all unit/Node tests and production
+  build budgets passed.
+
+### Previous engine change
+
 Neutral ViStudio-style editor grid, 2026-10-21, based on `451f2bc`:
 
 - Replaced the textured plane with two thin line batches shared by Scene and

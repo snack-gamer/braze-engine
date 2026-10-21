@@ -4,6 +4,8 @@ Braze is an experimental WebGPU game engine and browser-based editor for
 agent-led game development and manual authoring. It uses TypeScript, React and
 Three.js, with public JavaScript APIs and discoverable automation tools.
 
+[![Braze editor showing the Project browser, scene hierarchy, render settings and 3D Scene view](docs/images/braze-editor.png)](docs/images/braze-editor.png)
+
 **Early development:** APIs and document formats may change. Many production
 features are unfinished. The [capability ledger](docs/STATUS.md) distinguishes
 implemented features, tested behavior and planned work.
