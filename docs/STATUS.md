@@ -163,6 +163,11 @@ Standalone open-source extraction, 2026-10-21, initial public snapshot:
   editor/player captures were visually inspected: the collected cube disappears,
   two cubes remain and the score/HUD reflects the selected variant. This is
   automated manual-workflow coverage, not a human control-feel assessment.
+- The first Linux/Node 22 CI run exposed an existing scaffolder failure: exclusive
+  directory copy rejected the precreated Scripts folder. The template now creates
+  that folder itself. Both existing project-creation tests pass on Node 22,
+  including refusal to overwrite and canonical symlinked paths. CI actions use
+  the supported Node 24 runtime; the project checks still target Node 22.
 - Remaining limits: no separate acceptance agent, no human playtest or hardware
   performance measurement, and no complete cross-platform validation. Existing
   capability gaps in this ledger remain open.

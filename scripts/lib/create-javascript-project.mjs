@@ -17,7 +17,7 @@ export async function createJavascriptProject(destination, { name = 'My Game', e
     // and other symlinked parents must use the same base when emitting relatives.
     const canonicalRoot = await realpath(root), canonicalEngine = await realpath(engine);
     const relativeEngine = path.relative(canonicalRoot, canonicalEngine).split(path.sep).join('/');
-    for (const folder of ['Scripts/Behaviors', 'Scripts/Systems', 'Prefabs', 'Models', 'Materials', 'Input', 'Audio']) {
+    for (const folder of ['Prefabs', 'Models', 'Materials', 'Input', 'Audio']) {
       await mkdir(path.join(root, 'assets', folder), { recursive: true });
     }
     await mkdir(path.join(root, 'scenes'));

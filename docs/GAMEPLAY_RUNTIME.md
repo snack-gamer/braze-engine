@@ -57,6 +57,8 @@ Current delivered pieces and remaining work are listed in [STATUS.md](./STATUS.m
 
 From braze-engine run `npm run create:game -- /absolute/new-directory "My Game"`.
 The parent must exist; an existing destination is rejected without modification.
+The template copy creates `assets/Scripts` itself, so exclusive copy semantics
+work on Node 22 as well as newer Node versions.
 The Collect Three starter contains a playable top-down character, collectible
 behavior class, score system, saved per-object fields and a jsconfig.json. It uses
 the folder layout above. Open it with BRAZE_PROJECT_ROOT through the owned server
