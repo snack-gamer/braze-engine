@@ -1,0 +1,140 @@
+.humanoid-map > header > span:first-child {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: baseline;
+}
+
+.humanoid-map__legend {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  color: var(--muted);
+  font-size: var(--fs-2xs);
+}
+
+.humanoid-map__legend i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.humanoid-map__legend i[data-state="mapped"] { background: var(--success); }
+.humanoid-map__legend i[data-state="missing"] { background: var(--danger); }
+
+.humanoid-map__canvas {
+  display: grid;
+  place-items: center;
+  min-height: 390px;
+  padding: 14px 24px;
+  background: var(--layer-well);
+  box-shadow: none;
+}
+
+.humanoid-map__canvas svg {
+  display: block;
+  width: min(100%, 390px);
+  height: 370px;
+  overflow: visible;
+}
+
+.humanoid-map__artwork-layer {
+  opacity: 0.82;
+  transition: opacity var(--t-fast) var(--ease), filter var(--t-fast) var(--ease);
+}
+
+.humanoid-map__artwork-layer[data-state="mapped"] {
+  opacity: 0.86;
+  filter: sepia(0.9) saturate(4.8) hue-rotate(72deg) brightness(0.68) contrast(1.08);
+}
+
+.humanoid-map__artwork-layer[data-state="missing"] {
+  opacity: 0.82;
+  filter: sepia(0.95) saturate(5.2) hue-rotate(302deg) brightness(0.62) contrast(1.08);
+}
+
+.humanoid-map__artwork-layer[data-state="optional"] {
+  opacity: 0.58;
+  filter: grayscale(1) brightness(0.78);
+}
+
+.humanoid-map__point {
+  cursor: pointer;
+  outline: 0;
+}
+
+.humanoid-map__marker {
+  pointer-events: none;
+  transition: opacity var(--t-fast) var(--ease), filter var(--t-fast) var(--ease);
+}
+
+.humanoid-map__point[data-state="mapped"] .humanoid-map__marker {
+  filter: brightness(0) saturate(100%) invert(64%) sepia(46%) saturate(724%) hue-rotate(82deg) brightness(93%) contrast(89%);
+}
+
+.humanoid-map__point[data-state="missing"] .humanoid-map__marker {
+  filter: brightness(0) saturate(100%) invert(44%) sepia(57%) saturate(1462%) hue-rotate(320deg) brightness(96%) contrast(84%);
+}
+
+.humanoid-map__point[data-state="optional"] .humanoid-map__marker {
+  opacity: 0.82;
+  filter: brightness(0) saturate(100%) invert(44%) sepia(57%) saturate(1462%) hue-rotate(320deg) brightness(96%) contrast(84%);
+}
+
+.humanoid-map__point-hit {
+  fill: transparent;
+  stroke: transparent;
+  pointer-events: all;
+}
+
+.humanoid-map__selection-ring {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 2.5;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.humanoid-map__point:hover .humanoid-map__marker,
+.humanoid-map__point:focus-visible .humanoid-map__marker {
+  opacity: 1;
+}
+
+.humanoid-map__point:focus-visible .humanoid-map__selection-ring,
+.humanoid-map__point[aria-pressed="true"] .humanoid-map__selection-ring {
+  stroke: var(--accent-light);
+}
+
+.humanoid-map__regions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  padding: 1px;
+  border-top: 1px solid var(--component-divider);
+  background: var(--component-divider);
+}
+
+.humanoid-map__regions button {
+  min-width: 0;
+  min-height: var(--h-input);
+  overflow: hidden;
+  border: 0;
+  background: var(--component-head);
+  color: var(--text-2);
+  font: var(--fs-2xs)/1 var(--font-ui);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.humanoid-map__regions button:hover { background: var(--layer-hover); color: var(--text); }
+.humanoid-map__regions button.active {
+  background: color-mix(in srgb, var(--accent) 24%, var(--component-head));
+  color: var(--text);
+  box-shadow: inset 0 -2px 0 var(--accent-2);
+}
+.humanoid-map__regions button:focus-visible { outline: 1px solid var(--focus); outline-offset: -2px; }
+
+@media (max-height: 760px) {
+  .humanoid-map__canvas { min-height: 310px; padding-block: 8px; }
+  .humanoid-map__canvas svg { height: 292px; }
+}

@@ -1,0 +1,44 @@
+/* Global element defaults. All design tokens live in theme.css. */
+body {
+  background: var(--bg-base);
+  color: var(--text-1);
+  font-family: var(--font-ui);
+  font-size: var(--fs-base);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Slim overlay scrollbars — transparent track, hairline thumb, brighter on
+ * hover. No arrows, no chrome. */
+* {
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  scrollbar-width: thin;
+}
+*::-webkit-scrollbar { width: 9px; height: 9px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); background-clip: padding-box; }
+*::-webkit-scrollbar-corner { background: transparent; }
+
+/* Chrome (headers, labels, buttons) is not text-selectable; inputs + console
+ * output opt back in below. */
+.topbar, .rail-heading, .panel-header, .inspector-dock-title,
+.inspector-section__head, .inspector-row__label, .object-row,
+.asset-tile, button, .assets__filters, .inspector-tabs {
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+::selection { background: var(--accent-glow); color: var(--text); }
+button, input, select, textarea { font-family: var(--font-ui); }

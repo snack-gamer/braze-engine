@@ -1,0 +1,10 @@
+import { ANIMATOR_DOCUMENT_LIMITS } from "../domain/character-document-limits";
+
+/** Runtime aliases for the portable authored-document budgets. */
+export const MAX_RUNTIME_ANIMATOR_PARAMETERS = ANIMATOR_DOCUMENT_LIMITS.parametersPerController;
+export const MAX_RUNTIME_ANIMATOR_LAYERS = ANIMATOR_DOCUMENT_LIMITS.layersPerController;
+export const MAX_RUNTIME_ANIMATOR_STATES_PER_LAYER = ANIMATOR_DOCUMENT_LIMITS.statesPerLayer;
+export const MAX_RUNTIME_ANIMATOR_STATE_MACHINES_PER_LAYER = ANIMATOR_DOCUMENT_LIMITS.stateMachinesPerLayer;
+export const MAX_RUNTIME_ANIMATOR_STATE_MACHINE_DEPTH = ANIMATOR_DOCUMENT_LIMITS.stateMachineDepth;
+export const MAX_RUNTIME_ANIMATOR_TRANSITIONS_PER_LAYER = ANIMATOR_DOCUMENT_LIMITS.transitionsPerLayer;
+export const MAX_RUNTIME_ANIMATOR_CONDITIONS_PER_TRANSITION = ANIMATOR_DOCUMENT_LIMITS.conditionsPerTransition;

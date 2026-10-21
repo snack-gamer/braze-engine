@@ -1,0 +1,368 @@
+/* ─────────────────────────────────────────────────────────────────────────
+ * Inspector section — C4D-flat. A section is a list of property rows with
+ * a tiny header above. No card border, no background fill, no shadow. The
+ * header is dim caps, the body sits directly on the rail. Density first.
+ * ───────────────────────────────────────────────────────────────────── */
+
+.inspector-section {
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+/* Unity-style component card. Every top-level inspector section is a
+ * self-contained, bordered card so components read as separate units
+ * (Transform, Mesh Renderer, Collider, …) rather than one continuous run
+ * of stacked rows. Nested sections (--nested) keep the quiet flat style.
+ * NOTE: the element carries both `rail-section` and `inspector-section`;
+ * matching both here out-specifies the `.rail-scroll > .rail-section` reset
+ * below that would otherwise strip the border / background / shadow. */
+.rail-right .rail-scroll > .rail-section.inspector-section {
+  margin: 8px 0 0;
+  padding: 0;
+  /* Visible light edge outline + raised body + drop shadow = a clear card. */
+  border: 1px solid var(--component-outline);
+  border-radius: 6px;
+  background: var(--component-card);
+  overflow: hidden;
+}
+
+.inspector-section.closed {
+  background: transparent;
+}
+
+.inspector-section__head {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) auto auto;
+  justify-content: start;
+  align-items: center;
+  gap: 5px;
+  min-height: 21px;
+  padding: 0 7px;
+  margin: 6px -6px 1px;
+  border-top: 1px solid rgba(255, 255, 255, 0.055);
+  border-bottom: 0;
+  background: transparent;
+  cursor: pointer;
+  user-select: none;
+  transition: background 100ms ease;
+}
+
+.inspector-section:first-child .inspector-section__head {
+  margin-top: 0;
+}
+
+.inspector-section__head:hover {
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.inspector-section__head:hover .inspector-section__title {
+  color: var(--text);
+}
+
+.inspector-section__head:focus-visible {
+  outline: 1px dashed var(--accent);
+  outline-offset: -2px;
+}
+
+.inspector-section.closed .inspector-section__head {
+  opacity: 0.74;
+}
+
+.inspector-section__toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  color: var(--muted-2);
+}
+
+.inspector-section__head:hover .inspector-section__toggle {
+  color: var(--text-1);
+}
+
+.inspector-section__title {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 6px;
+  min-width: 0;
+  color: #b0b8bb;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color 100ms ease;
+}
+
+.inspector-section__title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: var(--icon-size-control);
+  color: #858f93;
+}
+
+.inspector-section__title-icon:empty {
+  display: none;
+}
+
+/* Component enable checkbox (Unity component-header toggle). Sits just before
+ * the component icon + name. Present only on disable-able components. */
+.inspector-section__enable {
+  flex: 0 0 auto;
+}
+
+/* Component options context menu (right-click a component header). */
+.component-menu {
+  position: fixed;
+  z-index: 1000;
+  min-width: 168px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 4px;
+  border: 1px solid var(--component-outline);
+  border-radius: 6px;
+  background: var(--component-card);
+  box-shadow: var(--shadow-float);
+}
+.component-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  text-align: left;
+  cursor: pointer;
+}
+.component-menu__item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.component-menu__item--danger:hover {
+  background: rgba(224, 82, 82, 0.16);
+  color: #f0a0a0;
+}
+
+.inspector-section__title > svg {
+  flex: 0 0 auto;
+}
+
+.inspector-section__title > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inspector-section__body {
+  display: grid;
+  gap: 0;
+  padding: 0 0 3px;
+}
+
+/* Nested InspectorSection — used inside a top-level section (e.g. each
+ * GI effect group inside Global Illumination). Smaller, quieter header
+ * so the visual hierarchy reads "panel > section > group" and the panel
+ * doesn't look like one continuous run of stacked sliders.
+ * Header is dense (18 px tall, no border / background card) and the body
+ * gains a faint left rule that hints at the hierarchy. */
+.inspector-section--nested .inspector-section__head {
+  min-height: 16px;
+  margin: 1px -3px 0;
+  padding: 0 3px;
+  border-top: 0;
+  border-bottom: 0;
+  background: transparent;
+  border-radius: 3px;
+}
+
+.inspector-section--nested .inspector-section__head:hover {
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.inspector-section--nested .inspector-section__title {
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #808a8e;
+}
+
+.inspector-section--nested .inspector-section__head:hover .inspector-section__title {
+  color: var(--text-1);
+}
+
+.inspector-section--nested .inspector-section__body {
+  padding: 0 0 3px 8px;
+  margin-left: 2px;
+  border-left: 1px solid rgba(255, 255, 255, 0.026);
+}
+
+.inspector-section--nested.closed .inspector-section__head {
+  opacity: 0.68;
+}
+
+.inspector-section--nested .rail-actions {
+  opacity: 0.72;
+}
+
+.inspector-section--nested .inspector-section__head:hover .rail-actions {
+  opacity: 1;
+}
+
+.inspector-section--nested + .inspector-section--nested .inspector-section__head {
+  margin-top: 2px;
+}
+
+/* Compact slider rhythm inside nested sections. Default rows are sized for a
+ * Blender-ish DCC panel (22 px min-height, 6 px margin per slider, 1 px row
+ * separators). For dense GI tuning panels we collapse all that vertical
+ * padding so each control reads as a single thin line. */
+.inspector-section--nested .inspector-row {
+  min-height: 18px;
+  padding: 0;
+}
+
+.inspector-section--nested
+  :where(.inspector-row, .inspector-toggle-row)
+  + :where(.inspector-row, .inspector-toggle-row) {
+  border-top: 0;
+}
+
+.inspector-section--nested .inspector-slider,
+.inspector-section--nested .rail-right .inspector-slider {
+  margin-bottom: 0;
+}
+
+.inspector-section--nested .inspector-slider__control {
+  gap: 4px;
+}
+
+.inspector-section--nested .inspector-row__label {
+  font-size: var(--fs-2xs);
+}
+
+.rail-right .rail-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--inspector-body);
+  padding: 6px;
+}
+
+.rail-right .rail-scroll > .rail-section {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Component card header — a flush title strip at the top of the card. The
+ * flat design's top-border separator and negative-margin bleed are dropped
+ * so the header sits inside the card frame. A hairline divides header from
+ * body only when the card is open. */
+.rail-right .rail-scroll > .inspector-section > .inspector-section__head {
+  margin: 0;
+  min-height: 28px;
+  padding: 0 8px;
+  border-top: 0;
+  border-bottom: 0;
+  /* Title bar — a clear step lighter than the card body, like a Unity
+   * component header. This is the main "which component is this" cue.
+   * The inset top highlight gives the card a beveled top edge. */
+  background: var(--component-head);
+}
+
+.rail-right .rail-scroll > .inspector-section.open > .inspector-section__head {
+  border-bottom: 1px solid var(--component-divider);
+}
+
+.rail-right .rail-scroll > .inspector-section > .inspector-section__head:hover {
+  background: var(--component-head-hover);
+}
+
+.rail-right .rail-scroll > .inspector-section.closed > .inspector-section__head {
+  opacity: 1;
+}
+
+/* Component name reads like Unity: Title Case, not the tracked uppercase used
+ * for nested groups. The chevron remains the collapse signifier. */
+.rail-right .rail-scroll > .inspector-section > .inspector-section__head .inspector-section__title {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: #e7eaec;
+}
+
+.rail-right .rail-scroll > .inspector-section > .inspector-section__head .inspector-section__title-icon {
+  color: #c2c8cb;
+  width: var(--icon-size-control);
+}
+
+.rail-right .rail-scroll > .inspector-section > .inspector-section__body {
+  padding: 7px 9px 9px;
+}
+
+.rail-right .rail-heading {
+  min-height: 24px;
+  margin: -1px 0 6px;
+  padding: 0 0 5px;
+  border-bottom: 1px solid var(--hairline-soft);
+  color: #a5afb2;
+  letter-spacing: 0.085em;
+}
+
+.rail-right .rail-heading > span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  color: #c7d0d2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rail-right .rail-heading svg {
+  flex: 0 0 auto;
+  color: #94a0a3;
+}
+
+.rail-right .rail-actions {
+  flex: 0 0 auto;
+  gap: 5px;
+}
+
+.rail-right .rail-meta {
+  color: #899296;
+  font-size: var(--fs-2xs);
+}
+
+.rail-right .rail-subheading {
+  margin: 6px 0 2px;
+  padding-top: 3px;
+  color: #788286;
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.075em;
+}
+
+.rail-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}

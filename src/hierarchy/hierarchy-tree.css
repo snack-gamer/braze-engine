@@ -1,0 +1,240 @@
+/* Feature-owned hierarchy presentation layered over shared editor chrome.
+ * Glyph colors come from category tones in theme.css (`.tone-*`) and glyph
+ * sizes from its `--icon-size-*` roles. Every row metric is a `--hierarchy-*`
+ * token in theme.css so the density toggle can swap the whole set. Rows are
+ * separated by hairlines; selection is a filled row, never an accent edge. */
+.object-row {
+  height: var(--hierarchy-row-h);
+  min-height: var(--hierarchy-row-h);
+  box-shadow: inset 0 -1px var(--hairline-soft);
+}
+
+.object-row[data-hierarchy-depth="0"] {
+  box-shadow: inset 0 -1px var(--hairline);
+}
+
+.object-row.selected,
+.object-row.selected:nth-child(even) {
+  background: var(--selection-fill-soft);
+}
+
+.object-row.active,
+.object-row.active:nth-child(even) {
+  background: var(--selection-fill);
+  color: var(--text);
+}
+
+.object-row__lead {
+  position: relative;
+  gap: var(--hierarchy-lead-gap);
+  padding: 0 var(--sp-2) 0 calc(var(--hierarchy-inset) + var(--row-depth, 0) * var(--hierarchy-indent));
+}
+
+.object-name,
+.object-name-input {
+  font-size: var(--hierarchy-name-size);
+}
+
+.object-name-input {
+  height: calc(var(--hierarchy-row-h) - 4px);
+}
+
+.object-row.active .object-name {
+  font-weight: var(--fw-medium);
+}
+
+.object-row__chevron {
+  width: var(--hierarchy-chevron);
+  height: var(--hierarchy-action-size);
+}
+
+/* Duotone glyphs: outline in the tone, closed shapes washed with the same hue. */
+.object-row__type-icon,
+.modifier-tag .editor-icon {
+  fill: color-mix(in srgb, currentColor var(--glyph-wash), transparent);
+}
+
+.object-row__type-icon {
+  color: var(--tone, var(--text-2));
+  opacity: 1;
+}
+
+.object-row__type-icon.tone-prefab {
+  fill: color-mix(in srgb, currentColor var(--glyph-wash-solid), transparent);
+}
+
+/* Only the active render camera shows at full strength. */
+.object-row__type-icon--camera:not(.active) {
+  opacity: 0.7;
+}
+
+.object-row.selected .object-row__type-icon.tone-neutral,
+.object-row.active .object-row__type-icon.tone-neutral {
+  color: var(--text);
+}
+
+/* Prefab-instance roots read blue, like Unity's outliner. On the selection
+ * fill the base blue loses contrast, so it lifts to the light accent. */
+.object-row.prefab-root .object-name {
+  color: var(--component-prefab);
+}
+
+.object-row.prefab-root.selected .object-name,
+.object-row.prefab-root.active .object-name {
+  color: var(--accent-light);
+}
+
+/* Hidden subtree (Unity's inactive objects): name, glyph and component icons
+ * grey out together. The action cluster stays at full strength so the eye is
+ * always one click from restoring the object. */
+.object-row.inactive .object-name,
+.object-row.inactive.prefab-root .object-name {
+  color: var(--text-3);
+}
+
+.object-row.inactive .object-row__type-icon,
+.object-row.inactive .modifier-tag {
+  color: var(--text-3);
+  opacity: 0.5;
+}
+
+.object-row.inactive .modifier-tag:hover {
+  color: var(--text-2);
+  opacity: 0.85;
+}
+
+.object-row .row-icon {
+  width: var(--hierarchy-action-size);
+  height: var(--hierarchy-action-size);
+}
+
+.hierarchy-tree-guides {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* A guide runs through the centre of its parent's disclosure chevron and each
+ * branch stub reaches the child's chevron. */
+.hierarchy-tree-guide {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--hierarchy-inset) + var(--hierarchy-chevron) / 2 + var(--guide-depth, 0) * var(--hierarchy-indent));
+  width: calc(var(--hierarchy-indent) - var(--hierarchy-chevron) / 2);
+  border-left: 1px solid var(--hairline-strong);
+}
+
+.hierarchy-tree-guide--branch::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -1px;
+  width: 100%;
+  border-top: 1px solid var(--hairline-strong);
+}
+
+.hierarchy-tree-guide--branch.ends {
+  bottom: 50%;
+}
+
+/* Component indicators form their own column behind a hairline splitter. Each
+ * is a full-strength tone glyph; hover lifts it onto a tinted chip. */
+.modifier-tags {
+  gap: 2px;
+  padding: 0 var(--sp-2) 0 var(--sp-1);
+  border-left: 1px solid var(--hairline);
+}
+
+.modifier-tag {
+  position: relative;
+  width: var(--hierarchy-tag-w);
+  height: var(--hierarchy-tag-h);
+  border: 0;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--tone, var(--text-3));
+  opacity: 1;
+}
+
+.modifier-tag:hover {
+  background: color-mix(in srgb, var(--tone, var(--text-3)) 20%, transparent);
+  color: var(--tone, var(--text-1));
+  opacity: 1;
+}
+
+.modifier-tag.disabled {
+  opacity: 0.38;
+  filter: grayscale(1);
+}
+
+/* Count pill: a tone-filled badge readable at a glance. */
+.hierarchy-component-count {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: grid !important;
+  min-width: var(--hierarchy-count-size);
+  height: var(--hierarchy-count-size);
+  padding: 0 3px;
+  place-items: center;
+  border-radius: 7px;
+  background: var(--tone, var(--text-2));
+  color: var(--on-accent);
+  font-size: var(--hierarchy-count-font);
+  font-weight: var(--fw-bold);
+  line-height: 1;
+}
+
+/* The density toggle matches the Search field's height in the toolbar. */
+.hierarchy-toolbar .hierarchy-density-button {
+  flex: 0 0 auto;
+  width: var(--h-control-compact);
+  height: var(--h-control-compact);
+}
+
+.hierarchy-tail-drop-zone {
+  position: relative;
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+  background: var(--panel-body);
+  color: var(--text-3);
+}
+
+.hierarchy-tail-drop-zone::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: transparent;
+}
+
+.hierarchy-tail-drop-zone > span {
+  display: inline-flex;
+  margin: 8px;
+  padding: 3px 6px;
+  border-radius: var(--r-xs);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hierarchy-row-dragging .hierarchy-tail-drop-zone > span {
+  opacity: 0.55;
+}
+
+.hierarchy-tail-drop-zone.active {
+  background: color-mix(in srgb, var(--accent) 7%, var(--panel-body));
+}
+
+.hierarchy-tail-drop-zone.active::before {
+  background: var(--accent);
+}
+
+.hierarchy-tail-drop-zone.active > span {
+  background: var(--accent-soft);
+  color: var(--text-1);
+  opacity: 1;
+}

@@ -1,0 +1,879 @@
+[
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll",
+    "primitive": "transform",
+    "values": {
+      "name": "Jointed ragdoll",
+      "position": [
+        25,
+        1.5,
+        -8
+      ]
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-pelvis",
+    "primitive": "transform",
+    "values": {
+      "name": "Ragdoll pelvis",
+      "parentId": "agent-ragdoll",
+      "position": [
+        0,
+        2.15,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-pelvis",
+    "component": "rigidbody",
+    "values": {
+      "massMode": "manual",
+      "mass": 4,
+      "angularDamping": 0.15
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-pelvis",
+    "component": "collider",
+    "values": {
+      "shape": "capsule",
+      "radius": 0.24,
+      "length": 0.3,
+      "axis": "y",
+      "friction": 0.5,
+      "id": "agent-ragdoll-pelvis-collider-1"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-pelvis-visual",
+    "primitive": "cube",
+    "values": {
+      "name": "pelvis visual",
+      "parentId": "agent-ragdoll-pelvis",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.34285714285714286,
+        0.5571428571428572,
+        0.34285714285714286
+      ],
+      "color": "#5996db"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-torso",
+    "primitive": "transform",
+    "values": {
+      "name": "Ragdoll torso",
+      "parentId": "agent-ragdoll",
+      "position": [
+        0,
+        3,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-torso",
+    "component": "rigidbody",
+    "values": {
+      "massMode": "manual",
+      "mass": 6,
+      "angularDamping": 0.15
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-torso",
+    "component": "collider",
+    "values": {
+      "shape": "capsule",
+      "radius": 0.25,
+      "length": 0.8,
+      "axis": "y",
+      "friction": 0.5,
+      "id": "agent-ragdoll-torso-collider-1"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-torso-visual",
+    "primitive": "cube",
+    "values": {
+      "name": "torso visual",
+      "parentId": "agent-ragdoll-torso",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.35714285714285715,
+        0.9285714285714287,
+        0.35714285714285715
+      ],
+      "color": "#5996db"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-head",
+    "primitive": "transform",
+    "values": {
+      "name": "Ragdoll head",
+      "parentId": "agent-ragdoll",
+      "position": [
+        0,
+        3.9,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-head",
+    "component": "rigidbody",
+    "values": {
+      "massMode": "manual",
+      "mass": 1.5,
+      "angularDamping": 0.15
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-head",
+    "component": "collider",
+    "values": {
+      "shape": "sphere",
+      "radius": 0.3,
+      "length": 1,
+      "axis": "y",
+      "friction": 0.5,
+      "id": "agent-ragdoll-head-collider-1"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-head-visual",
+    "primitive": "sphere",
+    "values": {
+      "name": "head visual",
+      "parentId": "agent-ragdoll-head",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.3846153846153846,
+        0.3846153846153846,
+        0.3846153846153846
+      ],
+      "color": "#ecaa63"
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-torso",
+    "component": "joint",
+    "values": {
+      "kind": "ball",
+      "connectedObjectId": "agent-ragdoll-pelvis",
+      "anchor": [
+        0,
+        -0.55,
+        0
+      ],
+      "collideConnected": false
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-head",
+    "component": "joint",
+    "values": {
+      "kind": "ball",
+      "connectedObjectId": "agent-ragdoll-torso",
+      "anchor": [
+        0,
+        -0.3,
+        0
+      ],
+      "collideConnected": false
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-left-upper-arm",
+    "primitive": "transform",
+    "values": {
+      "name": "Ragdoll left-upper-arm",
+      "parentId": "agent-ragdoll",
+      "position": [
+        -0.65,
+        3.3,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ]
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-left-upper-arm",
+    "component": "rigidbody",
+    "values": {
+      "massMode": "manual",
+      "mass": 1.5,
+      "angularDamping": 0.15
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-left-upper-arm",
+    "component": "collider",
+    "values": {
+      "shape": "capsule",
+      "radius": 0.15,
+      "length": 0.45,
+      "axis": "y",
+      "friction": 0.5,
+      "id": "agent-ragdoll-left-upper-arm-collider-1"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-left-upper-arm-visual",
+    "primitive": "cube",
+    "values": {
+      "name": "left-upper-arm visual",
+      "parentId": "agent-ragdoll-left-upper-arm",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.2142857142857143,
+        0.5357142857142857,
+        0.2142857142857143
+      ],
+      "color": "#5996db"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-left-forearm",
+    "primitive": "transform",
+    "values": {
+      "name": "Ragdoll left-forearm",
+      "parentId": "agent-ragdoll",
+      "position": [
+        -1.3,
+        3.3,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ]
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-left-forearm",
+    "component": "rigidbody",
+    "values": {
+      "massMode": "manual",
+      "mass": 1,
+      "angularDamping": 0.15
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-left-forearm",
+    "component": "collider",
+    "values": {
+      "shape": "capsule",
+      "radius": 0.14,
+      "length": 0.4,
+      "axis": "y",
+      "friction": 0.5,
+      "id": "agent-ragdoll-left-forearm-collider-1"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-left-forearm-visual",
+    "primitive": "cube",
+    "values": {
+      "name": "left-forearm visual",
+      "parentId": "agent-ragdoll-left-forearm",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.20000000000000004,
+        0.48571428571428577,
+        0.20000000000000004
+      ],
+      "color": "#5996db"
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-left-upper-arm",
+    "component": "joint",
+    "values": {
+      "kind": "ball",
+      "connectedObjectId": "agent-ragdoll-torso",
+      "anchor": [
+        0,
+        -0.3,
+        0
+      ],
+      "collideConnected": false
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-left-forearm",
+    "component": "joint",
+    "values": {
+      "kind": "hinge",
+      "connectedObjectId": "agent-ragdoll-left-upper-arm",
+      "anchor": [
+        0,
+        -0.3,
+        0
+      ],
+      "collideConnected": false,
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limitsEnabled": true,
+      "minAngle": -10,
+      "maxAngle": 130
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-left-thigh",
+    "primitive": "transform",
+    "values": {
+      "name": "Ragdoll left-thigh",
+      "parentId": "agent-ragdoll",
+      "position": [
+        -0.25,
+        1.55,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-left-thigh",
+    "component": "rigidbody",
+    "values": {
+      "massMode": "manual",
+      "mass": 3,
+      "angularDamping": 0.15
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-left-thigh",
+    "component": "collider",
+    "values": {
+      "shape": "capsule",
+      "radius": 0.18,
+      "length": 0.65,
+      "axis": "y",
+      "friction": 0.5,
+      "id": "agent-ragdoll-left-thigh-collider-1"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-left-thigh-visual",
+    "primitive": "cube",
+    "values": {
+      "name": "left-thigh visual",
+      "parentId": "agent-ragdoll-left-thigh",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.2571428571428572,
+        0.7214285714285715,
+        0.2571428571428572
+      ],
+      "color": "#5996db"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-left-shin",
+    "primitive": "transform",
+    "values": {
+      "name": "Ragdoll left-shin",
+      "parentId": "agent-ragdoll",
+      "position": [
+        -0.25,
+        0.5,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-left-shin",
+    "component": "rigidbody",
+    "values": {
+      "massMode": "manual",
+      "mass": 2,
+      "angularDamping": 0.15
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-left-shin",
+    "component": "collider",
+    "values": {
+      "shape": "capsule",
+      "radius": 0.17,
+      "length": 0.65,
+      "axis": "y",
+      "friction": 0.5,
+      "id": "agent-ragdoll-left-shin-collider-1"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-left-shin-visual",
+    "primitive": "cube",
+    "values": {
+      "name": "left-shin visual",
+      "parentId": "agent-ragdoll-left-shin",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.24285714285714288,
+        0.7071428571428572,
+        0.24285714285714288
+      ],
+      "color": "#5996db"
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-left-thigh",
+    "component": "joint",
+    "values": {
+      "kind": "ball",
+      "connectedObjectId": "agent-ragdoll-pelvis",
+      "anchor": [
+        0,
+        0.5,
+        0
+      ],
+      "collideConnected": false
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-left-shin",
+    "component": "joint",
+    "values": {
+      "kind": "hinge",
+      "connectedObjectId": "agent-ragdoll-left-thigh",
+      "anchor": [
+        0,
+        0.525,
+        0
+      ],
+      "collideConnected": false,
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limitsEnabled": true,
+      "minAngle": -10,
+      "maxAngle": 130
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-right-upper-arm",
+    "primitive": "transform",
+    "values": {
+      "name": "Ragdoll right-upper-arm",
+      "parentId": "agent-ragdoll",
+      "position": [
+        0.65,
+        3.3,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        -90
+      ]
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-right-upper-arm",
+    "component": "rigidbody",
+    "values": {
+      "massMode": "manual",
+      "mass": 1.5,
+      "angularDamping": 0.15
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-right-upper-arm",
+    "component": "collider",
+    "values": {
+      "shape": "capsule",
+      "radius": 0.15,
+      "length": 0.45,
+      "axis": "y",
+      "friction": 0.5,
+      "id": "agent-ragdoll-right-upper-arm-collider-1"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-right-upper-arm-visual",
+    "primitive": "cube",
+    "values": {
+      "name": "right-upper-arm visual",
+      "parentId": "agent-ragdoll-right-upper-arm",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.2142857142857143,
+        0.5357142857142857,
+        0.2142857142857143
+      ],
+      "color": "#5996db"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-right-forearm",
+    "primitive": "transform",
+    "values": {
+      "name": "Ragdoll right-forearm",
+      "parentId": "agent-ragdoll",
+      "position": [
+        1.3,
+        3.3,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        -90
+      ]
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-right-forearm",
+    "component": "rigidbody",
+    "values": {
+      "massMode": "manual",
+      "mass": 1,
+      "angularDamping": 0.15
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-right-forearm",
+    "component": "collider",
+    "values": {
+      "shape": "capsule",
+      "radius": 0.14,
+      "length": 0.4,
+      "axis": "y",
+      "friction": 0.5,
+      "id": "agent-ragdoll-right-forearm-collider-1"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-right-forearm-visual",
+    "primitive": "cube",
+    "values": {
+      "name": "right-forearm visual",
+      "parentId": "agent-ragdoll-right-forearm",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.20000000000000004,
+        0.48571428571428577,
+        0.20000000000000004
+      ],
+      "color": "#5996db"
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-right-upper-arm",
+    "component": "joint",
+    "values": {
+      "kind": "ball",
+      "connectedObjectId": "agent-ragdoll-torso",
+      "anchor": [
+        0,
+        -0.3,
+        0
+      ],
+      "collideConnected": false
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-right-forearm",
+    "component": "joint",
+    "values": {
+      "kind": "hinge",
+      "connectedObjectId": "agent-ragdoll-right-upper-arm",
+      "anchor": [
+        0,
+        -0.3,
+        0
+      ],
+      "collideConnected": false,
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "limitsEnabled": true,
+      "minAngle": -130,
+      "maxAngle": 10
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-right-thigh",
+    "primitive": "transform",
+    "values": {
+      "name": "Ragdoll right-thigh",
+      "parentId": "agent-ragdoll",
+      "position": [
+        0.25,
+        1.55,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-right-thigh",
+    "component": "rigidbody",
+    "values": {
+      "massMode": "manual",
+      "mass": 3,
+      "angularDamping": 0.15
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-right-thigh",
+    "component": "collider",
+    "values": {
+      "shape": "capsule",
+      "radius": 0.18,
+      "length": 0.65,
+      "axis": "y",
+      "friction": 0.5,
+      "id": "agent-ragdoll-right-thigh-collider-1"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-right-thigh-visual",
+    "primitive": "cube",
+    "values": {
+      "name": "right-thigh visual",
+      "parentId": "agent-ragdoll-right-thigh",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.2571428571428572,
+        0.7214285714285715,
+        0.2571428571428572
+      ],
+      "color": "#5996db"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-right-shin",
+    "primitive": "transform",
+    "values": {
+      "name": "Ragdoll right-shin",
+      "parentId": "agent-ragdoll",
+      "position": [
+        0.25,
+        0.5,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-right-shin",
+    "component": "rigidbody",
+    "values": {
+      "massMode": "manual",
+      "mass": 2,
+      "angularDamping": 0.15
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-right-shin",
+    "component": "collider",
+    "values": {
+      "shape": "capsule",
+      "radius": 0.17,
+      "length": 0.65,
+      "axis": "y",
+      "friction": 0.5,
+      "id": "agent-ragdoll-right-shin-collider-1"
+    }
+  },
+  {
+    "op": "object.create",
+    "id": "agent-ragdoll-right-shin-visual",
+    "primitive": "cube",
+    "values": {
+      "name": "right-shin visual",
+      "parentId": "agent-ragdoll-right-shin",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.24285714285714288,
+        0.7071428571428572,
+        0.24285714285714288
+      ],
+      "color": "#5996db"
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-right-thigh",
+    "component": "joint",
+    "values": {
+      "kind": "ball",
+      "connectedObjectId": "agent-ragdoll-pelvis",
+      "anchor": [
+        0,
+        0.5,
+        0
+      ],
+      "collideConnected": false
+    }
+  },
+  {
+    "op": "component.set",
+    "id": "agent-ragdoll-right-shin",
+    "component": "joint",
+    "values": {
+      "kind": "hinge",
+      "connectedObjectId": "agent-ragdoll-right-thigh",
+      "anchor": [
+        0,
+        0.525,
+        0
+      ],
+      "collideConnected": false,
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "limitsEnabled": true,
+      "minAngle": -10,
+      "maxAngle": 130
+    }
+  }
+]

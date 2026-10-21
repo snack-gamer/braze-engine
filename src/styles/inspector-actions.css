@@ -1,0 +1,66 @@
+/* Labeled Inspector actions are controls, not toolbar hints. Give them a
+ * flat resting surface and visible edge while keeping icon-only header
+ * actions intentionally quiet. */
+.rail-right .ghost-button {
+  height: var(--h-input);
+  border-color: var(--border-strong);
+  background: var(--layer-raised);
+  color: var(--text-1);
+  box-shadow: none;
+  transition:
+    background-color var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    box-shadow var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease);
+}
+
+.rail-right .ghost-button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--border-strong) 65%, var(--text-1));
+  background: var(--layer-hover);
+  color: var(--text);
+}
+
+.rail-right .ghost-button:active:not(:disabled) {
+  transform: translateY(1px);
+  border-color: var(--border);
+  background: var(--component-head);
+  box-shadow: none;
+}
+
+.rail-right .ghost-button:is(.active, [aria-pressed="true"], [aria-expanded="true"]) {
+  border-color: var(--state-on-edge);
+  background: var(--state-on-fill);
+  color: var(--state-on-ink);
+  box-shadow: none;
+}
+
+.rail-right .ghost-button.accent {
+  border-color: var(--accent-2);
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: none;
+}
+
+.rail-right .ghost-button.accent:hover:not(:disabled) {
+  border-color: var(--accent-light);
+  background: var(--accent-2);
+  color: var(--on-accent);
+}
+
+.rail-right .ghost-button.accent:active:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: none;
+}
+
+.rail-right .ghost-button:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.rail-right .ghost-button:disabled {
+  border-color: var(--border);
+  background: var(--component-head);
+  box-shadow: none;
+}

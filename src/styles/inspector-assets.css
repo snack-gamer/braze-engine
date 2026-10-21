@@ -1,0 +1,602 @@
+.asset-inspector__preview {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1.45;
+  margin: 2px 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #080a0b;
+  color: var(--muted);
+  overflow: hidden;
+  cursor: default;
+}
+
+.asset-inspector__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.asset-inspector__preview-placeholder {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.asset-inspector__preview--loading .editor-icon {
+  animation: asset-preview-pulse 1.2s ease-in-out infinite;
+}
+
+.asset-inspector__preview--failed .asset-inspector__preview-placeholder {
+  color: var(--subtle);
+}
+
+.asset-inspector__model-preview {
+  position: relative;
+  isolation: isolate;
+  height: clamp(220px, 42vh, 520px);
+  min-height: 180px;
+  max-height: min(720px, calc(100vh - 190px));
+  aspect-ratio: auto;
+  resize: vertical;
+  background: #20242a;
+}
+
+.asset-inspector__animated-preview {
+  margin: 0 0 8px;
+  border: 1px solid var(--hairline);
+  border-radius: 7px;
+  background: #171a1f;
+  overflow: hidden;
+}
+
+.asset-inspector__animated-preview .character-preview-workspace.is-resizable {
+  height: clamp(260px, 42vh, 520px);
+  min-height: 220px;
+}
+
+.asset-inspector__model-preview-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  cursor: grab;
+}
+
+.asset-inspector__model-preview-canvas:active {
+  cursor: grabbing;
+}
+
+.asset-inspector__model-preview-canvas:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.asset-inspector__model-preview-status {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.asset-inspector__model-preview-reset {
+  position: absolute;
+  z-index: 2;
+  top: 7px;
+  right: 7px;
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--r-sm);
+  background: rgba(20, 23, 27, 0.82);
+  color: var(--text-2);
+  box-shadow: var(--shadow-1);
+  cursor: pointer;
+}
+
+.asset-inspector__model-preview-grid {
+  position: absolute;
+  z-index: 2;
+  top: 7px;
+  left: 7px;
+}
+
+.asset-inspector__model-preview-grid .grid-settings-popover__trigger > span { display: none; }
+.asset-inspector__model-preview-grid .grid-settings-popover__trigger { width: 27px; padding-inline: 5px; }
+.asset-inspector__model-preview-grid .grid-settings-popover__trigger .editor-icon:last-child { display: none; }
+
+.asset-inspector__model-preview-reset:hover:not(:disabled),
+.asset-inspector__model-preview-reset:focus-visible {
+  border-color: var(--focus);
+  color: var(--text-1);
+}
+
+.asset-inspector__model-preview-reset:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+.asset-inspector__model-preview-hint {
+  position: absolute;
+  z-index: 2;
+  right: 8px;
+  bottom: 7px;
+  left: 8px;
+  padding: 4px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--r-sm);
+  background: rgba(20, 23, 27, 0.76);
+  color: rgba(225, 231, 235, 0.72);
+  font-size: var(--fs-xs);
+  line-height: 1.3;
+  text-align: center;
+  pointer-events: none;
+  backdrop-filter: blur(5px);
+}
+
+@keyframes asset-preview-pulse {
+  0%, 100% { opacity: 0.42; }
+  50% { opacity: 0.9; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .asset-inspector__preview--loading .editor-icon { animation: none; }
+}
+
+.rail-right .asset-inspector__preview {
+  margin: 0 0 8px;
+  border-color: var(--hairline);
+  border-radius: 7px;
+  background: var(--inspector-card);
+}
+
+.asset-inspector__identity {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  margin: 0 4px 7px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--component-divider);
+}
+
+.asset-inspector__identity strong {
+  overflow: hidden;
+  color: var(--text-1);
+  font-size: var(--fs-md);
+  font-weight: 650;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.asset-inspector__identity span {
+  color: var(--muted-2);
+  font-size: var(--fs-xs);
+  line-height: 1.35;
+}
+
+.asset-subasset-inspector {
+  display: grid;
+  gap: 7px;
+  margin: var(--inspector-section-gap);
+  padding: 9px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--r-sm);
+  background: var(--inspector-card);
+  color: var(--muted-2);
+  font-size: var(--fs-xs);
+}
+
+.asset-subasset-inspector strong {
+  color: var(--text-1);
+  text-transform: capitalize;
+}
+
+.asset-subasset-inspector .character-preview-workspace {
+  border: 1px solid var(--well-border);
+  border-radius: var(--r-sm);
+}
+
+.asset-subasset-inspector .character-preview-toolbar {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.asset-subasset-inspector .character-preview-toolbar__player {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.asset-subasset-inspector .character-preview-toolbar__player .editor-range-control,
+.asset-subasset-inspector .character-preview-toolbar__player output {
+  grid-column: 1 / -1;
+}
+
+.asset-subasset-inspector .character-preview-toolbar__player output,
+.asset-subasset-inspector .character-preview-toolbar__tools {
+  justify-self: end;
+}
+
+.asset-import-issues__list {
+  display: grid;
+  gap: 6px;
+}
+
+.asset-import-issue {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 7px;
+  padding: 8px;
+  border: 1px solid color-mix(in srgb, currentColor 25%, var(--border));
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, currentColor 5%, var(--group-card));
+  color: #d6aa62;
+}
+
+.asset-import-issue--error {
+  color: #e77e7e;
+}
+
+.asset-import-issue > div {
+  min-width: 0;
+}
+
+.asset-import-issue strong {
+  display: block;
+  color: currentColor;
+  font-size: var(--fs-xs);
+  line-height: 1.35;
+}
+
+.asset-import-issue p {
+  margin: 2px 0 0;
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.brdf-editor {
+  display: grid;
+  gap: 10px;
+}
+
+.brdf-preview {
+  display: grid;
+  place-items: center;
+  min-height: 118px;
+  border: 1px solid var(--hairline);
+  border-radius: 7px;
+  background-image: var(--check-bg);
+  background-size: 16px 16px;
+  overflow: hidden;
+}
+
+.brdf-preview__sphere {
+  width: 92px;
+  height: 92px;
+  border-radius: 999px;
+  background:
+    var(--material-preview-image),
+    var(--material-preview-color);
+  background-size: cover, auto;
+  background-position: center;
+}
+
+.brdf-name {
+  margin: 0;
+}
+
+/* Material workbench styles live in components/material-editor/MaterialEditor.css —
+ * that file is the single source of truth. Earlier duplicates here were causing
+ * cascade conflicts (e.g. `border: 0` on the tab buttons stripping the new
+ * inter-tab separators). Removed deliberately. */
+
+.brdf-texture-slot {
+  position: relative;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 7px;
+  min-height: 50px;
+  padding: 6px;
+  border: 1px dashed var(--hairline);
+  border-radius: 6px;
+  background: var(--inspector-input);
+  color: #989fa2;
+  transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.brdf-texture-slot.filled {
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.brdf-texture-slot.drag-hover {
+  border-style: solid;
+  border-color: var(--accent);
+  outline: 2px solid var(--accent-glow);
+  background: var(--accent-soft);
+}
+
+.brdf-texture-slot__preview {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 5px;
+  background: #1a1a1a;
+  color: #8a9295;
+}
+
+/* Clickable variant: when the slot has a texture assigned, the preview
+ * becomes a button that reveals the source image in the asset browser
+ * (handled via the tgan:focus-image window event). */
+.brdf-texture-slot__preview--clickable {
+  cursor: pointer;
+  transition: border-color 100ms ease, box-shadow 100ms ease, transform 80ms ease;
+}
+
+.brdf-texture-slot__preview--clickable:hover {
+  border-color: rgba(255, 255, 255, 0.30);
+  outline: 2px solid var(--hairline-strong);
+  transform: scale(1.05);
+}
+
+.brdf-texture-slot__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.brdf-texture-slot__body {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.brdf-texture-slot__body > span {
+  color: var(--subtle);
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.brdf-texture-slot__name {
+  display: block;
+  width: 100%;
+  padding: 2px 4px;
+  margin-left: -4px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #d4dbde;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 100ms ease, color 100ms ease;
+}
+
+.brdf-texture-slot__name:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.brdf-texture-slot__name--empty {
+  color: #6e7679;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.brdf-texture-slot__picker {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  background: transparent;
+  color: #b8c0c3;
+  cursor: pointer;
+  transition: border-color 100ms ease, color 100ms ease, background 100ms ease;
+}
+
+.brdf-texture-slot__picker:hover {
+  border-color: rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.brdf-texture-slot__picker.active {
+  border-color: var(--state-on-edge);
+  color: var(--state-on-ink);
+  background: var(--state-on-fill);
+}
+
+.brdf-texture-slot__flip {
+  display: inline-grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: 5px;
+  padding: 0 4px;
+  color: #b8c0c3;
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+
+.brdf-texture-slot__flip input {
+  width: 13px;
+  height: 13px;
+  accent-color: var(--accent);
+}
+
+/* Object-picker popover (Unity-style "circle picker"): floats below the
+ * slot, listens for outside-clicks and Escape, and provides a quick
+ * searchable list of available images. Drag-and-drop is the primary
+ * gesture; the picker is the fallback for when the desired texture
+ * isn't visible in the current asset browser view. */
+.texture-picker-popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 6px;
+  z-index: 20;
+  display: grid;
+  width: 240px;
+  max-width: calc(100vw - 24px);
+  padding: 6px;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 7px;
+  background: #1a1d20;
+  box-shadow: var(--shadow-float);
+}
+
+.texture-picker-popover__search {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px solid var(--hairline);
+  border-radius: 5px;
+  background: #0f1113;
+  color: #8a9295;
+}
+
+.texture-picker-popover__search input {
+  border: 0;
+  background: transparent;
+  color: #e2e7e9;
+  font-size: var(--fs-xs);
+  outline: none;
+}
+
+.texture-picker-popover__list {
+  display: grid;
+  gap: 2px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.texture-picker-popover__row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #d4dbde;
+  font-size: var(--fs-xs);
+  text-align: left;
+  cursor: pointer;
+  transition: background 80ms ease, color 80ms ease;
+}
+
+.texture-picker-popover__row:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.texture-picker-popover__row.selected {
+  background: var(--accent-soft);
+  color: #fff;
+}
+
+.texture-picker-popover__thumb {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  background: #0f1113;
+  color: #6e7679;
+}
+
+.texture-picker-popover__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.texture-picker-popover__thumb--empty {
+  color: #555c5f;
+}
+
+.texture-picker-popover__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.texture-picker-popover__row--none {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0;
+  padding-bottom: 6px;
+  margin-bottom: 2px;
+  color: #8a9295;
+  font-style: italic;
+}
+
+.texture-picker-popover__empty {
+  margin: 6px 4px;
+  color: #6e7679;
+  font-size: var(--fs-xs);
+  text-align: center;
+}
+
+.brdf-derived-tools {
+  display: grid;
+  gap: 8px;
+  padding: 8px 0 0;
+  border-top: 1px solid var(--hairline);
+}
+
+.brdf-derived-tools__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #dde2e4;
+  font-size: var(--fs-xs);
+}
+
+.brdf-derived-tools__source {
+  margin: 0;
+}
+
+.brdf-derived-tools__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.brdf-derived-tools__actions .ghost-button {
+  width: 100%;
+}
+
+.brdf-derived-tools__error {
+  color: #ff8c8c;
+  font-size: var(--fs-xs);
+  font-weight: 650;
+}
+
+.prefab-action {
+  color: #d8dcde;
+}

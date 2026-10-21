@@ -1,0 +1,1015 @@
+.inspector-slider {
+  display: grid;
+  gap: 2px;
+  margin-bottom: 3px;
+}
+
+.field-grid .inspector-slider {
+  margin-bottom: 0;
+}
+
+.inspector-slider__top {
+  display: block;
+}
+
+.inspector-slider__label {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--subtle);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.inspector-slider__control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+}
+
+/* The value sits centred in its well — not shoved against the right edge,
+ * where it reads as overflow and collides with the field border. The optional
+ * unit trails it. */
+.inspector-number {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--control-number-gap);
+  min-width: var(--control-number-min-w);
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: center;
+  cursor: ew-resize;
+  user-select: none;
+}
+
+.inspector-number__input {
+  position: relative;
+  z-index: 1;
+  flex: 0 1 auto;
+  /* Shrink to the value so "360" and its "deg" centre together as one piece —
+   * a fixed-width input pushed the unit to the far border, visually orphaned.
+   * Browsers without field-sizing fall back to a full-width centred value. */
+  field-sizing: content;
+  min-width: 2ch;
+  max-width: 100%;
+  height: 100%;
+  padding: 0;
+  text-align: center;
+  /* Scrub-first affordance: the whole field reads as a scrubber on hover;
+   * only while focused (actively typing) does it become a text caret. */
+  cursor: ew-resize;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.inspector-number__input:focus {
+  cursor: text;
+}
+
+/* When a unit is present the input shrinks to its value so "360 deg" centres
+ * as one piece — several later rules set width: 100% (full-well click target
+ * for unit-less fields), and an explicit width defeats field-sizing, orphaning
+ * the unit at the far border. :has() outranks them all. */
+.inspector-number:has(> .inspector-number__unit) > .inspector-number__input {
+  flex: 0 1 auto;
+  width: auto;
+  min-width: 2ch;
+}
+
+body.inspector-scrubbing,
+body.inspector-scrubbing * {
+  cursor: ew-resize !important;
+  user-select: none !important;
+}
+
+.inspector-number__input::-webkit-outer-spin-button,
+.inspector-number__input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.inspector-number__unit {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.rail-right .inspector-slider {
+  gap: 2px;
+  margin-bottom: 2px;
+}
+
+.rail-right .field-grid .inspector-slider {
+  margin-bottom: 0;
+}
+
+.rail-right .inspector-slider__label {
+  color: var(--text-2);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.075em;
+}
+
+.rail-right .inspector-slider__control {
+  gap: 5px;
+}
+
+.rail-right .inspector-number {
+  min-width: var(--control-number-rail-min-w);
+}
+
+.rail-right .inspector-number__input {
+  width: 100%;
+}
+
+.rail-right .inspector-slider .inspector-number {
+  min-width: var(--control-number-slider-min-w);
+}
+
+.rail-right .inspector-slider .inspector-number__input {
+  width: 100%;
+}
+
+.rail-right .inspector-slider .inspector-number:has(.inspector-number__unit) {
+  min-width: var(--control-number-unit-min-w);
+}
+
+.field > .inspector-number {
+  width: 100%;
+  min-width: 0;
+}
+
+.field > .inspector-number .inspector-number__input {
+  width: 100%;
+  height: 100%;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Canonical app slider — a single visual treatment shared by InspectorSlider.
+ * Thin recessed track
+ * with a fill bar growing from the left and a small flat marker at the
+ * current value. No round thumbs, no roundings — pro DCC convention so
+ * sliders feel like one component across every panel.
+ *
+ *   Track height       → 2 px
+ *   Track fill         → muted grey on a recessed line
+ *   Marker             → 2 px flat light bar with an 8 px hit area
+ * ───────────────────────────────────────────────────────────────────── */
+
+/* Flat slider: a 2px track (--border) with an accent fill drawn by an
+ * underlay element sized to --slider-fill, and a small round accent thumb
+ * on a transparent native range input layered on top. No gradients, no
+ * shadows — the fill is a solid block, the thumb a solid disc. */
+.inspector-slider__slider {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+/* The track is a recessed rail (a well, like every other input), not a
+ * hairline — at 2px on a dark card it vanished and only the thumb showed. */
+.inspector-slider__track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  overflow: hidden;
+}
+
+.inspector-slider__fill {
+  display: block;
+  width: var(--slider-fill, 0%);
+  height: 100%;
+}
+
+.inspector-slider__range {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Inspector group — a labelled subsection of a component. It is a quiet
+ * divider (chevron · label · hairline rule), not a nested card: the component
+ * header is the only bar inside a component, so the hierarchy reads
+ * object > component > group instead of stacked header bars. Rows sit directly
+ * on the component card and use its full width.
+ * ───────────────────────────────────────────────────────────────────────── */
+/* --card-surface = "the colour of the card I am sitting on". Full-width rows
+ * repaint it to mask the column splitter. Groups are transparent, so they
+ * never re-point it. */
+.inspector-section__body {
+  --card-surface: var(--component-card);
+}
+
+.inspector-group {
+  margin-top: var(--sp-3);
+}
+.inspector-group:first-child {
+  margin-top: 0;
+}
+
+.inspector-group__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 100%;
+  height: var(--inspector-group-head-h);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-2);
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease);
+}
+/* The rule fills the space after the label, so the label reads as a divider. */
+.inspector-group__head::after {
+  content: "";
+  order: 2;
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--hairline);
+}
+.inspector-group__head:hover {
+  color: var(--text);
+}
+.inspector-group__head:focus-visible {
+  outline: 1px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--r-xs);
+}
+
+.inspector-group__chevron {
+  --editor-icon-size: var(--icon-size-disclosure);
+  order: 0;
+  flex: 0 0 auto;
+  color: var(--muted-2);
+  transition: transform var(--t-base) var(--ease);
+}
+/* Child combinator, NOT descendant — an open parent must not restyle the
+ * chevrons of closed groups nested inside it. */
+.inspector-group.open > .inspector-group__head .inspector-group__chevron {
+  transform: rotate(90deg);
+}
+.inspector-group__head:hover .inspector-group__chevron {
+  color: var(--text-2);
+}
+
+.inspector-group__title {
+  order: 1;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.inspector-group__meta {
+  order: 3;
+  flex: 0 0 auto;
+  color: var(--muted-2);
+  font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.inspector-group__body {
+  padding: 0 0 var(--sp-1);
+}
+
+/* Nested group — a sub-option that only exists because of its parent (Ring
+ * Stack / Spiral / Wave belong to Radial). It drops the rule and quiets its
+ * label, and a hairline spine down the gutter marks the dependency, so the
+ * parent's label stays the loudest thing in the group. */
+.inspector-group__body > .inspector-group {
+  position: relative;
+  margin-top: var(--sp-1);
+  margin-left: var(--inspector-nest-indent);
+}
+
+.inspector-group__body > .inspector-group::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 2px;
+  left: calc(-1 * var(--inspector-nest-indent) / 2 - 1px);
+  width: 1px;
+  background: var(--hairline-strong);
+}
+
+.inspector-group__body > .inspector-group > .inspector-group__head {
+  color: var(--text-3);
+}
+.inspector-group__body > .inspector-group > .inspector-group__head::after {
+  display: none;
+}
+.inspector-group__body > .inspector-group > .inspector-group__head:hover {
+  color: var(--text-1);
+}
+
+/* Trailing hint under a group's controls — explains what the parameters do
+ * without competing with them. */
+.inspector-group__note {
+  margin: var(--sp-2) 0 0;
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Canonical inspector theme — single source of truth for property rows,
+ * vector inputs, and segmented toggles. Use these classes (or the
+ * matching React components: InspectorRow, VectorField, InspectorSegmented)
+ * for any new inspector UI. Domain-specific row classes are deprecated.
+ *
+ * Inspector design tokens (--inspector-row-label-w, --inspector-gap, etc.)
+ * are defined in theme.css.
+ * ───────────────────────────────────────────────────────────────────────── */
+
+/* Row layout (label + control) ----------------------------------------- */
+
+.inspector-row {
+  display: grid;
+  gap: var(--inspector-gap);
+  align-items: center;
+  min-height: var(--inspector-row-min-h);
+  padding: var(--inspector-row-block-pad) 0;
+  transition: opacity 100ms ease;
+}
+
+/* Horizontal hairline splitter between adjacent property rows (any combo
+ * of .inspector-row + .inspector-toggle-row). Reads as a DCC property
+ * list. :where() keeps specificity at zero so per-row classes still win. */
+:where(.inspector-row, .inspector-toggle-row) + :where(.inspector-row, .inspector-toggle-row) {
+  border-top: 1px solid var(--inspector-row-divider);
+}
+
+.inspector-row--inline {
+  grid-template-columns: var(--inspector-row-gutter-w) var(--inspector-row-label-w) minmax(0, 1fr);
+}
+
+.inspector-row--stacked,
+.inspector-row--vec {
+  grid-template-columns: var(--inspector-row-gutter-w) minmax(0, 1fr);
+  gap: 4px var(--inspector-gap);
+}
+
+.inspector-row--stacked .inspector-row__head,
+.inspector-row--vec .inspector-row__head {
+  grid-column: 2;
+}
+
+.inspector-row--stacked .inspector-row__control,
+.inspector-row--vec .inspector-row__control {
+  grid-column: 2;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Property stack — InspectorGrid is the canonical ordered list of properties.
+ * It is intentionally one column at every pane width: automatic two-up
+ * packing hid labels, split related controls, and introduced an arbitrary
+ * center rule. Components create explicit sub-groups when they need hierarchy.
+ * ───────────────────────────────────────────────────────────────────────── */
+.inspector-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 0;
+}
+
+/* Only plain label+control rows share the columns. Everything else — group
+ * dividers, sub-titles, vector triplets, stacked rows, notes — spans the full
+ * width, so a section body can be flipped to grid wholesale (layout="grid")
+ * without auditing every child. They also paint the card's own surface, which
+ * masks the column splitter below where it must not run. */
+.inspector-grid > *:not(.inspector-row--inline),
+.inspector-grid > .inspector-row.is-full {
+  grid-column: 1 / -1;
+  background: var(--card-surface);
+}
+
+/* Grid rows use the same label/control proportions as every plain row. */
+.inspector-grid > .inspector-row--inline {
+  grid-template-columns:
+    var(--inspector-row-gutter-w)
+    minmax(0, var(--inspector-row-label-w))
+    minmax(0, 1fr);
+  gap: var(--inspector-gap);
+}
+
+/* A lone number never needs the whole column — cap it so the digits stay near
+ * their label instead of drifting to the far edge of the panel. Selects and
+ * sliders still fill: they carry words / a track that wants the room. */
+.inspector-row__control > .inspector-number {
+  max-width: var(--inspector-number-max-w);
+}
+
+/* Two numbers in one control (min/max, width/depth) share the column instead
+ * of stacking or spilling past it. */
+.inspector-row__control:has(> .inspector-number + .inspector-number) {
+  display: flex;
+  gap: 5px;
+  min-width: 0;
+}
+
+.inspector-row__control:has(> .inspector-number + .inspector-number) > .inspector-number {
+  flex: 1 1 0;
+  max-width: none;
+}
+
+/* Key gutter — leftmost column on every row. Empty by default so the rest
+ * of the panel still aligns to a grid; gains a small diamond/dot when the
+ * value is animated or overrides a prefab. Reads as the "list rhythm" anchor
+ * the way C4D's animation diamonds do. */
+.inspector-row__gutter {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  width: var(--inspector-row-gutter-w);
+  pointer-events: none;
+}
+
+.inspector-row__key {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+
+.inspector-row__key--anim {
+  background: var(--accent);
+  outline: 1px solid var(--hairline-strong);
+}
+
+.inspector-row__key--override {
+  background: var(--warning);
+  outline: 1px solid var(--hairline-strong);
+}
+
+.inspector-row.is-muted {
+  opacity: 0.45;
+}
+
+.inspector-row.is-muted .inspector-row__control,
+.inspector-row.is-muted .inspector-row__head {
+  pointer-events: none;
+}
+
+.inspector-row.is-muted .inspector-row__actions {
+  pointer-events: auto;
+}
+
+.inspector-row__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.inspector-row__enable {
+  flex: 0 0 auto;
+}
+
+.inspector-row--inline .inspector-row__head {
+  min-height: var(--inspector-row-min-h);
+}
+
+.inspector-row__icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--inspector-muted);
+  flex: 0 0 auto;
+}
+
+.inspector-row__label {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inspector-row__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+.inspector-row__control {
+  min-width: 0;
+}
+
+.inspector-row__control > select,
+.inspector-row__control > .inspector-number {
+  width: 100%;
+  height: var(--inspector-input-h);
+}
+
+.inspector-row__control > select {
+  padding: 0 7px;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Object-reference field (InspectorObjectField). The one look for every
+ * asset/object pointer in the engine — icon + friendly name + picker, in the
+ * same boxed control language as selects/inputs. Shows names, never paths.
+ * ───────────────────────────────────────────────────────────────────── */
+.inspector-row__control > .object-field,
+.object-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: var(--inspector-input-h);
+  min-width: 0;
+  padding: 0 3px 0 8px;
+}
+.object-field.is-disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+.object-field__icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  color: var(--muted-2);
+}
+.object-field__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+}
+.object-field.is-empty .object-field__name {
+  color: var(--muted-2);
+  font-style: italic;
+}
+.object-field__pick {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--muted-2);
+  cursor: pointer;
+  transition: color 100ms ease, background 100ms ease;
+}
+.object-field__pick:hover {
+  color: var(--text-1);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Vector field (X/Y/Z triplet) — Unity-style dense single-line layout.
+ * Each cell is `letter | input`. The letter is the scrub handle: drag
+ * horizontally to update the value (useScrub on the letter span). */
+
+.inspector-vec {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  min-width: 0;
+}
+
+.inspector-vec__cell {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.inspector-vec__cell.no-letter {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.inspector-vec__cell.is-animated {
+  grid-template-columns: 12px 18px minmax(0, 1fr);
+}
+
+.inspector-vec__cell.no-letter.is-animated {
+  grid-template-columns: 18px minmax(0, 1fr);
+}
+
+/* Axis letter doubles as a scrub handle (Unity convention). Hover invites
+ * the drag (ew-resize cursor + brighter color); .is-scrubbing pins the
+ * cursor while the drag is active. */
+.inspector-vec__letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--inspector-input-h);
+  color: var(--inspector-muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 0;
+  cursor: ew-resize;
+  user-select: none;
+  transition: color 80ms ease;
+}
+
+.inspector-vec__letter:hover,
+.inspector-vec__letter.is-scrubbing {
+  color: var(--text);
+}
+
+.inspector-vec__cell[data-axis="x"] .inspector-vec__letter { color: var(--axis-x); }
+.inspector-vec__cell[data-axis="y"] .inspector-vec__letter { color: var(--axis-y); }
+.inspector-vec__cell[data-axis="z"] .inspector-vec__letter { color: var(--axis-z); }
+
+.inspector-vec__cell.is-disabled .inspector-vec__letter {
+  color: var(--text-disabled);
+  cursor: default;
+  opacity: var(--control-disabled-field-opacity);
+}
+
+.inspector-vec__badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 16px;
+  color: var(--accent-light);
+  font: 900 9px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.inspector-vec__cell .inspector-number {
+  width: 100%;
+  min-width: 0;
+  height: var(--inspector-input-h);
+  grid-template-columns: minmax(0, 1fr);
+  font-size: var(--fs-xs);
+}
+
+.inspector-vec__cell .inspector-number__input {
+  height: 100%;
+  padding: 0 var(--control-number-inline-pad);
+}
+
+/* Hide the per-cell unit suffix inside vector fields. The row label
+ * (Rotation / Position / Scale) carries the unit context, and a dim glyph
+ * at the right edge reads as a leftover control hint now that scrub lives
+ * on the axis letter. Standalone .inspector-number (FOV, Bloom Threshold,
+ * etc.) still shows its unit. */
+.inspector-vec__cell .inspector-number__unit {
+  display: none;
+}
+
+/* Segmented toggle ----------------------------------------------------- */
+
+.inspector-segmented {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.inspector-segmented button {
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Raw <input> / <textarea> styling inside .inspector-row__control.
+ * Lets a row hold any HTML input without an extra component wrapper —
+ * all controls fill the 1fr column at the canonical inspector input height.
+ * Selectors below are explicit (not a bare type selector) so they only
+ * apply when the input is the direct control of an InspectorRow.
+ * ───────────────────────────────────────────────────────────────────── */
+
+.inspector-row__control > input[type="text"],
+.inspector-row__control > input[type="search"],
+.inspector-row__control > input[type="email"],
+.inspector-row__control > input[type="url"],
+.inspector-row__control > input:not([type]),
+.inspector-row__control > input[type="password"] {
+  width: 100%;
+  height: var(--inspector-input-h);
+  padding: 0 8px;
+  font-size: var(--fs-xs);
+}
+
+.inspector-row__control > textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+  resize: vertical;
+}
+
+/* Read-only value rendered as plain text in the control column. Used by
+ * inspectors that surface metadata (asset details, computed values, etc.).
+ * Sits at the same baseline as an input without drawing a border. */
+.inspector-row__control > .inspector-row__value {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--inspector-input-h);
+  padding: 0 4px;
+  color: var(--text);
+  font-size: var(--fs-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inspector-row__control > .inspector-row__value--mono {
+  font: 600 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--muted);
+}
+
+/* The label-less slider variant — used when InspectorSlider sits inside
+ * an InspectorRow (the row owns the label). Strip the slider's own
+ * top label slot so the range bar + numeric box align to row baseline. */
+
+.inspector-slider--bare {
+  display: block;
+}
+
+.inspector-slider--bare .inspector-slider__top {
+  display: none;
+}
+
+.inspector-row__control > .inspector-slider {
+  margin: 0;
+}
+
+.inspector-row__control > .inspector-slider--bare .inspector-slider__control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Toggle switch — pill, the canonical boolean control.
+ * Replaces .toggle-row's floating square checkbox.
+ *
+ * Two layouts:
+ *  - bare .inspector-toggle: a pill alone (sits inside InspectorRow control)
+ *  - .inspector-toggle-row: switch + adjacent label block (for "Enable X"
+ *    rows that need a primary title + sub-description)
+ * ───────────────────────────────────────────────────────────────────── */
+
+/* Square toggle button — reads as a compact DCC boolean. On state uses a
+ * light checkmark and a subtle border instead of a bright filled checkbox. */
+.inspector-toggle {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  flex: 0 0 auto;
+  vertical-align: middle;
+}
+
+/* Checkmark glyph — drawn with two CSS borders (right + bottom of a
+ * rotated transparent box). Sized to fit ~70% of the toggle. */
+
+.inspector-toggle-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-height: var(--inspector-row-min-h);
+  padding: 1px 0;
+  cursor: pointer;
+}
+
+.inspector-toggle-row__label {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.inspector-toggle-row__label strong {
+  color: var(--inspector-label);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+.inspector-toggle-row__label span {
+  color: var(--subtle);
+  font-size: var(--fs-xs);
+  line-height: 1.3;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Color input — chip + hex code, used by material/lighting colors.
+ * Replaces ad-hoc .brdf-color-row.
+ * ───────────────────────────────────────────────────────────────────── */
+
+.inspector-color {
+  display: inline-grid;
+  grid-template-columns: 22px 78px;
+  align-items: center;
+  gap: 0;
+  height: var(--inspector-input-h);
+  width: auto;
+  justify-self: start;
+  padding: 1px;
+  border: 1px solid var(--hairline-medium);
+  border-radius: 4px;
+  background: var(--bg-input);
+  transition: border-color 100ms ease;
+}
+
+.inspector-color:hover {
+  border-color: var(--hairline-strong);
+}
+
+.inspector-color:focus-within {
+  border-color: var(--focus);
+}
+
+.inspector-color__chip {
+  position: relative;
+  width: 22px;
+  height: 100%;
+  border-radius: var(--r-xs);
+  outline: 1px solid rgba(0, 0, 0, 0.45);
+  outline-offset: -1px;
+  cursor: pointer;
+  overflow: hidden;
+  background-image: var(--check-bg);
+  background-size: 12px 12px;
+}
+
+.inspector-color__chip input[type="color"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.inspector-color__hex {
+  border: 0;
+  background: transparent;
+  outline: 0;
+  padding: 0 8px;
+  height: 100%;
+  width: 100%;
+  color: var(--text);
+  font: var(--fw-regular) var(--fs-xs)/1 var(--font-mono);
+  text-align: right;
+  text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Preset grid — a row of equal-width buttons (aspect picker, mode picker).
+ * Replaces ad-hoc .preset-row/.preset-button. Sits inside InspectorRow
+ * .inspector-row--stacked for label-on-top, or InspectorRow .inline
+ * with a tighter button height.
+ * ───────────────────────────────────────────────────────────────────── */
+
+.inspector-preset-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 4px;
+  width: 100%;
+}
+
+.inspector-preset-grid__button {
+  height: var(--inspector-input-h);
+  padding: 0 8px;
+  border: 1px solid var(--hairline-medium);
+  border-radius: 4px;
+  background: var(--bg-input);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background 100ms ease, color 100ms ease, border-color 100ms ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inspector-preset-grid__button:hover {
+  color: var(--text);
+  border-color: var(--hairline-strong);
+}
+
+.inspector-preset-grid__button.is-active {
+  background: var(--state-on-fill);
+  color: var(--state-on-ink);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Inspector tabs — property-page picker at the top of an inspector body.
+ * The C4D Basic / Coordinates / Object / Phong row. Sits flush under the
+ * PanelHeader; each tab is an equal-share button with a 1 px underline
+ * marking active.
+ * ───────────────────────────────────────────────────────────────────── */
+
+/* Inspector navigation uses compact separated tabs, matching the field rhythm. */
+.inspector-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  margin: 0;
+  padding: var(--sp-1) 0;
+  border-bottom: 1px solid var(--hairline);
+  background: transparent;
+}
+
+.inspector-tabs__tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-1);
+  min-width: 0;
+  height: var(--inspector-tab-h);
+  padding: 0 var(--sp-2);
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-2);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.inspector-tabs__tab:hover { background: var(--bg-hover); color: var(--text); }
+.inspector-tabs__tab.is-active { color: var(--state-on-ink); background: var(--state-on-fill); }
+.inspector-tabs__tab:focus-visible { outline: 1px solid var(--focus); outline-offset: -1px; }
+
+.inspector-tabs__icon {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  color: currentColor;
+}
+
+.inspector-tabs__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inspector-tabs__badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 15px;
+  height: 14px;
+  padding: 0 4px;
+  border-radius: var(--r-xs);
+  background: var(--bg-input-2);
+  color: var(--text-2);
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.inspector-tabs__tab.is-active .inspector-tabs__badge {
+  background: var(--state-on-fill);
+  color: var(--state-on-ink);
+}

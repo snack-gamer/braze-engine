@@ -1,0 +1,9 @@
+.animator-clip-events-summary { padding-bottom: 5px; border-bottom: 1px solid var(--border); }
+.animator-clip-events-summary > header { display: flex; min-height: 28px; align-items: center; justify-content: space-between; padding: 0 7px; background: var(--component-head); }
+.animator-clip-events-summary > header span { color: var(--muted); font-size: var(--fs-xs); }
+.animator-clip-events-summary__event { display: flex; width: calc(100% - 12px); min-height: 28px; align-items: center; justify-content: space-between; margin: 4px 6px 0; padding: 0 7px; border: 1px solid var(--hairline-medium); border-radius: var(--r-sm); background: var(--component-card); color: var(--text-1); text-align: left; }
+.animator-clip-events-summary__event:hover { background: var(--component-head-hover); }
+.animator-clip-events-summary__event--state { cursor: default; }
+.animator-clip-events-summary__event--state:hover { background: var(--component-card); }
+.animator-clip-events-summary__event small { color: var(--muted); font-family: var(--font-mono); }
+.animator-clip-events-summary > p { margin: var(--sp-2); color: var(--muted); font-size: var(--fs-sm); line-height: 1.35; }

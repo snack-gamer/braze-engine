@@ -1,0 +1,61 @@
+import { AUTOMATION_PRIMITIVES, AUTOMATION_VERSION } from "./commands";
+import { automationOperationCatalog } from "./operation-catalog";
+import { UI_KINDS, UI_LIMITS } from "../../game-ui/domain/ui-document";
+import { INPUT_LIMITS } from "../../input/domain/action-map-limits.mjs";
+import { SOURCE_IMPORT_EXTENSIONS, SOURCE_IMPORT_MAX_BYTES } from "../../assets/domain/source-import-contract.mjs";
+import { ANIMATOR_DOCUMENT_LIMITS } from "../../character/domain/character-document-limits";
+
+/** Discoverable contract shared by HTTP, CLI and MCP; future chat uses the same owner. */
+export const automationCapabilities = {
+  engine: "braze",
+  version: AUTOMATION_VERSION,
+  operations: automationOperationCatalog.map(({ operation }) => operation),
+  operationCatalog: automationOperationCatalog,
+  prefabs: { authoring: "prefab.create/inspect/edit", assetVersion: "braze/prefab-v1", maxAuthoringBytes: 1048576,
+    identity: "GUID and stable prefab-local node IDs", initialRootId: "root", revision: "source byte SHA-256", previewByDefault: true,
+    manual: "Hierarchy selection to Project; Prefab Mode Inspector, undo and Save", runtime: "context.prefabs.list/instantiate/destroy/isAlive/createPool",
+    registration: "project source runtimePrefabs GUID manifest (no registration tool/UI yet)", runtimeMaxNodes: 128,
+    runtimeSubsetDiagnostics: true, dependencyReadinessVerified: false, savedChanges: "next Play/export; reopen Prefab Mode",
+    openDrafts: "preserved; stale saves conflict", updatesLiveInstances: false, nestedPrefabs: false, variants: false, liveOverrides: false },
+  sourceImport: { operation: "assets.import", source: "absolute local engine-host file", extensions: SOURCE_IMPORT_EXTENSIONS,
+    maxBytes: SOURCE_IMPORT_MAX_BYTES, previewByDefault: true, revision: "source byte SHA-256", destination: "new exact Assets-relative path",
+    overwrite: false, atomicBundles: false, remoteUrls: false, scriptImport: false, identity: "fresh GUID; localId main",
+    manual: "Project import/drop; uploadAsset/uploadAssetToFolder share the source writer", readiness: "index diagnostics plus browser rendering verification" },
+  input: { assetVersion: "braze/input-action-map-v1", mapVersion: 1, limits: INPUT_LIMITS, kinds: ["button", "axis", "delta"],
+    devices: ["keyboard", "pointer-button", "pointer-delta", "gamepad-button", "gamepad-axis"], authoring: "input.map.create/inspect/save; input.project.inspect/select",
+    identity: "GUID; optional localId main", revisions: "map byte hash; project input-section hash", previewByDefault: true,
+    runtime: "context.input.action/rebind/bindings", savedChanges: "next Play/export only", sceneUndo: false, inspectorDrafts: "preserved; stale saves conflict", runtimeProfiles: false },
+  commands: {
+    "object.create": { required: ["id", "primitive"], optional: ["values", "assetRef"] },
+    "object.update": { required: ["id", "values"] },
+    "object.delete": { required: ["id"], includesDescendants: true },
+    "component.set": { required: ["id", "component", "values"] },
+    "component.remove": { required: ["id", "component"], optional: ["colliderId"] },
+  },
+  primitives: AUTOMATION_PRIMITIVES,
+  components: ["rigidbody", "collider", "characterController", "joint", "behaviors", "uiCanvas", "animator"],
+  animator: { componentSet: "replace", version: "braze/animator-component-v2", controllerVersion: "braze/animator-controller-v1",
+    limits: ANIMATOR_DOCUMENT_LIMITS, eligibility: "ready imported FBX/glTF main model; same as Inspector", controller: "embedded",
+    manual: "Animator Inspector and Behavior Map; scene/Prefab Mode history and save", runtime: "context.animation",
+    dependencyReadinessVerified: false, legacyControllerReferences: "read-only; embed to edit", behaviorMap: "graph layout; state semantics live on controller layers" },
+  ui: { version: 1, componentSet: "replace", kinds: UI_KINDS, limits: UI_LIMITS, space: "screen",
+    layouts: ["row", "column", "grid", "overlay"], breakpoints: "ascending minWidth in Game viewport CSS pixels",
+    scripts: "context.ui.create/screen; screen.inspect/update/on/tween/dispose", actions: "named; delivered on next fixed tick", tweenClock: "fixed gameplay; Pause holds; Step advances", runtimePrefabs: false },
+  behaviors: { version: 1, maxPerEntity: 8, componentSet: "replace", registration: "engine stock + GameModule.behaviors", discovery: "editor.behaviors",
+    entryFields: ["id", "type", "typeVersion", "enabled", "values"], valueKinds: ["number", "string", "boolean", "entity-reference", "null"],
+    entityReference: { entityId: "authored scene ID or prefab-local node ID" },
+    validation: "Envelope validated on authoring; registered type, version and fields validated at activation. Missing registrations are retained." },
+  jointKinds: ["distance", "ball", "fixed", "hinge"],
+  colliderShapes: ["box", "sphere", "capsule", "mesh"],
+  colliderFields: ["geometry", "isTrigger", "restitution", "collisionLayer", "collisionMask"],
+  objectFields: ["name", "tags", "color", "visible", "parentId", "position", "rotation", "scale"],
+  entityTags: { maxPerEntity: 1, maxLength: 48, caseSensitive: true, inherited: false, projectSection: "entityTags" },
+  persistence: { previewByDefault: true, revisionRequired: true, atomicBatch: true, backups: true, editorUndo: false },
+  scenes: { oneActivePerTab: true, instanceIdentity: true, loadModes: ["single"], workspacePersistence: "tab-session-storage", templates: ["basic", "empty"], saveBeforeSwitch: true, recoverableDeletion: true, runtimeLoading: false, additiveLoading: false },
+  runtimeControl: true,
+  liveEditor: { sessionRequired: true, revision: "numeric-per-session-monotonic-across-scenes", previewByDefault: true, editorUndo: true,
+    transport: ["play", "pause", "step", "stop"], physicsCommands: ["impulse", "velocity", "force", "kinematic-target", "character-move"],
+    characterMovement: { scope: "static", displacement: "world-metres", gravity: "caller-owned", uprightCapsuleOnly: true },
+    queries: { scope: "static", kinds: ["raycast", "sphere-cast", "capsule-cast"] }, receiptTimeoutMilliseconds: 15000 },
+  limitations: ["Live editor commands require an explicit connected sessionId. Native input/capture require a dedicated browser; exports use saved scenes and isolated output.", "Character movement constrains against static geometry; moving-platform attachment and dynamic obstruction queries remain unfinished. Joint motors/breaking and full continuous collision detection remain unfinished.", "Physics capacity depends on device storage and local contact density."],
+} as const;

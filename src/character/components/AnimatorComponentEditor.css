@@ -1,0 +1,124 @@
+.animator-component-card {
+  gap: var(--sp-1);
+}
+
+.animator-component-controls {
+  display: grid;
+  gap: var(--sp-1);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.animator-controller-quick-create {
+  display: grid;
+  gap: 4px;
+  padding: 7px 9px 8px;
+  border-bottom: 1px solid var(--hairline-soft);
+  background: color-mix(in srgb, var(--accent-softer) 34%, transparent);
+}
+
+.animator-controller-quick-create__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.animator-controller-quick-create > small { color: var(--muted); line-height: 1.35; }
+
+.animator-controller-edit-button {
+  width: 100%;
+  min-width: 0;
+  justify-content: flex-start;
+}
+
+.animator-controller-edit-button small {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.animator-component-read-only {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-1);
+  padding: var(--sp-2);
+  border: 1px solid color-mix(in srgb, var(--warning) 42%, var(--component-divider));
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--warning) 8%, var(--component-card));
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+}
+
+.animator-component-read-only .editor-icon {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  color: var(--warning);
+}
+
+.animator-component-read-only strong {
+  color: var(--text-1);
+}
+
+.animator-parameter-overrides {
+  display: grid;
+  gap: var(--sp-1);
+  padding-top: var(--sp-1);
+  border-top: 1px solid var(--component-divider);
+}
+
+.animator-parameter-overrides > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--sp-2);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.animator-parameter-overrides > header small {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+}
+
+.animator-override-boolean {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+
+.animator-root-motion-settings {
+  display: grid;
+  gap: var(--sp-1);
+  padding-top: var(--sp-1);
+  border-top: 1px solid var(--component-divider);
+}
+
+.animator-axis-controls {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+}
+
+.animator-axis-controls button {
+  min-width: 0;
+  height: var(--inspector-input-h);
+  padding: 0;
+  border: 1px solid var(--component-divider);
+  border-radius: var(--r-sm);
+  background: var(--inspector-input);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.animator-axis-controls button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--accent) 68%, var(--component-divider));
+  background: color-mix(in srgb, var(--accent) 24%, var(--inspector-input));
+  color: var(--text-1);
+}

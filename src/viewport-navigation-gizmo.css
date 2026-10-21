@@ -1,0 +1,106 @@
+.viewport-orientation {
+  --orientation-x: #de6b6b;
+  --orientation-y: #78bd6a;
+  --orientation-z: #6e91d8;
+  position: absolute;
+  z-index: 14;
+  top: 44px;
+  right: var(--sp-2);
+  width: 92px;
+  height: 92px;
+  overflow: visible;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viewport-orientation__graphic {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.viewport-orientation__axis {
+  --orientation-axis: var(--text-2);
+  color: var(--orientation-axis);
+  transition: filter 100ms ease, opacity 100ms ease;
+}
+
+.viewport-orientation__axis[data-axis="x"] { --orientation-axis: var(--orientation-x); }
+.viewport-orientation__axis[data-axis="y"] { --orientation-axis: var(--orientation-y); }
+.viewport-orientation__axis[data-axis="z"] { --orientation-axis: var(--orientation-z); }
+.viewport-orientation__axis line {
+  stroke: var(--orientation-axis);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.viewport-orientation__axis polygon,
+.viewport-orientation__axis circle { fill: var(--orientation-axis); }
+.viewport-orientation__axis circle {
+  stroke: rgba(255, 255, 255, 0.45);
+  stroke-width: 0.7;
+}
+.viewport-orientation__axis text {
+  fill: var(--orientation-axis);
+  font: 700 9px/1 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: rgba(12, 13, 15, 0.86);
+  stroke-width: 2px;
+}
+
+.viewport-orientation__cube polygon {
+  fill: #aeb2b7;
+  stroke: rgba(15, 16, 18, 0.82);
+  stroke-width: 0.9;
+  stroke-linejoin: round;
+  transition: filter 100ms ease;
+}
+.viewport-orientation__cube polygon[data-cube-face^="-"] { fill: #888d93; }
+
+.viewport-orientation__hit {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  outline: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+}
+.viewport-orientation__hit:hover { background: rgba(255, 255, 255, 0.065); }
+.viewport-orientation__hit:focus-visible {
+  outline: 1px solid var(--focus);
+  outline-offset: 1px;
+}
+.viewport-orientation__hit--cube {
+  z-index: 40;
+  top: 46px;
+  left: 46px;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+}
+.viewport-orientation__hit[aria-pressed="true"] { background: rgba(255, 255, 255, 0.10); }
+
+.viewport-orientation[data-hover-view="+x"] [data-direction="+x"],
+.viewport-orientation[data-hover-view="-x"] [data-direction="-x"],
+.viewport-orientation[data-hover-view="+y"] [data-direction="+y"],
+.viewport-orientation[data-hover-view="-y"] [data-direction="-y"],
+.viewport-orientation[data-hover-view="+z"] [data-direction="+z"],
+.viewport-orientation[data-hover-view="-z"] [data-direction="-z"] {
+  filter: brightness(1.28);
+}
+.viewport-orientation[data-hover-view="projection"] .viewport-orientation__cube {
+  filter: brightness(1.18);
+}
+
+/* Keep navigation clear of the compact Scene controls without reserving a row. */
+
+@media (max-height: 700px) {
+  .viewport-orientation { top: 42px; right: var(--sp-2); }
+}

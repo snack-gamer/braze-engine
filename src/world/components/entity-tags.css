@@ -1,0 +1,17 @@
+.entity-tag-header { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); padding: var(--sp-2); }
+.entity-tag-header label { display: flex; flex: 1; align-items: center; gap: var(--sp-2); color: var(--text-2); font-size: var(--fs-xs); }
+.entity-tag-header select { flex: 1; min-width: 0; }
+.entity-tag-header [role="alert"], .project-tags-manager [role="alert"] { color: var(--danger); }
+.project-tags-manager { width: min(850px, 90vw); max-height: 85vh; padding: var(--sp-4); border: 1px solid var(--border-strong); border-radius: var(--r-md); background: var(--layer-window); color: var(--text-1); font: var(--fs-sm)/1.5 var(--font-ui); }
+.project-tags-manager::backdrop { background: rgba(0, 0, 0, 0.55); }
+.project-tags-manager header, .project-tags-manager__create { display: flex; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-2); }
+.project-tags-manager header h2 { flex: 1; margin: 0; font-size: var(--fs-md); }
+.project-tags-manager__create input { flex: 1; min-width: 0; width: auto; }
+.project-tags-manager__create button { flex-shrink: 0; white-space: nowrap; }
+.project-tags-manager__columns { display: grid; grid-template-columns: minmax(140px, 0.7fr) minmax(0, 1.5fr); gap: var(--sp-3); }
+.project-tags-manager__names { display: flex; flex-direction: column; gap: var(--sp-1); }
+.project-tags-manager__names button { justify-content: start; text-align: left; height: auto; min-height: var(--h-control); overflow-wrap: anywhere; }
+.project-tags-manager section { min-width: 0; padding: var(--sp-2); background: var(--layer-contained); }
+.project-tags-manager ul { padding-left: var(--sp-4); }
+.project-tags-manager li { overflow-wrap: anywhere; }
+.project-tags-manager small { display: block; color: var(--text-3); }

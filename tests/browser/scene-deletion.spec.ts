@@ -1,0 +1,50 @@
+import { expect, test } from "playwright/test";
+import { readFile, readdir } from "node:fs/promises";
+import path from "node:path";
+import { createSceneTemplate } from "../../src/scene/application/scene-templates";
+
+test("Project Delete removes inactive and active scenes recoverably and stale tabs cannot recreate them", async ({ page, request, context }) => {
+  const sourceId = `delete-${crypto.randomUUID()}`;
+  await request.put(`/api/scenes/${sourceId}`, { data: { baseRevision: null, scene: createSceneTemplate("Delete Source") } });
+  await page.goto(`/?scene=${sourceId}`);
+  await expect.poll(() => page.locator("html").getAttribute("data-braze-editor-session")).toBeTruthy();
+  const sessionId = await page.locator("html").getAttribute("data-braze-editor-session");
+  const live = async (operation: string, values = {}) => (await request.post("/api/automation/v1/commands", { headers: { "X-Braze-Automation": "1" },
+    data: { version: 1, requestId: crypto.randomUUID(), sessionId, operation, ...values } })).json();
+  await expect.poll(async () => (await live("editor.status")).result?.loaded).toBe(true);
+  const copy = await live("editor.scene.copy", { name: "Delete Copy" }); expect(copy.status).toBe("ok");
+  const copyId = copy.result.sceneId;
+  await expect.poll(async () => { const s = (await live("editor.status")).result; return s?.loaded && s.sceneId; }).toBe(copyId);
+  const original = await (await request.get(`/api/scenes/${sourceId}`)).json();
+  await page.getByRole("button", { name: "All Scenes", exact: true }).click();
+  const source = page.locator(`[data-asset-key="scene:${sourceId}"]`);
+  await source.click(); await page.keyboard.press("Delete");
+  const dialog = page.getByRole("dialog", { name: "Delete Scene", exact: true });
+  await expect(dialog).toContainText("project Trash");
+  await dialog.getByRole("button", { name: "Cancel" }).click();
+  expect((await (await request.get(`/api/scenes/${sourceId}`)).json()).scene).toEqual(original.scene);
+  await source.click({ button: "right" }); await page.getByRole("menuitem", { name: "Delete", exact: true }).click();
+  await dialog.getByRole("button", { name: "Delete Scene", exact: true }).click();
+  await expect(dialog).toHaveCount(0); await expect(source).toHaveCount(0);
+  expect((await live("editor.status")).result.sceneId).toBe(copyId);
+  expect((await (await request.get(`/api/scenes/${sourceId}`)).json()).scene).toBeNull();
+  expect((await request.put(`/api/scenes/${sourceId}`, { data: { baseRevision: original.revision, scene: original.scene } })).status()).toBe(409);
+  const trash = path.join(process.env.BRAZE_PLAYWRIGHT_PROJECT_ROOT!, ".braze/Trash/scenes");
+  const records = await Promise.all((await readdir(trash)).map(async (entry) => ({ entry, manifest: JSON.parse(await readFile(path.join(trash, entry, "manifest.json"), "utf8")) })));
+  const archived = records.find((record) => record.manifest.sceneId === sourceId)!;
+  expect(JSON.parse(await readFile(path.join(trash, archived.entry, `${sourceId}.scene.json`), "utf8"))).toEqual(original.scene);
+
+  const other = await context.newPage(); await other.goto(`/?scene=${copyId}`);
+  await expect(other.getByRole("button", { name: "Scene Delete Copy", exact: true })).toBeVisible();
+  const otherSession = await other.locator("html").getAttribute("data-braze-editor-session");
+  const shell = await page.locator(".app-shell").elementHandle();
+  const tile = page.locator(`[data-asset-key="scene:${copyId}"]`);
+  await tile.click(); await page.keyboard.press("Delete"); await expect(dialog).toContainText("This scene is open");
+  await dialog.getByRole("button", { name: "Delete Scene", exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect.poll(async () => { const s = (await live("editor.status")).result; return s?.loaded && s.sceneId !== copyId; }).toBe(true);
+  expect(await shell!.evaluate((element) => element.isConnected)).toBe(true);
+  expect(new URL(page.url()).searchParams.has("scene")).toBe(false);
+  const stale = await live("editor.save", { sessionId: otherSession }); expect(stale.status).toBe("error");
+  expect((await (await request.get(`/api/scenes/${copyId}`)).json()).scene).toBeNull();
+});

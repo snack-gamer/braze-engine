@@ -1,0 +1,903 @@
+/* ---------------------------------------------------------------- */
+/* Project browser (Unity-style bottom dock)                         */
+/* ---------------------------------------------------------------- */
+
+.assets {
+  --project-sidebar-w: clamp(176px, 18vw, 244px);
+  position: relative;
+  background: var(--panel-body);
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.assets .assets__resize-handle {
+  top: -5px;
+  right: 0;
+  bottom: auto;
+  left: 0;
+  width: auto;
+  height: 9px;
+  cursor: row-resize;
+}
+
+.assets__head {
+  display: flex;
+  align-items: stretch;
+  min-height: 31px;
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-chrome);
+}
+
+.assets__dock-tab {
+  display: flex;
+  align-items: center;
+  min-width: 78px;
+  padding: 0 11px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--accent);
+  background: var(--panel-body);
+  color: var(--text);
+  font-size: var(--fs-base);
+  font-weight: 500;
+}
+
+.assets__head-actions {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  padding: 3px 6px;
+}
+
+.assets__create {
+  flex: 0 0 auto;
+  gap: 1px;
+  padding-inline: 5px;
+}
+
+.assets__search {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  align-items: center;
+  gap: 3px;
+  width: clamp(116px, 18vw, 224px);
+  min-width: 76px;
+  padding: 0 5px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-xs);
+  background: var(--bg);
+  color: var(--subtle);
+}
+
+.assets__search:focus-within {
+  border-color: var(--focus);
+  color: var(--accent);
+}
+
+.assets__search input {
+  min-width: 0;
+  height: 21px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: var(--fs-sm);
+  color: var(--text);
+}
+
+.assets__search input:focus {
+  outline: 0;
+  background: transparent;
+  border: 0;
+}
+
+.assets__filter-select {
+  width: 82px;
+  font: inherit;
+  font-size: var(--fs-sm);
+}
+
+/* Breadcrumb path bar — compact, text-first navigation. */
+.assets__crumbs {
+  min-width: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0;
+  overflow: hidden;
+  font-size: var(--fs-sm);
+}
+
+.assets__crumb-row {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.assets__crumb {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  padding: 2px 3px;
+  border: 0;
+  border-radius: var(--r-xs);
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+
+.assets__crumb:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.assets__crumb.current {
+  color: var(--text);
+  background: transparent;
+}
+
+.assets__crumb.drop-target {
+  color: var(--accent);
+  background: var(--accent-soft);
+  outline: 1px dashed var(--accent);
+}
+
+.assets__crumb-sep {
+  color: var(--subtle);
+  opacity: 0.8;
+}
+
+.assets__toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 10px;
+  border-bottom: 2px solid #141414;
+  background: var(--panel-chrome);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+
+.assets__filters {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.assets__filters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.assets__filters button:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.assets__filters button.active {
+  color: var(--state-on-ink);
+  font-weight: 700;
+  background: var(--state-on-fill);
+}
+
+.assets__view-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  overflow: hidden;
+}
+
+.assets__zoom {
+  flex: 0 0 auto;
+}
+
+.assets__workspace {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  background: var(--panel-body);
+}
+
+.assets__sidebar {
+  flex: 0 0 var(--project-sidebar-w);
+  min-width: 0;
+  overflow: auto;
+  border-right: 1px solid var(--border);
+  background: var(--panel-body);
+  color: var(--text-1);
+}
+
+.assets__sidebar-section {
+  padding: 3px 0 4px;
+  border-bottom: 1px solid var(--hairline-soft);
+}
+
+.assets__sidebar-heading,
+.assets__smart-row,
+.assets__tree-row {
+  min-width: 0;
+  height: var(--h-input);
+  display: flex;
+  align-items: center;
+  color: var(--text-1);
+  font-size: var(--fs-base);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.assets__sidebar-heading {
+  gap: 4px;
+  padding: 0 5px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.assets__smart-row {
+  width: 100%;
+  gap: 5px;
+  padding: 0 6px 0 25px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+  cursor: default;
+}
+
+.assets__smart-row:hover,
+.assets__tree-row:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.assets__smart-row.selected,
+.assets__tree-row.selected {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.assets__folder-tree {
+  min-width: max-content;
+  padding: 3px 0 8px;
+}
+
+.assets__folder-tree--virtualized {
+  position: relative;
+  min-width: 100%;
+  padding: 0;
+}
+
+.assets__tree-branch {
+  min-width: 100%;
+}
+
+.assets__tree-row {
+  min-width: 100%;
+  padding-left: calc(3px + var(--tree-depth, 0) * 14px);
+}
+
+.assets__tree-row.drop-target {
+  background: var(--accent-soft);
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.assets__tree-disclosure {
+  width: 16px;
+  height: var(--h-input);
+  flex: 0 0 16px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+}
+
+button.assets__tree-disclosure {
+  cursor: default;
+}
+
+button.assets__tree-disclosure:hover {
+  color: var(--text);
+}
+
+.assets__tree-label {
+  min-width: 0;
+  height: var(--h-input);
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 6px 0 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+}
+
+.assets__tree-label svg {
+  flex: 0 0 auto;
+  color: var(--text-2);
+}
+
+.assets__tree-label span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.assets__content {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel-well);
+}
+
+.assets__content-head {
+  min-height: 27px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 7px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-body);
+}
+
+.assets__item-count {
+  margin-left: auto;
+  flex: 0 0 auto;
+  color: var(--subtle);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.assets__tiles {
+  --asset-item-font-size: var(--fs-sm);
+  --asset-item-glyph-size: var(--icon-size-preview);
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, var(--tile-size, 72px));
+  grid-auto-rows: max-content;
+  gap: 4px;
+  padding: 6px;
+  overflow-y: auto;
+  overflow-x: auto;
+  align-content: start;
+  transition: background 120ms ease, box-shadow 120ms ease;
+}
+
+.assets__tiles.asset-drop-active {
+  background: rgba(255, 255, 255, 0.012);
+  outline: 1px solid rgba(255, 255, 255, 0.45);
+  outline-offset: -1px;
+}
+
+.assets__empty {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  margin: 7px 3px;
+  line-height: 1.5;
+}
+
+/* Unity-style flat tile — no card border, no panel background. Just the
+ * asset thumb (which carries its own area) and the name label. Interaction
+ * states (hover / selected / focused) fill the whole cell area, like Unity's
+ * project window. */
+.asset-tile {
+  width: var(--tile-size, 72px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 2px 3px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-xs);
+  cursor: default;
+  position: relative;
+  user-select: none;
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), opacity var(--t-base) var(--ease);
+}
+
+.asset-tile:hover {
+  background: var(--bg-hover);
+}
+
+/* Multi-selected (bulk-delete set) — soft accent fill across the cell. */
+.asset-tile.selected {
+  background: var(--accent-softer);
+}
+
+/* Focused tile = whose editor is open on the right rail. Solid accent fill
+ * so the single editing target is unambiguous (Unity's blue selection). */
+.asset-tile.focused {
+  background: var(--accent-soft);
+  border-color: var(--focus);
+}
+
+.asset-tile.assigned::after {
+  content: "●";
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-size: var(--fs-xs);
+  color: var(--accent);
+}
+
+.asset-wrap {
+  position: relative;
+  width: var(--tile-size, 72px);
+}
+
+.asset-wrap--compound-child {
+  isolation: isolate;
+}
+
+.asset-wrap--compound-child::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: -2px;
+  background: color-mix(in srgb, var(--text-2) 8%, var(--panel-well));
+  pointer-events: none;
+}
+
+:is(.ce1, .ce3, .ce5, .ce7, .ce9, .ce11, .ce13, .ce15)::before {
+  border-top: 2px solid color-mix(in srgb, var(--text-2) 38%, var(--component-divider));
+}
+
+:is(.ce2, .ce3, .ce6, .ce7, .ce10, .ce11, .ce14, .ce15)::before {
+  border-bottom: 2px solid color-mix(in srgb, var(--text-2) 38%, var(--component-divider));
+}
+
+:is(.ce4, .ce5, .ce6, .ce7, .ce12, .ce13, .ce14, .ce15)::before {
+  border-left: 2px solid color-mix(in srgb, var(--text-2) 38%, var(--component-divider));
+}
+
+:is(.ce8, .ce9, .ce10, .ce11, .ce12, .ce13, .ce14, .ce15)::before {
+  border-right: 2px solid color-mix(in srgb, var(--text-2) 38%, var(--component-divider));
+}
+
+.asset-wrap--compound-child > .asset-tile {
+  z-index: 1;
+}
+
+.asset-wrap--dragging .asset-tile {
+  opacity: 0.52;
+  border-color: var(--accent);
+}
+
+.asset-wrap.favorite::after {
+  content: "★";
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  z-index: 2;
+  color: #f2b84b;
+  font-size: var(--fs-xs);
+  pointer-events: none;
+}
+
+.asset-tile__swatch {
+  display: grid;
+  place-items: center;
+  width: var(--swatch-size, 64px);
+  height: var(--swatch-size, 64px);
+  border-radius: 50%;
+  border: 1px solid var(--border);
+}
+
+.asset-tile__swatch--rendered {
+  overflow: hidden;
+  border-radius: var(--r-xs);
+  background: var(--surface-2);
+}
+
+.asset-tile__name {
+  width: 100%;
+  font-size: var(--asset-item-font-size);
+  line-height: 14px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-1);
+}
+
+/* Generic inline-edit tile name input (shared by folder + material rename). */
+.asset-tile--editing {
+  border-color: var(--accent);
+  outline: 1px solid var(--accent);
+}
+
+.asset-tile__name-input {
+  width: 100%;
+  height: 20px;
+  padding: 0 3px;
+  border: 1px solid var(--accent);
+  border-radius: var(--r-xs);
+  background: var(--bg);
+  color: var(--text);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  text-align: center;
+}
+
+.asset-tile__name-input:focus {
+  outline: 0;
+  background: #2f2f2f;
+}
+
+/* Model / HDRI tile variants — same outer .asset-tile shell, different
+   inner thumbnail block. Flat, Unity-style: no outer hairline around the
+   thumb. The thumb's fill (solid color or image) is the only chrome. */
+.model-tile__icon,
+.image-tile__thumb,
+.hdri-tile__swatch {
+  display: grid;
+  place-items: center;
+  width: var(--swatch-size, 64px);
+  height: var(--swatch-size, 64px);
+  border-radius: var(--r-xs);
+  border: 0;
+  color: var(--muted);
+}
+
+.model-tile__icon {
+  background: var(--surface-2);
+}
+
+.model-tile__disclosure {
+  position: absolute;
+  z-index: 2;
+  top: calc(4px + var(--swatch-size, 64px) / 2);
+  right: -5px;
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--component-divider) 86%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--text-2) 72%, var(--panel-chrome));
+  color: var(--panel-well);
+  box-shadow: var(--shadow-1);
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.model-tile__disclosure:hover,
+.model-tile__disclosure:focus-visible {
+  border-color: var(--focus);
+  color: var(--text-1);
+  outline: 0;
+}
+
+.model-subasset-tile {
+  background: transparent;
+}
+
+.model-subasset-tile__icon {
+  position: relative;
+  border: 0;
+  background: transparent;
+  color: var(--accent-light);
+}
+
+.model-subasset-tile__icon--preview {
+  overflow: hidden;
+}
+
+.model-subasset-tile__badge {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  border: 1px solid color-mix(in srgb, currentColor 58%, var(--component-divider));
+  border-radius: var(--r-xs);
+  background: color-mix(in srgb, var(--panel-chrome) 88%, transparent);
+  box-shadow: var(--shadow-1);
+}
+
+.model-subasset-tile__material-preview {
+  width: 74%;
+  height: 74%;
+  border: 1px solid color-mix(in srgb, var(--model-subasset-color) 72%, white);
+  border-radius: 50%;
+  background: var(--model-subasset-color);
+  box-shadow: none;
+}
+
+.model-subasset-tile--clip .model-subasset-tile__icon {
+  color: #bca8ef;
+}
+
+.model-subasset-tile--avatar .model-subasset-tile__icon,
+.model-subasset-tile--skeleton .model-subasset-tile__icon {
+  color: var(--success);
+}
+
+.model-subasset-tile--material .model-subasset-tile__icon {
+  color: #d9ae61;
+}
+
+.model-subasset-tile.disabled {
+  opacity: 0.52;
+}
+
+/* Prefab tile — Unity-flat. No card chrome on the tile itself; the prefab
+ * identity lives entirely in the inner blue icon. Hover / selected / focused
+ * use the same cell-fill pattern as plain asset tiles, just tinted blue. */
+.prefab-tile {
+  background: transparent;
+}
+
+.prefab-tile:hover {
+  background: var(--bg-hover);
+}
+
+.prefab-tile.selected,
+.prefab-tile.focused {
+  background: var(--accent-soft);
+  border-color: var(--focus);
+}
+
+.prefab-tile__icon {
+  border: 0;
+  background: var(--accent-softer);
+  color: var(--accent-light);
+}
+
+.character-asset-tile__icon {
+  background: color-mix(in srgb, var(--component-card) 82%, var(--panel-well));
+  color: var(--accent-light);
+}
+
+.character-asset-tile__icon--mask {
+  color: var(--success, #62c983);
+}
+
+.image-tile__thumb {
+  background: var(--bg-input-2);
+  overflow: hidden;
+}
+
+.folder-tile .folder-tile__icon {
+  display: grid;
+  place-items: center;
+  width: var(--swatch-size, 64px);
+  height: var(--swatch-size, 64px);
+  border-radius: var(--r-xs);
+  border: 0;
+  background: transparent;
+  color: var(--text-2);
+}
+
+.assets__tiles .character-asset-tile__icon > .editor-icon,
+.assets__tiles .model-tile__icon > .editor-icon,
+.assets__tiles .hdri-tile__swatch > .editor-icon,
+.assets__tiles .folder-tile__icon > .editor-icon {
+  --editor-icon-size: var(--asset-item-glyph-size);
+}
+
+.folder-tile.drop-target {
+  background: var(--accent-soft);
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.assets__tiles:not(.list) .model-tile__meta,
+.assets__tiles:not(.list) .image-tile__meta,
+.assets__tiles:not(.list) .hdri-tile__meta {
+  display: none;
+}
+
+
+/* ---------------------------------------------------------------- */
+/* List-view overrides — same tiles, dense row layout                */
+/* ---------------------------------------------------------------- */
+
+.assets__tiles.list {
+  --asset-item-glyph-size: var(--icon-size-control);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 3px 0 8px;
+}
+
+.assets__tiles.list > div,
+.assets__tiles.list > .asset-tile {
+  width: 100%;
+}
+
+.assets__tiles.list .asset-tile,
+.assets__tiles.list > div > .asset-tile {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 0;
+  background: transparent;
+  border-color: transparent;
+}
+
+.assets__tiles.list .asset-tile:hover {
+  background: var(--bg-hover);
+  border-color: transparent;
+}
+
+.assets__tiles.list .asset-tile.focused,
+.assets__tiles.list .asset-tile.selected {
+  background: var(--accent-soft);
+  border-color: var(--focus);
+}
+
+.assets__tiles.list .asset-tile.assigned::after {
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+}
+
+.assets__tiles.list .model-tile:has(.model-tile__disclosure) {
+  grid-template-columns: var(--asset-item-glyph-size) var(--asset-item-glyph-size) minmax(0, 1fr) auto;
+  gap: 4px;
+}
+
+.assets__tiles.list .model-tile__disclosure {
+  position: static;
+  grid-column: 1;
+  width: var(--asset-item-glyph-size);
+  height: var(--h-control-compact);
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  box-shadow: none;
+  transform: none;
+}
+
+.assets__tiles.list .model-tile__disclosure:hover,
+.assets__tiles.list .model-tile__disclosure:focus-visible {
+  color: var(--text-1);
+}
+
+.assets__tiles.list .model-tile__disclosure .editor-icon {
+  --editor-icon-size: var(--icon-size-micro);
+}
+
+.assets__tiles.list .model-subasset-tile {
+  padding-left: calc(6px + var(--asset-item-glyph-size) + 4px);
+  background: transparent;
+}
+
+.assets__tiles.list .asset-wrap--compound-child::before {
+  inset: 0 2px;
+  border-radius: 0;
+}
+
+.assets__tiles.list :is(.ce1, .ce3, .ce5, .ce7, .ce9, .ce11, .ce13, .ce15)::before {
+  border-radius: var(--r-xs) var(--r-xs) 0 0;
+}
+
+.assets__tiles.list :is(.ce2, .ce3, .ce6, .ce7, .ce10, .ce11, .ce14, .ce15)::before {
+  border-radius: 0 0 var(--r-xs) var(--r-xs);
+}
+
+.assets__tiles.list :is(.ce3, .ce7, .ce11, .ce15)::before {
+  border-radius: var(--r-xs);
+}
+
+.assets__tiles.list .asset-tile__swatch,
+.assets__tiles.list .model-tile__icon,
+.assets__tiles.list .image-tile__thumb,
+.assets__tiles.list .hdri-tile__swatch,
+.assets__tiles.list .folder-tile__icon {
+  width: var(--asset-item-glyph-size);
+  height: var(--asset-item-glyph-size);
+  border-radius: var(--r-xs);
+}
+
+.assets__tiles.list .asset-tile__name {
+  text-align: left;
+}
+
+.assets__tiles.list .model-tile__meta,
+.assets__tiles.list .image-tile__meta,
+.assets__tiles.list .hdri-tile__meta {
+  margin: 0;
+  justify-self: end;
+  color: var(--subtle);
+  padding-right: 3px;
+  font-size: var(--fs-2xs);
+}
+
+/* Inline rename input shrinks to row height in list mode. */
+.assets__tiles.list .asset-tile__name-input {
+  height: 22px;
+  text-align: left;
+}
+
+/* Large libraries switch to a fixed-layout window. The scroll surface keeps
+ * the full logical height while only visible rows (plus overscan) own DOM. */
+.assets__item-cell {
+  min-width: 0;
+}
+
+.assets__tiles.assets__tiles--virtualized {
+  position: relative;
+  display: block;
+  padding: 0;
+}
+
+.assets__virtual-space {
+  position: relative;
+  min-width: 100%;
+}
+
+.assets__virtual-cell {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.hdri-tile__swatch {
+  background: #d97c2f;
+  color: #fff;
+}
+
+.model-tile__meta,
+.image-tile__meta,
+.hdri-tile__meta {
+  margin-top: 0;
+  color: var(--subtle);
+  font-size: var(--fs-2xs);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  letter-spacing: 0.02em;
+}
+
+.model-subasset-tile .model-tile__meta { text-transform: capitalize; }
+
+/* Real model/HDRI thumbnail rendered by Three.js to a JPEG data URL.
+   Fills the swatch container; cover-crops at any aspect ratio. */
+.asset-tile__preview {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--r-xs);
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}

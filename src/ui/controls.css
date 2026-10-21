@@ -1,0 +1,984 @@
+/* Shared editor control skin.
+ *
+ * This file is intentionally imported after the structural and pane theme
+ * sheets. Component/layout CSS owns geometry and composition; this late layer
+ * is the single visual authority for shared buttons, Inspector wells, ranges,
+ * segmented controls, toggles, and native checkboxes. All visual values come
+ * from theme.css so the same controls read consistently in rails, panes,
+ * windows, and floating panels.
+ */
+
+/* Native fallback wells ------------------------------------------------- */
+
+/* Unclassified form controls keep a safe editor baseline while migrations
+ * move pane code toward the explicit editor-input/select/textarea classes. */
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid var(--well-border);
+  border-radius: var(--r-sm);
+  background: var(--bg-input);
+  color: var(--text);
+  transition:
+    background-color var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--well-border-hover);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--focus);
+  background: var(--bg-input-2);
+  outline: 0;
+}
+
+input,
+select {
+  height: var(--h-control);
+  padding: 0 var(--sp-2);
+  font-size: var(--fs-base);
+}
+
+input[type="number"] {
+  font-variant-numeric: tabular-nums;
+}
+
+textarea {
+  padding: var(--sp-2);
+  font-size: var(--fs-base);
+  line-height: 1.45;
+  resize: vertical;
+}
+
+input[readonly] {
+  background: var(--bg-input);
+  color: var(--muted);
+}
+
+input[type="range"] {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  accent-color: var(--accent);
+}
+
+input[type="checkbox"]:not(:is(.editor-checkbox, .ui-checkbox)) {
+  width: var(--control-checkbox-size);
+  height: var(--control-checkbox-size);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  accent-color: var(--accent);
+}
+
+/* Buttons ---------------------------------------------------------------- */
+
+.icon-button {
+  --control-icon-size: var(--icon-size-control);
+  --control-icon-stroke: var(--icon-stroke-regular);
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: var(--h-control);
+  height: var(--h-control);
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+}
+
+.icon-button.compact {
+  --control-icon-size: var(--icon-size-compact);
+  width: var(--h-control-compact);
+  height: var(--h-control-compact);
+  border-radius: var(--r-sm);
+}
+
+.icon-button.narrow {
+  --control-icon-size: var(--icon-size-compact);
+  width: var(--h-control-compact);
+}
+
+.icon-button > svg:not(.editor-icon),
+.ghost-button > svg:not(.editor-icon),
+.link-button > svg:not(.editor-icon) {
+  width: var(--control-icon-size, var(--icon-size-compact));
+  height: var(--control-icon-size, var(--icon-size-compact));
+  flex: 0 0 var(--control-icon-size, var(--icon-size-compact));
+  stroke-width: var(--control-icon-stroke, var(--icon-stroke-regular));
+  pointer-events: none;
+}
+
+.topbar .icon-button {
+  --control-icon-size: var(--icon-size-toolbar);
+}
+
+.topbar .playback-button {
+  --control-icon-size: var(--icon-size-transport);
+  --control-icon-stroke: var(--icon-stroke-fine);
+}
+
+.playback-cluster {
+  gap: 0;
+  padding: 1px;
+  overflow: visible;
+  border: 1px solid var(--layer-outline);
+  border-radius: var(--r-md);
+  background: var(--layer-contained);
+}
+
+.playback-cluster .playback-button {
+  width: var(--h-control);
+  min-width: var(--h-control);
+  height: var(--h-input);
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--layer-contained);
+  color: var(--muted-2);
+  transform: none;
+}
+
+.playback-cluster .playback-button + .playback-button {
+  border-left: 1px solid var(--layer-outline);
+}
+
+.playback-cluster .playback-button:first-child { border-radius: var(--r-sm) 0 0 var(--r-sm); }
+.playback-cluster .playback-button:last-child { border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+.playback-cluster .playback-button:hover:not(:disabled) { background: var(--layer-raised); color: var(--text); }
+.playback-cluster .playback-button:active:not(:disabled) { background: var(--layer-canvas); }
+
+.playback-cluster .playback-button.active,
+.playback-cluster .playback-button--play.active {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.rail-right .icon-button {
+  --control-icon-size: var(--icon-size-compact);
+  width: var(--inspector-input-h);
+  height: var(--inspector-input-h);
+  border-radius: var(--r-sm);
+}
+
+.icon-button:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.icon-button:active:not(:disabled) {
+  background: var(--bg-active);
+}
+
+.icon-button.active,
+.icon-button[aria-pressed="true"],
+.icon-button[aria-expanded="true"] {
+  border: 0;
+  background: var(--state-on-fill);
+  color: var(--state-on-ink);
+}
+
+.icon-button.primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.icon-button.primary:hover:not(:disabled) {
+  background: var(--accent-2);
+  color: var(--on-accent);
+}
+
+.icon-button.danger {
+  color: var(--danger);
+}
+
+.icon-button.danger:hover:not(:disabled) {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.ghost-button,
+.link-button {
+  --control-icon-size: var(--icon-size-compact);
+  --control-icon-stroke: var(--icon-stroke-regular);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  gap: var(--sp-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-1);
+  font-family: var(--font-ui);
+  font-weight: var(--fw-medium);
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+}
+
+.ghost-button {
+  height: var(--h-control);
+  padding: 0 var(--sp-3);
+  font-size: var(--fs-sm);
+}
+
+.ghost-button.compact {
+  height: var(--h-input);
+  padding: 0 var(--sp-2);
+  font-size: var(--fs-xs);
+}
+
+.ghost-button.accent {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-light);
+}
+
+.link-button {
+  height: var(--h-control-compact);
+  padding: 0 var(--sp-2);
+  font-size: var(--fs-xs);
+}
+
+.rail-right .ghost-button,
+.rail-right .link-button {
+  height: var(--h-control-compact);
+  padding: 0 var(--sp-2);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-xs);
+}
+
+/* Labeled Inspector actions are controls, not toolbar hints. Give them a
+ * raised resting surface, visible edge and physical pressed state while
+ * keeping icon-only header actions intentionally quiet. */
+.ghost-button:hover:not(:disabled),
+.link-button:hover:not(:disabled) {
+  border-color: var(--border-strong);
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.ghost-button:active:not(:disabled),
+.link-button:active:not(:disabled) {
+  background: var(--bg-active);
+}
+
+.ghost-button.active,
+.ghost-button[aria-pressed="true"],
+.ghost-button[aria-expanded="true"] {
+  border-color: var(--state-on-edge);
+  background: var(--state-on-fill);
+  color: var(--state-on-ink);
+}
+
+:is(.icon-button, .ghost-button, .link-button):focus-visible {
+  outline: 1px solid var(--focus);
+  outline-offset: -1px;
+}
+
+:is(.icon-button, .ghost-button, .link-button):disabled {
+  opacity: var(--control-disabled-opacity);
+  cursor: default;
+  transform: none;
+}
+
+/* Inspector input wells -------------------------------------------------- */
+
+:is(
+  .inspector-number,
+  .editor-input,
+  .editor-select,
+  .editor-textarea,
+  .inspector-row__control > input:not([type="range"], [type="checkbox"], [type="color"]),
+  .inspector-row__control > select,
+  .inspector-row__control > textarea,
+  .rail-right input:not([type="range"], [type="checkbox"], [type="color"]),
+  .rail-right select,
+  .rail-right textarea,
+  .object-field
+) {
+  border: 1px solid var(--well-border);
+  border-radius: var(--r-xs);
+  background: var(--inspector-input);
+  color: var(--text);
+  transition:
+    background-color var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+}
+
+:is(
+  .inspector-number,
+  .editor-input,
+  .editor-select,
+  .editor-textarea,
+  .inspector-row__control > input:not([type="range"], [type="checkbox"], [type="color"]),
+  .inspector-row__control > select,
+  .inspector-row__control > textarea,
+  .rail-right input:not([type="range"], [type="checkbox"], [type="color"]),
+  .rail-right select,
+  .rail-right textarea,
+  .object-field
+):hover {
+  border-color: var(--well-border-hover);
+  background: var(--bg-input-2);
+  color: var(--text);
+}
+
+:is(
+  .inspector-number:focus-within,
+  .editor-input:focus,
+  .editor-select:focus,
+  .editor-textarea:focus,
+  .inspector-row__control > input:not([type="range"], [type="checkbox"], [type="color"]):focus,
+  .inspector-row__control > select:focus,
+  .inspector-row__control > textarea:focus,
+  .rail-right input:not([type="range"], [type="checkbox"], [type="color"]):focus,
+  .rail-right select:focus,
+  .rail-right textarea:focus,
+  .object-field:focus-within
+) {
+  border-color: var(--focus);
+  background: var(--bg-input-2);
+  color: var(--text);
+  outline: 0;
+}
+
+:is(
+  .inspector-row__control > input:not([type="range"], [type="checkbox"], [type="color"]),
+  .inspector-row__control > textarea,
+  .editor-input,
+  .editor-textarea,
+  .rail-right input:not([type="range"], [type="checkbox"], [type="color"]),
+  .rail-right textarea
+)::placeholder {
+  color: var(--text-3);
+}
+
+:is(
+  .inspector-row__control > input:not([type="range"], [type="checkbox"], [type="color"]),
+  .inspector-row__control > select,
+  .inspector-row__control > textarea,
+  .editor-input,
+  .editor-select,
+  .editor-textarea,
+  .rail-right input:not([type="range"], [type="checkbox"], [type="color"]),
+  .rail-right select,
+  .rail-right textarea
+):disabled,
+.object-field.is-disabled {
+  color: var(--text-disabled);
+  opacity: var(--control-disabled-field-opacity);
+  cursor: not-allowed;
+}
+
+:is(
+  .inspector-row__control > input:not([type="range"], [type="checkbox"], [type="color"]),
+  .editor-input,
+  .rail-right input:not([type="range"], [type="checkbox"], [type="color"])
+)[readonly] {
+  background: var(--inspector-input);
+  color: var(--muted);
+}
+
+:is(.editor-input, .editor-select) {
+  height: var(--h-input);
+  padding: 0 var(--sp-2);
+}
+
+.editor-textarea {
+  min-height: calc(var(--h-input) + var(--h-input));
+  padding: var(--sp-2);
+}
+
+.editor-input[type="number"] {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.inspector-number,
+.rail-right .inspector-number {
+  height: var(--inspector-input-h);
+  padding: 0 var(--control-number-inline-pad);
+  border-color: var(--well-border);
+  border-radius: var(--r-xs);
+  background: var(--inspector-input);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+}
+
+.inspector-number:hover,
+.rail-right .inspector-number:hover {
+  border-color: var(--well-border-hover);
+  background: var(--bg-input-2);
+  color: var(--text);
+}
+
+.inspector-number:focus-within,
+.rail-right .inspector-number:focus-within {
+  border-color: var(--focus);
+  background: var(--bg-input-2);
+  color: var(--text);
+}
+
+.inspector-number > .inspector-number__input,
+.rail-right .inspector-number > .inspector-number__input,
+.inspector-number > .inspector-number__input:hover,
+.rail-right .inspector-number > .inspector-number__input:hover,
+.inspector-number > .inspector-number__input:focus,
+.rail-right .inspector-number > .inspector-number__input:focus {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  outline: 0;
+}
+
+.inspector-number.is-scrubbing,
+.rail-right .inspector-number.is-scrubbing {
+  border-color: var(--accent);
+  background: var(--accent-softer);
+  color: var(--text);
+}
+
+.inspector-number:has(> .inspector-number__input:disabled) {
+  color: var(--text-disabled);
+  opacity: var(--control-disabled-field-opacity);
+}
+
+.inspector-number__unit {
+  color: var(--muted-2);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-medium);
+}
+
+/* Range sliders ---------------------------------------------------------- */
+
+/* Standalone native range. Use this when a control does not need the
+ * InspectorSlider fill/value wrapper (for example zoom and gizmo scales). */
+.editor-range-control {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: var(--h-input);
+}
+
+.editor-control-group .editor-range-control {
+  flex: 0 0 var(--control-range-inline-w);
+  width: var(--control-range-inline-w);
+  margin: 0 2px;
+}
+
+.editor-range-control__track {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: var(--control-slider-track-h);
+  overflow: hidden;
+  transform: translateY(-50%);
+  border: 1px solid var(--control-slider-track-border);
+  border-radius: var(--r-xs);
+  background: var(--control-slider-track-bg);
+  pointer-events: none;
+}
+
+.editor-range-control__fill {
+  display: block;
+  width: var(--editor-range-fill, 0%);
+  height: 100%;
+  background: var(--control-slider-fill);
+}
+
+input[type="range"].editor-range {
+  height: var(--h-input);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  accent-color: var(--accent);
+  cursor: ew-resize;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.editor-range-control input[type="range"].editor-range {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+input[type="range"].editor-range:focus {
+  outline: 0;
+}
+
+input[type="range"].editor-range:focus-visible {
+  outline: 0;
+}
+
+.editor-range-control input[type="range"].editor-range:focus-visible {
+  outline: 0;
+}
+
+input[type="range"].editor-range::-webkit-slider-runnable-track {
+  height: var(--control-slider-track-h);
+  border: 1px solid var(--control-slider-track-border);
+  border-radius: var(--r-xs);
+  background: var(--control-slider-track-bg);
+}
+
+.editor-range-control input[type="range"].editor-range::-webkit-slider-runnable-track {
+  border: 0;
+  background: transparent;
+}
+
+input[type="range"].editor-range::-webkit-slider-thumb {
+  width: var(--control-slider-thumb-size);
+  height: var(--control-slider-thumb-size);
+  margin-top: var(--control-slider-thumb-offset);
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--control-slider-thumb);
+  transition: box-shadow var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+input[type="range"].editor-range::-moz-range-track {
+  height: var(--control-slider-track-h);
+  border: 1px solid var(--control-slider-track-border);
+  border-radius: var(--r-xs);
+  background: var(--control-slider-track-bg);
+}
+
+.editor-range-control input[type="range"].editor-range::-moz-range-track {
+  border: 0;
+  background: transparent;
+}
+
+input[type="range"].editor-range::-moz-range-progress {
+  height: var(--control-slider-track-h);
+  border-radius: var(--r-xs);
+  background: var(--control-slider-fill);
+}
+
+.editor-range-control input[type="range"].editor-range::-moz-range-progress {
+  background: transparent;
+}
+
+input[type="range"].editor-range::-moz-range-thumb {
+  width: var(--control-slider-thumb-size);
+  height: var(--control-slider-thumb-size);
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--control-slider-thumb);
+  transition: box-shadow var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+input[type="range"].editor-range:is(:active, :focus-visible)::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  transform: scale(1.12);
+}
+
+input[type="range"].editor-range:is(:active, :focus-visible)::-moz-range-thumb {
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  transform: scale(1.12);
+}
+
+input[type="range"].editor-range::-moz-focus-outer {
+  border: 0;
+}
+
+input[type="range"].editor-range:disabled {
+  opacity: var(--control-disabled-opacity);
+  cursor: not-allowed;
+}
+
+.editor-range-control:has(input[type="range"].editor-range:disabled) {
+  opacity: var(--control-disabled-opacity);
+}
+
+.editor-range-control input[type="range"].editor-range:disabled {
+  opacity: 1;
+}
+
+/* InspectorSlider's native input is transparent; the existing wrapper DOM
+ * owns its tokenized fill bar while the browser keeps range semantics. */
+
+.inspector-slider__track {
+  height: var(--control-slider-track-h);
+  overflow: hidden;
+  border: 1px solid var(--control-slider-track-border);
+  border-radius: var(--r-xs);
+  background: var(--control-slider-track-bg);
+  transition:
+    background-color var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease);
+}
+
+.inspector-slider__slider,
+.inspector-slider__range,
+.inspector-slider__range::-webkit-slider-runnable-track,
+.inspector-slider__range::-moz-range-track {
+  height: var(--control-slider-hit-h);
+}
+
+.inspector-slider__fill {
+  background: var(--control-slider-fill);
+}
+
+.inspector-slider__range {
+  border: 0;
+  background: transparent;
+  accent-color: var(--accent);
+  cursor: ew-resize;
+  outline: 0;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.inspector-slider__range:focus,
+.inspector-slider__range:focus-visible {
+  outline: 0;
+}
+
+.inspector-slider__range::-webkit-slider-runnable-track {
+  border: 0;
+  background: transparent;
+}
+
+.inspector-slider__range::-webkit-slider-thumb {
+  width: var(--control-slider-thumb-size);
+  height: var(--control-slider-thumb-size);
+  margin-top: var(--control-slider-overlay-thumb-offset);
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--control-slider-thumb);
+  transition: box-shadow var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.inspector-slider__range::-moz-range-track {
+  border: 0;
+  background: transparent;
+}
+
+.inspector-slider__range::-moz-range-progress {
+  background: transparent;
+}
+
+.inspector-slider__range::-moz-range-thumb {
+  width: var(--control-slider-thumb-size);
+  height: var(--control-slider-thumb-size);
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--control-slider-thumb);
+  transition: box-shadow var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+.inspector-slider__range:is(:active, :focus-visible)::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  transform: scale(1.12);
+}
+
+.inspector-slider__range:is(:active, :focus-visible)::-moz-range-thumb {
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  transform: scale(1.12);
+}
+
+.inspector-slider__range::-moz-focus-outer {
+  border: 0;
+}
+
+.inspector-slider__slider:has(.inspector-slider__range:disabled) {
+  opacity: var(--control-disabled-opacity);
+}
+
+.inspector-slider__range:disabled {
+  cursor: not-allowed;
+}
+
+/* Segmented control ------------------------------------------------------ */
+
+.inspector-segmented {
+  padding: 1px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--r-xs);
+  background: var(--inspector-input);
+  color: var(--text);
+}
+
+.inspector-segmented button {
+  height: var(--control-segment-h);
+  padding: 0 var(--sp-2);
+  border: 0;
+  border-radius: var(--r-xs);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+}
+
+.inspector-segmented button:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.inspector-segmented button.active,
+.inspector-segmented button[aria-pressed="true"] {
+  background: var(--state-on-fill);
+  color: var(--state-on-ink);
+}
+
+.inspector-segmented button:focus-visible {
+  outline: 1px solid var(--focus);
+  outline-offset: -1px;
+}
+
+.inspector-segmented button:disabled {
+  color: var(--text-disabled);
+  opacity: var(--control-disabled-field-opacity);
+  cursor: not-allowed;
+}
+
+/* General pane/window segmented strip. Feature CSS owns the strip's flex or
+ * grid composition; this class owns the shared well and option states. */
+.editor-segmented {
+  padding: 1px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--r-sm);
+  background: var(--inspector-input);
+  color: var(--text);
+}
+
+.editor-segmented > button {
+  height: var(--control-segment-h);
+  padding: 0 var(--sp-2);
+  border: 0;
+  border-radius: var(--r-xs);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+}
+
+.editor-segmented--icons > button {
+  width: var(--h-control-compact);
+  padding: 0;
+}
+
+.editor-segmented > button:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.editor-segmented > button:is(.active, [aria-selected="true"], [aria-pressed="true"]) {
+  background: var(--state-on-fill);
+  color: var(--state-on-ink);
+}
+
+.editor-segmented > button:focus-visible {
+  outline: 1px solid var(--focus);
+  outline-offset: -1px;
+}
+
+.editor-segmented > button:disabled {
+  color: var(--text-disabled);
+  opacity: var(--control-disabled-field-opacity);
+  cursor: not-allowed;
+}
+
+.editor-segmented > button + button {
+  border-left: 1px solid var(--well-border);
+}
+
+/* Inline group for a compact mix of buttons and a range/readout. */
+.editor-control-group {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  gap: 1px;
+  min-height: var(--h-input);
+  padding: 0 2px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--r-xs);
+  background: var(--inspector-input);
+}
+
+/* Inspector toggle ------------------------------------------------------- */
+
+.inspector-toggle {
+  width: var(--control-toggle-size);
+  height: var(--control-toggle-size);
+  border: 1px solid var(--well-border-hover);
+  border-radius: var(--r-xs);
+  background: var(--inspector-input);
+  color: var(--text-1);
+  transition:
+    background-color var(--t-base) var(--ease),
+    border-color var(--t-base) var(--ease),
+    color var(--t-base) var(--ease);
+}
+
+.inspector-toggle:hover:not(:disabled) {
+  border-color: var(--border-strong);
+  background: var(--bg-hover);
+}
+
+.inspector-toggle.is-on,
+.inspector-toggle[aria-checked="true"] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.inspector-toggle.is-on:hover:not(:disabled),
+.inspector-toggle[aria-checked="true"]:hover:not(:disabled) {
+  border-color: var(--accent-light);
+  background: var(--accent-light);
+}
+
+.inspector-toggle:focus-visible {
+  outline: 1px solid var(--focus);
+  outline-offset: -1px;
+}
+
+.inspector-toggle__thumb {
+  width: var(--sp-1);
+  height: calc(var(--control-toggle-size) - var(--sp-2) + 1px);
+  border-color: currentColor;
+  border-style: solid;
+  border-width: 0 var(--control-checkmark-stroke) var(--control-checkmark-stroke) 0;
+  transform: translateY(-1px) rotate(45deg);
+  opacity: 0;
+  transition: opacity var(--t-base) var(--ease);
+}
+
+.inspector-toggle.is-on .inspector-toggle__thumb,
+.inspector-toggle[aria-checked="true"] .inspector-toggle__thumb {
+  opacity: 1;
+}
+
+.inspector-toggle:disabled,
+.inspector-toggle-row.is-disabled .inspector-toggle {
+  color: var(--text-disabled);
+  opacity: var(--control-disabled-opacity);
+  cursor: not-allowed;
+}
+
+/* Canonical native checkbox --------------------------------------------- */
+
+/* Apply .editor-checkbox to a native checkbox. .ui-checkbox remains as a
+ * compatibility alias. Native semantics, keyboard interaction, and form
+ * behavior remain intact; only appearance is skinned. */
+input[type="checkbox"]:is(.editor-checkbox, .ui-checkbox) {
+  display: inline-grid;
+  place-content: center;
+  width: var(--control-checkbox-size);
+  height: var(--control-checkbox-size);
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--well-border-hover);
+  border-radius: var(--r-xs);
+  background: var(--inspector-input);
+  color: var(--on-accent);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition:
+    background-color var(--t-base) var(--ease),
+    border-color var(--t-base) var(--ease),
+    color var(--t-base) var(--ease);
+}
+
+input[type="checkbox"]:is(.editor-checkbox, .ui-checkbox)::after {
+  width: var(--sp-1);
+  height: calc(var(--control-checkbox-size) - var(--sp-2) + 1px);
+  border-color: currentColor;
+  border-style: solid;
+  border-width: 0 var(--control-checkmark-stroke) var(--control-checkmark-stroke) 0;
+  transform: translateY(-1px) rotate(45deg);
+  opacity: 0;
+  content: "";
+}
+
+input[type="checkbox"]:is(.editor-checkbox, .ui-checkbox):hover:not(:disabled) {
+  border-color: var(--border-strong);
+  background: var(--bg-hover);
+}
+
+input[type="checkbox"]:is(.editor-checkbox, .ui-checkbox):checked,
+input[type="checkbox"]:is(.editor-checkbox, .ui-checkbox):indeterminate {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+input[type="checkbox"]:is(.editor-checkbox, .ui-checkbox):checked::after {
+  opacity: 1;
+}
+
+input[type="checkbox"]:is(.editor-checkbox, .ui-checkbox):indeterminate::after {
+  width: calc(var(--control-checkbox-size) - var(--sp-2));
+  height: var(--control-indeterminate-h);
+  border: 0;
+  background: currentColor;
+  transform: none;
+  opacity: 1;
+}
+
+input[type="checkbox"]:is(.editor-checkbox, .ui-checkbox):focus-visible {
+  outline: 1px solid var(--focus);
+  outline-offset: -1px;
+}
+
+input[type="checkbox"]:is(.editor-checkbox, .ui-checkbox):disabled {
+  color: var(--text-disabled);
+  opacity: var(--control-disabled-opacity);
+  cursor: not-allowed;
+}
+
+@media (forced-colors: active) {
+  input[type="range"].editor-range,
+  input[type="checkbox"]:is(.editor-checkbox, .ui-checkbox) {
+    appearance: auto;
+  }
+
+  input[type="checkbox"]:is(.editor-checkbox, .ui-checkbox)::after {
+    content: none;
+  }
+}
+
+@media (max-width: 1180px) {
+  .ghost-button.collapse-to-icon {
+    width: var(--h-control);
+    padding: 0;
+  }
+}

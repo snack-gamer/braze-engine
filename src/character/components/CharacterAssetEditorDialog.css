@@ -1,0 +1,65 @@
+.character-asset-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  background: var(--panel-well);
+  color: var(--text);
+}
+
+.character-asset-dialog__panel {
+  /* Keep the flexible body in its slot when the optional error row is absent. */
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-areas:
+    "header"
+    "error"
+    "body";
+  grid-template-rows: auto auto minmax(0, 1fr);
+  overflow: hidden;
+  background: var(--panel-well);
+}
+
+.character-asset-dialog__panel:focus { outline: 0; }
+
+.character-asset-dialog__header {
+  grid-area: header;
+  min-height: 58px;
+  display: grid;
+  grid-template-columns: 34px minmax(180px, 1fr) auto auto auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-chrome);
+}
+
+.character-asset-dialog__icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--hairline-medium);
+  border-radius: var(--r-sm);
+  background: var(--component-card);
+  color: var(--accent-light);
+}
+
+.character-asset-dialog__header > div { min-width: 0; display: grid; gap: 2px; }
+.character-asset-dialog__header small { color: var(--accent-light); font-size: var(--fs-xs); letter-spacing: .12em; }
+.character-asset-dialog__header strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--fs-md); }
+.character-asset-dialog__sync { color: var(--muted); font-size: var(--fs-xs); }
+.character-asset-dialog__sync[data-phase="error"],
+.character-asset-dialog__sync[data-phase="conflict"] { color: var(--danger); }
+.character-asset-dialog__error { grid-area: error; padding: 6px 12px; border-bottom: 1px solid var(--danger); color: var(--danger); }
+.character-asset-dialog__body { grid-area: body; min-width: 0; min-height: 0; overflow: auto; padding: 10px 12px 18px; }
+.character-asset-dialog__empty { display: grid; place-content: center; min-height: 180px; color: var(--muted); text-align: center; }
+.character-asset-dialog__empty h3 { margin: 0 0 var(--sp-1); color: var(--text); }
+.character-asset-dialog__empty p { margin: 0; }
+
+@media (max-width: 760px) {
+  .character-asset-dialog__header { grid-template-columns: 34px minmax(120px, 1fr) auto; }
+  .character-asset-dialog__sync,
+  .character-asset-dialog__header > button:not(:last-child) { display: none; }
+}

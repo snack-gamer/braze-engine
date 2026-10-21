@@ -1,0 +1,148 @@
+/* Inspector surfaces follow ViStudio's card rhythm and warm property labels.
+ * Structural rows and nested groups live in inspector.css; shared fields and
+ * button states live in ui/controls.css. */
+.inspector-dock-title {
+  height: var(--dock-tab-height);
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-3);
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-chrome);
+  color: var(--text);
+  user-select: none;
+}
+.inspector-dock-title > svg { color: var(--text-2); }
+.inspector-dock-title strong { flex: 1; font-size: var(--fs-base); font-weight: var(--fw-medium); }
+.inspector-dock-title span { display: none; }
+.inspector-dock-content { min-height: 0; flex: 1; overflow: hidden; }
+
+.rail-right .rail-scroll {
+  gap: var(--inspector-card-gap);
+  padding: var(--inspector-card-padding);
+  background: var(--panel-body);
+  scrollbar-gutter: stable;
+}
+/* Panel title block: the identity of what is inspected. It sits on the pane
+ * surface (not a second chrome bar under the dock tab) and carries the largest
+ * type in the Inspector, so the hierarchy reads object > component > group.
+ * Its icon chip takes the inspected thing's `.tone-*` (neutral without one). */
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: 46px;
+  margin: 0;
+  padding: var(--sp-1) 0 var(--sp-2);
+  border: 0;
+  border-bottom: 1px solid var(--hairline);
+  background: transparent;
+}
+.panel-header__icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-lg);
+  background: color-mix(in srgb, var(--tone, var(--text-2)) 16%, transparent);
+  color: var(--tone, var(--text-2));
+}
+.panel-header__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--text);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.panel-header__actions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--sp-1);
+}
+.rail-right .panel-header__actions .icon-button {
+  width: 28px;
+  height: 28px;
+}
+
+/* Sections receive a `.tone-<category>` class; theme.css owns the color. */
+.inspector-section { --section-accent: var(--tone, var(--text-2)); }
+.rail-right .rail-scroll > .rail-section.inspector-section {
+  margin: 0;
+  border: 1px solid var(--component-outline);
+  border-radius: var(--r-md);
+  background: var(--component-card);
+  overflow: visible;
+}
+.rail-right .rail-scroll > .inspector-section > .inspector-section__head {
+  min-height: var(--inspector-section-head-h);
+  margin: 0;
+  padding: 0 var(--sp-2) 0 var(--sp-3);
+  border: 0;
+  border-radius: var(--r-md) var(--r-md) 0 0;
+  background: var(--component-head);
+}
+.rail-right .rail-scroll > .inspector-section.closed > .inspector-section__head {
+  border-radius: var(--r-md);
+}
+.rail-right .rail-scroll > .inspector-section.open > .inspector-section__head {
+  border-bottom: 1px solid var(--component-divider);
+}
+.rail-right .rail-scroll > .inspector-section > .inspector-section__head:hover {
+  background: var(--component-head-hover);
+}
+.rail-right .rail-scroll > .inspector-section > .inspector-section__head .inspector-section__title {
+  gap: var(--sp-2);
+  color: var(--text);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.rail-right .rail-scroll > .inspector-section > .inspector-section__head:hover .inspector-section__title {
+  color: var(--text);
+}
+.rail-right .rail-scroll > .inspector-section > .inspector-section__head .inspector-section__title-icon {
+  color: var(--section-accent);
+}
+.inspector-section__title-icon .editor-icon { --editor-icon-size: var(--icon-size-tree); }
+.rail-right .rail-scroll > .inspector-section > .inspector-section__body {
+  --card-surface: var(--component-card);
+  padding: var(--sp-2) var(--inspector-card-padding) var(--sp-3);
+}
+.inspector-section__head:focus-visible { outline: 1px solid var(--focus); outline-offset: -1px; }
+.inspector-note {
+  margin: var(--sp-2) 0 0;
+  color: var(--text-3);
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+}
+.inspector-row { min-height: var(--inspector-row-min-h); padding: var(--inspector-row-block-pad) 0; }
+.inspector-row__label { color: var(--inspector-label); font-size: var(--fs-base); font-weight: var(--fw-regular); }
+.inspector-row:hover .inspector-row__label { color: var(--property-text); }
+.inspector-vec__letter { color: var(--muted); }
+.rail-right .rail-subheading {
+  margin: var(--sp-2) 0 var(--sp-1);
+  color: var(--inspector-muted);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-caps);
+}
+.collider-edit-button { width: 100%; }
+.inspector-readonly-value {
+  display: flex;
+  align-items: center;
+  min-height: var(--inspector-input-h);
+  padding: 0 var(--control-number-inline-pad);
+  color: var(--inspector-label);
+  background: var(--inspector-input);
+  border: 1px solid var(--well-border);
+  border-radius: var(--r-xs);
+  font-size: var(--fs-base);
+}

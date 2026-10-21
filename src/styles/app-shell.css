@@ -1,0 +1,243 @@
+/* Design tokens live in theme.css (loaded first). */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: var(--fs-md);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------- */
+/* App shell                                                        */
+/* ---------------------------------------------------------------- */
+
+.app-shell {
+  height: 100%;
+  display: grid;
+  grid-template-rows: var(--header-h) minmax(0, 1fr) var(--statusbar-h);
+  background: var(--bg);
+}
+
+/* ---------------------------------------------------------------- */
+/* Topbar                                                           */
+/* ---------------------------------------------------------------- */
+
+.topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--hairline);
+  background: #2a2a2a;
+}
+
+.topbar--playmode {
+  background: #273242;
+  border-bottom-color: rgba(109, 180, 255, 0.4);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 7px;
+  background: var(--surface-3);
+  color: var(--accent);
+}
+
+.brand-meta h1 {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.brand-meta p {
+  margin-top: 1px;
+  color: var(--subtle);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+/* Flat row of icon buttons matching .top-pass-cluster — no container
+ * background, individual raised square buttons. Labels live in title
+ * tooltips. */
+.mode-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.top-actions {
+  display: flex;
+  justify-self: end;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.history-cluster {
+  display: inline-flex;
+  gap: 4px;
+}
+
+/* Vertical hairline between functional groups in the topbar. Slightly
+ * shorter than the row so it reads as a separator, not a frame edge. */
+.topbar-divider {
+  display: inline-block;
+  width: 1px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.28);
+  margin: 0 2px;
+}
+
+/* C4D-style flat icon strip — no pill container, just a row of raised
+ * square buttons. The Animate toggle is separated by a thin hairline gap
+ * to group view-pass icons from the workflow toggle. */
+.top-pass-cluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.top-pass-cluster .animation-workflow-toggle,
+.top-pass-cluster .sequencer-workflow-toggle {
+  margin-left: 4px;
+  color: var(--accent-2);
+}
+
+.top-pass-cluster .animation-workflow-toggle.active,
+.top-pass-cluster .sequencer-workflow-toggle.active {
+  background: rgba(242, 184, 75, 0.18);
+  color: #ffd98a;
+}
+
+/* Unity-style transport: one fused segmented group. Buttons are wider than
+ * tall, share the group's raised chrome, and are separated by hairlines
+ * instead of gaps. Pressed state is the Unity blue tint. */
+.playback-cluster {
+  display: inline-grid;
+  grid-template-columns: repeat(3, var(--h-control));
+  grid-template-rows: var(--h-input);
+  align-items: center;
+  justify-self: center;
+  min-width: 0;
+}
+
+/* ---------------------------------------------------------------- */
+/* Workspace grid                                                   */
+/* ---------------------------------------------------------------- */
+
+.workspace {
+  display: grid;
+  grid-template-columns: var(--rail-l) minmax(0, 1fr) var(--rail-r);
+  grid-template-rows: minmax(0, 1fr) var(--assets-h);
+  grid-template-areas:
+    "hierarchy stage inspector"
+    "project project inspector";
+  min-height: 0;
+}
+
+/* When the Project browser is not mounted, let the upper editor fill the
+   workspace. */
+.workspace:not(:has(.assets)) {
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "hierarchy stage inspector";
+}
+
+.workspace > .rail-left { grid-area: hierarchy; }
+.workspace > .stage { grid-area: stage; }
+.workspace > .rail-right { grid-area: inspector; }
+.workspace > .assets { grid-area: project; }
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--surface);
+}
+
+/* The panels carry NO local colour ladder — they inherit the one in theme.css.
+ * (They each used to re-declare a flat neutral greyscale here, which is what
+ * collapsed every surface into the same soot and overrode the token system.) */
+.rail-left {
+  border-right: 1px solid var(--border);
+  background: var(--panel-body);
+}
+
+.rail-right {
+  position: relative;
+  border-left: 1px solid var(--border);
+  background: var(--inspector-body);
+  overflow: hidden;
+
+  --inspector-raised-2: var(--layer-hover);   /* highest elevation */
+  /* Inspector wells recess RELATIVE to the card they sit on (see --well in
+   * theme.css) — an absolute near-black here punched holes through every
+   * nesting level and dominated the panel. */
+  --inspector-input: var(--well);
+  --bg-input: var(--well);
+  --bg-input-2: var(--well-deep);
+}
+
+.rail-scroll {
+  overflow-y: auto;
+  height: 100%;
+}
+
+.rail-section {
+  background: transparent;
+  padding: 0;
+  border-bottom: 0;
+}
+
+.rail-section:last-child {
+  border-bottom: 0;
+}

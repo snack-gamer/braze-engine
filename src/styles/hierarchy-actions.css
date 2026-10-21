@@ -1,0 +1,105 @@
+/* ------- C4D-style layout additions ------- */
+
+.add-menu {
+  position: relative;
+}
+
+.add-menu__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  background: transparent;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 5px;
+  color: var(--text-2);
+  cursor: pointer;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+.add-menu__trigger:hover,
+.add-menu__trigger.open {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+}
+
+.add-menu__popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 180px;
+  background: var(--surface, #121618);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-float);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+}
+
+.add-menu__popover button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  font-size: var(--fs-sm);
+  text-align: left;
+  border-radius: 4px;
+}
+
+.add-menu__popover button:hover {
+  background: var(--accent-soft, #2a3340);
+}
+
+.add-menu__popover button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.add-menu__popover button:disabled:hover {
+  background: transparent;
+}
+
+.rail-left {
+  position: relative;
+}
+
+/* Material chip on hierarchy rows */
+.material-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: var(--fs-xs);
+  color: #fff;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  margin-right: 4px;
+}
+
+.material-chip > span {
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.material-chip-remove {
+  cursor: pointer;
+  font-size: var(--fs-xs);
+  padding: 0 2px;
+  opacity: 0.6;
+  display: inline-block;
+}
+
+.material-chip-remove:hover {
+  opacity: 1;
+}

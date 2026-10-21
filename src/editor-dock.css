@@ -1,0 +1,608 @@
+.workspace.editor-dock-workspace {
+  position: relative;
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--bg-base);
+}
+
+/* Pane surfaces are permanent direct siblings. Moving a tab only changes its
+ * frame and visibility, so expensive canvases and editor state never remount. */
+.editor-dock-surface {
+  position: absolute;
+  z-index: 1;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding-top: var(--dock-tab-height);
+  border: 1px solid var(--border);
+  background: var(--panel-body);
+}
+
+.editor-dock-surface.is-inactive,
+.editor-dock-surface.is-closed {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.editor-dock-surface.is-closed {
+  top: -10000px;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+}
+
+.editor-dock-surface__content {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Lazy dock content must preserve the panel surface while its module loads.
+ * The light scene loader belongs only to the viewport and would flash across
+ * dark editor panes when reused as a Suspense fallback. */
+.editor-dock-pane-loading {
+  display: grid;
+  flex: 1 1 auto;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background: var(--panel-body);
+  color: var(--muted);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+}
+
+.editor-dock-surface__content > .rail,
+.editor-dock-surface__content > .stage,
+.editor-dock-surface__content > .game-view,
+.editor-dock-surface__content > .animation-panel {
+  position: relative;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  border: 0;
+}
+
+.editor-dock-surface__content > .stage { display: flex; }
+
+/* The dock tree owns titles while retaining each pane's functional toolbar. */
+.editor-dock-surface[data-pane-id="hierarchy"] .rail-left .rail-section > .rail-heading:first-child,
+.editor-dock-surface[data-pane-id="inspector"] .inspector-dock-title,
+.editor-dock-surface[data-pane-id="project"] .assets__dock-tab {
+  display: none;
+}
+
+.editor-dock-surface[data-pane-id="project"] .assets__head-actions {
+  justify-content: flex-start;
+}
+
+.editor-dock-surface[data-pane-id="project"] .assets__search {
+  margin-right: 0;
+}
+
+.editor-dock-surface[data-pane-id="animation"] .animation-panel,
+.editor-dock-surface[data-pane-id="sequencer"] .animation-panel {
+  position: relative;
+  inset: auto;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  border: 0;
+  box-shadow: none;
+}
+
+/* Group chrome is separate from pane content, allowing tabs to change without
+ * moving the mounted surface nodes through the React tree. */
+.editor-dock-group {
+  position: absolute;
+  z-index: 5;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  pointer-events: none;
+}
+
+.editor-dock-group__tabbar {
+  display: flex;
+  width: 100%;
+  height: var(--dock-tab-height);
+  min-width: 0;
+  overflow: visible;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-chrome);
+  color: var(--text-1);
+  pointer-events: auto;
+  user-select: none;
+  container-type: inline-size;
+  container-name: dock-tabbar;
+}
+
+.editor-dock-group__tabstrip {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+}
+
+.editor-dock-group__tabs {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.editor-dock-group__tabs::-webkit-scrollbar { display: none; }
+
+.editor-dock-tab-shell {
+  position: relative;
+  display: inline-flex;
+  flex: 0 1 auto;
+  min-width: 76px;
+  max-width: 220px;
+  height: 100%;
+  border-right: 1px solid var(--hairline);
+  background: transparent;
+  color: var(--text-3);
+}
+
+.editor-dock-tab-shell::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: transparent;
+  pointer-events: none;
+}
+
+.editor-dock-tab-shell:hover { background: var(--bg-hover); }
+
+/* The active tab shares the pane surface; no accent stroke. */
+.editor-dock-tab-shell.is-active {
+  background: var(--panel-body);
+  color: var(--text);
+}
+
+.editor-dock-tab-shell.is-active .editor-icon { color: var(--text-1); }
+
+.editor-dock-tab-shell.is-dragging { opacity: var(--control-disabled-opacity); }
+
+.editor-dock-tab-shell.is-drop-before::after,
+.editor-dock-tab-shell.is-drop-after::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  border-radius: var(--r-xs);
+  background: var(--dock-drop-border);
+  pointer-events: none;
+}
+
+.editor-dock-tab-shell.is-drop-before::after { left: -1px; }
+.editor-dock-tab-shell.is-drop-after::after { right: -1px; }
+
+.editor-dock-tab {
+  --control-icon-size: var(--icon-size-control);
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  height: 100%;
+  padding: 0 var(--sp-3);
+  overflow: hidden;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font: var(--fw-medium) var(--fs-sm)/1 var(--font-ui);
+  cursor: grab;
+}
+
+.editor-dock-tab:active { cursor: grabbing; }
+
+.editor-dock-tab:focus-visible {
+  outline: 1px solid var(--focus);
+  outline-offset: -2px;
+}
+
+.editor-dock-tab > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.editor-dock-tab-nav {
+  display: inline-grid;
+  flex: 0 0 var(--h-control-compact);
+  place-items: center;
+  width: var(--h-control-compact);
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid var(--border);
+  background: var(--panel-chrome);
+  color: var(--text-2);
+  cursor: pointer;
+}
+
+.editor-dock-tab-nav--back {
+  border-right: 1px solid var(--border);
+  border-left: 0;
+}
+
+.editor-dock-tab-nav--back .editor-icon { transform: rotate(180deg); }
+.editor-dock-tab-nav:hover:not(:disabled) { background: var(--bg-hover); color: var(--text); }
+.editor-dock-tab-nav:disabled { color: var(--text-disabled); cursor: default; }
+.editor-dock-tab-nav:focus-visible {
+  outline: 1px solid var(--focus);
+  outline-offset: -2px;
+}
+
+.editor-dock-group__toolbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  height: 100%;
+  min-width: 0;
+  margin-left: auto;
+  padding: 0 var(--sp-1);
+  border-left: 1px solid var(--border);
+}
+
+.layout-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  margin-left: 2px;
+  padding-left: 2px;
+  border-left: 1px solid var(--layer-outline);
+  pointer-events: auto;
+}
+
+/* One optical contract for every Scene-header action. Component-specific
+ * button defaults must not introduce a different text baseline or icon box. */
+.editor-dock-group__toolbar :is(
+  .scene-view-settings-toolbar .ghost-button,
+  .scene-snap-control__menu-button,
+  .gizmos-menu__trigger,
+  .layout-menu__trigger
+) {
+  --control-icon-size: var(--icon-size-control);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: var(--h-input);
+  padding-block: 0;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  line-height: 1;
+}
+
+.editor-dock-group__toolbar :is(
+  .scene-view-settings-toolbar .ghost-button,
+  .gizmos-menu__trigger,
+  .layout-menu__trigger
+) > span {
+  display: inline-flex;
+  align-items: center;
+  height: var(--icon-size-control);
+  line-height: var(--icon-size-control);
+}
+
+.editor-dock-group__toolbar .editor-icon {
+  flex: 0 0 var(--icon-size-control);
+  align-self: center;
+}
+
+.layout-menu__trigger {
+  gap: var(--sp-1);
+  height: var(--h-input);
+  padding-inline: var(--sp-2);
+  border: 0;
+}
+
+.layout-menu__panel {
+  position: absolute;
+  z-index: var(--z-dropdown);
+  top: calc(100% + var(--sp-1));
+  right: 0;
+  box-sizing: border-box;
+  width: 236px;
+  max-height: min(72vh, 560px);
+  padding: var(--sp-1);
+  overflow-y: auto;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--menu-surface);
+  color: var(--text-1);
+  box-shadow: var(--shadow-float);
+}
+
+.layout-menu__heading {
+  padding: var(--sp-2) var(--sp-2) var(--sp-1);
+  color: var(--text-3);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+
+.layout-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 100%;
+  min-width: 0;
+  min-height: var(--h-control);
+  padding: 0 var(--sp-2);
+  border: 0;
+  border-radius: var(--r-xs);
+  background: transparent;
+  color: var(--text-1);
+  font: var(--fw-medium) var(--fs-sm)/1 var(--font-ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.layout-menu__item > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.layout-menu__item:hover:not(:disabled) { background: var(--bg-hover); }
+.layout-menu__item.is-active {
+  background: var(--state-on-fill);
+  color: var(--state-on-ink);
+}
+.layout-menu__item:focus-visible {
+  outline: 1px solid var(--focus);
+  outline-offset: -1px;
+}
+.layout-menu__item:disabled {
+  color: var(--text-disabled);
+  cursor: default;
+  opacity: var(--control-disabled-opacity);
+}
+
+.layout-menu__separator {
+  height: 1px;
+  margin: var(--sp-1);
+  background: var(--border);
+}
+
+.layout-menu__saved-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--h-control-compact);
+  align-items: center;
+}
+
+.layout-menu__delete {
+  color: var(--muted-2);
+}
+
+@container dock-tabbar (max-width: 560px) {
+  .layout-menu__trigger > span { display: none; }
+}
+
+/* Unity-style docking exposes one final placement outline at a time. The tab
+ * strip owns tab joins; this content target owns edge splits only. */
+.editor-dock-drop-target {
+  position: absolute;
+  z-index: 20;
+  inset: var(--dock-tab-height) 0 0;
+  pointer-events: auto;
+}
+
+.editor-dock-drop-preview {
+  position: absolute;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--dock-drop-border);
+  background: var(--dock-drop-fill);
+  pointer-events: none;
+}
+
+.editor-dock-drop-preview::after,
+.editor-dock-workspace-edge-target__preview::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--dock-drop-border);
+  opacity: .48;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M0 0h4v4H0zM4 4h4v4H4z'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: repeat;
+  -webkit-mask-size: 8px 8px;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath d='M0 0h4v4H0zM4 4h4v4H4z'/%3E%3C/svg%3E");
+  mask-repeat: repeat;
+  mask-size: 8px 8px;
+}
+
+.editor-dock-drop-target[data-dock-edge="left"] .editor-dock-drop-preview { inset: 0 auto 0 0; width: 20px; }
+.editor-dock-drop-target[data-dock-edge="right"] .editor-dock-drop-preview { inset: 0 0 0 auto; width: 20px; }
+.editor-dock-drop-target[data-dock-edge="top"] .editor-dock-drop-preview { inset: 0 0 auto; height: 20px; }
+.editor-dock-drop-target[data-dock-edge="bottom"] .editor-dock-drop-preview { inset: auto 0 0; height: 20px; }
+
+/* The footer remains fixed shell chrome. During a tab drag, this narrow outer
+ * edge target sits directly above it and previews a full-width bottom row. */
+.editor-dock-workspace-edge-target {
+  position: absolute;
+  z-index: 40;
+  inset: 0;
+  pointer-events: none;
+}
+
+.editor-dock-workspace-edge-target__hit-area {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: clamp(44px, 8%, 72px);
+  pointer-events: auto;
+}
+
+.editor-dock-workspace-edge-target__preview {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--dock-drop-border);
+  background: var(--dock-drop-fill);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.editor-dock-workspace-edge-target[data-active="true"]
+  .editor-dock-workspace-edge-target__preview {
+  opacity: 1;
+}
+
+.editor-dock-group.is-tab-drop-preview {
+  box-shadow: inset 0 0 0 2px var(--dock-drop-border);
+}
+
+.editor-dock-tab-menu {
+  position: fixed;
+  z-index: var(--z-modal);
+  display: flex;
+  flex-direction: column;
+  min-width: 210px;
+  padding: var(--sp-1);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--menu-surface);
+  box-shadow: var(--shadow-float);
+  color: var(--text);
+  user-select: none;
+}
+
+.editor-dock-tab-menu__label,
+.editor-dock-tab-menu__section {
+  max-width: 260px;
+  padding: var(--sp-2) var(--sp-2) var(--sp-1);
+  overflow: hidden;
+  color: var(--text-3);
+  font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-ui);
+  letter-spacing: var(--tracking-caps);
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.editor-dock-tab-menu__item {
+  display: grid;
+  grid-template-columns: var(--icon-size-control) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: var(--h-control);
+  padding: 0 var(--sp-2);
+  border: 0;
+  border-radius: var(--r-xs);
+  background: transparent;
+  color: var(--text-1);
+  font: var(--fw-medium) var(--fs-sm)/1 var(--font-ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.editor-dock-tab-menu__item:hover,
+.editor-dock-tab-menu__item:focus-visible {
+  outline: 0;
+  background: var(--bg-hover);
+}
+
+.editor-dock-tab-menu__hint { color: var(--text-3); font-size: var(--fs-2xs); }
+.editor-dock-tab-menu__divider { height: 1px; margin: var(--sp-1); background: var(--border); }
+
+/* Splitters are absolute siblings too. Their full themed width is the hit
+ * target; a one-pixel center line keeps the resting layout visually quiet. */
+.editor-dock-splitter {
+  position: absolute;
+  z-index: 12;
+  box-sizing: border-box;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  touch-action: none;
+}
+
+.editor-dock-splitter::before {
+  content: "";
+  position: absolute;
+  background: var(--border);
+  transition: background-color var(--t-fast) var(--ease);
+}
+
+.editor-dock-splitter--horizontal {
+  width: var(--dock-splitter-size);
+  transform: translateX(-50%);
+  cursor: col-resize;
+}
+
+.editor-dock-splitter--horizontal::before {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+}
+
+.editor-dock-splitter--vertical {
+  height: var(--dock-splitter-size);
+  transform: translateY(-50%);
+  cursor: row-resize;
+}
+
+.editor-dock-splitter--vertical::before {
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.editor-dock-splitter:hover::before,
+.editor-dock-splitter:focus-visible::before,
+.editor-dock-splitter.is-resizing::before {
+  background: var(--accent-light);
+}
+
+.editor-dock-splitter:focus-visible {
+  outline: 1px solid var(--focus);
+  outline-offset: -1px;
+}
+
+@media (max-width: 900px) {
+  .editor-dock-tab-shell { min-width: 48px; }
+  .editor-dock-tab { padding-inline: var(--sp-1); }
+}

@@ -1,0 +1,354 @@
+@import "./styles/editor-fonts.css";
+
+/* Braze's shared editor tokens, adapted from ViStudio's neutral surface,
+ * typography, field and interaction system. Features own layout and consume
+ * these roles; scene/world colors are separate authored data. */
+:root {
+  color-scheme: dark;
+  --focus: #92969d;
+  --property-text: #d6d3cc;
+  --menu-surface: #2e3035;
+  --menu-border: rgb(255 255 255 / 28%);
+  --menu-hover: rgb(255 255 255 / 9%);
+  --overlay-scrim: rgb(0 0 0 / 56%);
+  --scrollbar-thumb: rgb(255 255 255 / 22%);
+  --scrollbar-hover: rgb(255 255 255 / 32%);
+  --inspector-card-gap: 8px;
+  --inspector-card-padding: 12px;
+  --control-height-toolbar: 30px;
+
+  --bg-base: #141517;
+  --bg-panel: #1b1c1f;
+  --bg-panel-header: #1f2124;
+  --bg-input: #0e0f11;
+  --bg-input-2: #15171a;
+  --bg-hover: #2b2e33;
+  --bg-active: #35383e;
+
+  --bg-deepest: var(--bg-base);
+  --bg: var(--bg-base);
+  --surface-dim: var(--bg-panel-header);
+  --surface: var(--bg-panel);
+  --surface-1: #232529;
+  --surface-closed: #232529;
+  --surface-2: #232529;
+  --surface-3: #2b2e33;
+  --surface-4: #35383e;
+
+  --layer-canvas: var(--bg-base);
+  --layer-well: var(--bg-input);
+  --layer-window-chrome: var(--bg-panel-header);
+  --layer-window: var(--bg-panel);
+  --layer-contained: #202226;
+  --layer-component: #202226;
+  --layer-component-head: #2b2e33;
+  --layer-raised: #303339;
+  --layer-hover: #383c42;
+  --layer-outline: var(--hairline-strong);
+  --layer-highlight: transparent;
+
+  --well: var(--bg-input);
+  --well-deep: var(--bg-input);
+  --well-border: #3d4046;
+  --well-border-hover: #51555c;
+
+  --border: rgb(255 255 255 / 10.5%);
+  --border-strong: rgb(255 255 255 / 18%);
+  --hairline-soft: rgb(255 255 255 / 4.5%);
+  --hairline: rgb(255 255 255 / 7%);
+  --hairline-medium: rgb(255 255 255 / 8%);
+  --hairline-strong: rgb(255 255 255 / 10.5%);
+
+  --text: #f0f0f2;
+  --text-1: #d8d9de;
+  --text-2: #adaeb3;
+  --text-3: #8f9197;
+  --muted: #adaeb3;
+  --muted-2: #8f9197;
+  --subtle: #777b83;
+  --text-primary: var(--text);
+  --text-secondary: var(--text-2);
+  --text-disabled: rgb(255 255 255 / 38%);
+
+  --accent: #4da3ff;
+  --accent-light: #73b7ff;
+  --accent-2: #73b7ff;
+  --accent-soft: rgb(77 163 255 / 20%);
+  --accent-softer: rgb(77 163 255 / 13%);
+  --accent-glow: rgb(77 163 255 / 32%);
+  --on-accent: #07131f;
+
+  /* Engine category tones: one distinct hue per system. Glyphs, Inspector
+   * headers, Hierarchy indicators and creation menus select a tone through a
+   * `.tone-<category>` class (below); features never pick category colors. */
+  /* Saturated but not neon: 60-80% saturation at 58-70% lightness, spaced
+   * around the wheel so neighbours stay distinguishable. Neutral is the
+   * default for object glyphs; prefab is the Unity-style instance/model blue. */
+  --component-transform: #b2bbcb;
+  --component-mesh: #62a3f2;
+  --component-rendering: #3fcdb6;
+  --component-lighting: #f0bd45;
+  --component-physics: #6fca57;
+  --component-animation: #ac7ff0;
+  --component-effects: #f4855a;
+  --component-modifiers: #ec78ad;
+  --component-neutral: #d3d7de;
+  --component-prefab: #4f9bff;
+  --component-water: var(--component-rendering);
+
+  /* Interaction states. Toggled/pressed controls lift on a neutral surface;
+   * accent is reserved for values (checked, on) and list selection, never for
+   * decorative edges. */
+  --state-on-fill: #3a3d44;
+  --state-on-ink: var(--text);
+  --state-on-edge: rgb(255 255 255 / 14%);
+  --selection-fill: color-mix(in srgb, var(--accent) 26%, var(--bg-panel));
+  --selection-fill-soft: color-mix(in srgb, var(--accent) 13%, var(--bg-panel));
+
+  --danger: #e27c7c;
+  --danger-soft: rgb(181 73 73 / 13%);
+  --warning: #dcaa4d;
+  --warning-soft: rgb(220 170 77 / 13%);
+  --success: #72c792;
+  --success-soft: rgb(114 199 146 / 13%);
+
+  --red: var(--danger);
+  --red-soft: var(--danger-soft);
+  --green: var(--success);
+  --green-soft: var(--success-soft);
+
+  --axis-x: #f07878;
+  --axis-y: #70bf83;
+  --axis-z: #72a1e8;
+
+  --panel-chrome: var(--bg-panel-header);
+  --panel-body: var(--bg-panel);
+  --panel-well: var(--bg-input);
+  --panel-input: var(--bg-input);
+  --panel-card: var(--layer-component);
+  --panel-raised: var(--layer-raised);
+  --component-outline: var(--hairline);
+  --component-divider: var(--hairline);
+  --component-card: var(--layer-component);
+  --component-head: var(--layer-component-head);
+  --component-head-hover: var(--layer-raised);
+
+  --group-card: var(--layer-component);
+  --group-head-hover: #35383e;
+  --inspector-chrome: var(--bg-panel-header);
+  --inspector-body: var(--bg-panel);
+  --inspector-input: var(--bg-input);
+  --inspector-card: var(--layer-component);
+  --inspector-raised: var(--layer-raised);
+  --inspector-surface: rgba(255, 255, 255, 0.014);
+  --inspector-border: var(--hairline-soft);
+  --inspector-label: #b3b0a9;
+  --inspector-muted: #938f88;
+
+  --font-ui: "Roboto", Arial, Helvetica, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --fs-2xs: 10.5px;
+  --fs-xs: 11.5px;
+  --fs-sm: 12.5px;
+  --fs-base: 13px;
+  --fs-md: 14px;
+  --fs-lg: 15px;
+  --fs-xl: 17px;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --tracking-caps: 0.025em;
+
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+
+  --r-xs: 2px;
+  --r-sm: 3px;
+  --r-md: 4px;
+  --r-lg: 6px;
+
+  --h-control-compact: 26px;
+  --h-input: 26px;
+  --h-control: 30px;
+  --control-transport-button-size: var(--h-input);
+  --control-transport-play-w: 27px;
+  --control-slider-hit-h: 12px;
+  --control-range-inline-w: 48px;
+  --control-slider-track-h: 3px;
+  --control-slider-track-bg: #5e5e5e;
+  --control-slider-track-border: transparent;
+  --control-slider-fill: #929292;
+  --control-slider-thumb: #b6b6b6;
+  --control-slider-thumb-size: 10px;
+  --control-slider-thumb-offset: -3.5px;
+  --control-slider-overlay-thumb-offset: 0.5px;
+  --control-toggle-size: 14px;
+  --control-checkbox-size: 15px;
+  --control-checkmark-stroke: 1.5px;
+  --control-indeterminate-h: 2px;
+  --control-segment-h: 17px;
+  --control-number-min-w: 72px;
+  --control-number-rail-min-w: 60px;
+  --control-number-slider-min-w: 64px;
+  --control-number-unit-min-w: 68px;
+  --control-number-gap: 3px;
+  --control-number-inline-pad: 5px;
+  --control-disabled-opacity: 0.42;
+  --control-disabled-field-opacity: 0.42;
+
+  --icon-size-micro: 11px;
+  --icon-size-compact: 15px;
+  --icon-size-control: 17px;
+  --icon-size-disclosure: 14px;
+  --icon-size-row-action: 16px;
+  --icon-size-indicator: 20px;
+  --icon-size-tree: 22px;
+  --icon-size-toolbar: 20px;
+  --icon-size-transport: 19px;
+  --icon-size-brand: 22px;
+  /* Duotone glyphs: the closed shapes of a tone icon are washed with its own
+   * hue. Solid is for markers that should read as filled (prefab). */
+  --glyph-wash: 28%;
+  --glyph-wash-solid: 58%;
+  --icon-size-hero: 24px;
+  --icon-size-preview: 28px;
+  --icon-inset-badge: 5px;
+  --icon-stroke-fine: 1.5;
+  --icon-stroke-regular: 1.75;
+  --icon-stroke-strong: 2;
+
+  --dock-tab-height: 34px;
+  --dock-splitter-size: 4px;
+  --dock-drop-fill: rgb(77 163 255 / 17%);
+  --dock-drop-border: rgb(77 163 255 / 82%);
+
+  --t-fast: 100ms;
+  --t-base: 120ms;
+  --ease: ease;
+
+  --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --layer-shadow: none;
+
+  --z-base: 1;
+  --z-overlay: 100;
+  --z-dropdown: 1000;
+  --z-modal: 2000;
+  --z-tooltip: 3000;
+
+  --check-bg:
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><rect width="16" height="16" fill="%23202226"/><rect width="8" height="8" fill="%232b2d33"/><rect x="8" y="8" width="8" height="8" fill="%232b2d33"/></svg>');
+
+  --header-h: 40px;
+  /* Hierarchy rows. These are the `large` density: the maximum size. The
+   * compact set below overrides them under `[data-hierarchy-density]`. The list
+   * reads --hierarchy-row-h so virtualization always matches paint. */
+  --hierarchy-row-h: 24px;
+  --hierarchy-inset: 8px;
+  --hierarchy-indent: 16px;
+  --hierarchy-chevron: 16px;
+  --hierarchy-lead-gap: 6px;
+  --hierarchy-name-size: var(--fs-md);
+  --hierarchy-action-size: 22px;
+  --hierarchy-tag-w: 24px;
+  --hierarchy-tag-h: 22px;
+  --hierarchy-count-size: 13px;
+  --hierarchy-count-font: var(--fs-2xs);
+  --statusbar-h: 26px;
+  --assets-h: 270px;
+  --rail-l: 340px;
+  --rail-r: 372px;
+
+  --inspector-row-label-w: clamp(96px, 32%, 136px);
+  --inspector-row-gutter-w: 12px;
+  --inspector-row-min-h: 30px;
+  --inspector-row-block-pad: 4px;
+  --inspector-row-divider: var(--hairline);
+  --inspector-gap: 8px;
+  --inspector-input-h: 24px;
+  --inspector-tab-h: 30px;
+  --inspector-group-head-h: 28px;
+  --inspector-nest-indent: 12px;
+
+  --inspector-cell-min: 185px;
+  --inspector-cell-label-w: 84px;
+  --inspector-cell-gap: 6px;
+  --inspector-col-gap: 14px;
+  --inspector-number-max-w: 120px;
+  --inspector-section-head-h: 36px;
+}
+
+/* Hierarchy compact density: fits more objects per screen. Glyph roles shrink
+ * only inside the list, so the toolbar and every other pane keep their scale. */
+[data-hierarchy-density="compact"] {
+  --hierarchy-row-h: 18px;
+  --hierarchy-inset: 6px;
+  --hierarchy-indent: 12px;
+  --hierarchy-chevron: 12px;
+  --hierarchy-lead-gap: 4px;
+  --hierarchy-name-size: var(--fs-sm);
+  --hierarchy-action-size: 16px;
+  --hierarchy-tag-w: 18px;
+  --hierarchy-tag-h: 16px;
+  --hierarchy-count-size: 11px;
+  --hierarchy-count-font: 9px;
+  --icon-size-tree: 16px;
+  --icon-size-indicator: 14px;
+  --icon-size-row-action: 12px;
+  --icon-size-disclosure: 11px;
+}
+
+.editor-icon {
+  --editor-icon-size: var(--icon-size-control);
+  --editor-icon-stroke: var(--icon-stroke-regular);
+  display: block;
+  inline-size: var(--editor-icon-size);
+  block-size: var(--editor-icon-size);
+  min-inline-size: var(--editor-icon-size);
+  flex: 0 0 var(--editor-icon-size);
+  stroke-width: var(--editor-icon-stroke);
+  pointer-events: none;
+}
+
+.editor-icon--micro { --editor-icon-size: var(--icon-size-micro); }
+.editor-icon--compact { --editor-icon-size: var(--icon-size-compact); }
+.editor-icon--control { --editor-icon-size: var(--icon-size-control); }
+.editor-icon--disclosure { --editor-icon-size: var(--icon-size-disclosure); }
+.editor-icon--row-action { --editor-icon-size: var(--icon-size-row-action); }
+.editor-icon--indicator { --editor-icon-size: var(--icon-size-indicator); }
+.editor-icon--tree { --editor-icon-size: var(--icon-size-tree); }
+.editor-icon--toolbar { --editor-icon-size: var(--icon-size-toolbar); }
+.editor-icon--transport { --editor-icon-size: var(--icon-size-transport); }
+.editor-icon--brand { --editor-icon-size: var(--icon-size-brand); }
+.editor-icon--hero { --editor-icon-size: var(--icon-size-hero); }
+.editor-icon--preview { --editor-icon-size: var(--icon-size-preview); }
+
+.editor-icon--stroke-fine { --editor-icon-stroke: var(--icon-stroke-fine); }
+.editor-icon--stroke-regular { --editor-icon-stroke: var(--icon-stroke-regular); }
+.editor-icon--stroke-strong { --editor-icon-stroke: var(--icon-stroke-strong); }
+.editor-icon--filled { fill: currentColor; }
+
+/* Category tone selection. `src/ui/tones.ts` owns the names; this block is the
+ * only mapping from a category to its color. Consumers read `var(--tone)`. */
+.tone-transform { --tone: var(--component-transform); }
+.tone-mesh { --tone: var(--component-mesh); }
+.tone-rendering { --tone: var(--component-rendering); }
+.tone-lighting { --tone: var(--component-lighting); }
+.tone-physics { --tone: var(--component-physics); }
+.tone-animation { --tone: var(--component-animation); }
+.tone-effects { --tone: var(--component-effects); }
+.tone-modifiers { --tone: var(--component-modifiers); }
+.tone-neutral { --tone: var(--component-neutral); }
+.tone-prefab { --tone: var(--component-prefab); }
+.category-glyph { color: var(--tone, currentColor); }
+
+@media (max-width: 1280px) {
+  :root {
+    --rail-l: 220px;
+    --rail-r: 340px;
+  }
+}

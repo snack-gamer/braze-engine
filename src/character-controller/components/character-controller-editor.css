@@ -1,0 +1,22 @@
+.character-controller-card__warning {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: var(--sp-2);
+  padding: var(--sp-2);
+  border: 1px solid color-mix(in srgb, var(--warning) 45%, var(--border));
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--warning) 8%, var(--panel-well));
+  color: var(--text-1);
+  font-size: var(--fs-xs);
+}
+
+.character-controller-card__warning > .editor-icon { color: var(--warning); }
+
+.character-controller-card__note {
+  margin: var(--sp-2);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+}

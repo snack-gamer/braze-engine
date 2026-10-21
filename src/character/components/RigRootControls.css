@@ -1,0 +1,16 @@
+.avatar-configurator__root-help {
+  margin: 0;
+  padding: 7px var(--sp-2);
+  border-bottom: 1px solid var(--hairline-soft);
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+}
+
+.avatar-configurator__roots .avatar-configurator__field > span {
+  color: var(--text-1);
+}
+
+.avatar-configurator__roots .avatar-configurator__field {
+  grid-template-columns: 100px minmax(0, 1fr);
+}

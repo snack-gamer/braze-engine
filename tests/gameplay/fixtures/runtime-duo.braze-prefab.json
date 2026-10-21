@@ -1,0 +1,140 @@
+{
+  "version": "braze/prefab-v1",
+  "name": "Runtime Duo",
+  "createdAt": "2026-09-29T00:00:00.000Z",
+  "rootIds": [
+    "root"
+  ],
+  "objects": [
+    {
+      "id": "root",
+      "name": "Runtime Duo",
+      "tags": ["Reusable"],
+      "primitive": "transform",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": "#ffb020",
+      "visible": true,
+      "locked": false,
+      "renderVisible": false
+    },
+    {
+      "id": "group",
+      "name": "Pair",
+      "primitive": "transform",
+      "parentId": "root",
+      "position": [
+        0,
+        0.2,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "color": "#ffb020",
+      "visible": true,
+      "locked": false,
+      "renderVisible": false
+    },
+    {
+      "id": "box",
+      "name": "Orange Box",
+      "primitive": "cube",
+      "parentId": "group",
+      "position": [
+        -0.6,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ],
+      "color": "#ffb020",
+      "visible": true,
+      "locked": false,
+      "rigidbody": {
+        "enabled": true,
+        "bodyType": "dynamic",
+        "massMode": "manual",
+        "mass": 1
+      },
+      "colliders": [
+        {
+          "id": "box-shape",
+          "enabled": true,
+          "shape": "box",
+          "size": [
+            1.4,
+            1.4,
+            1.4
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sphere",
+      "name": "Cyan Sphere",
+      "primitive": "sphere",
+      "parentId": "group",
+      "position": [
+        0.6,
+        0.1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "color": "#29d6ff",
+      "visible": true,
+      "locked": false,
+      "rigidbody": {
+        "enabled": true,
+        "bodyType": "dynamic",
+        "massMode": "manual",
+        "mass": 1
+      },
+      "colliders": [
+        {
+          "id": "sphere-shape",
+          "enabled": true,
+          "shape": "sphere",
+          "radius": 0.78
+        }
+      ]
+    }
+  ]
+}

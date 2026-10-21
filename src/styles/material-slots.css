@@ -1,0 +1,228 @@
+/* Mesh Filter / Mesh Renderer use Unity's dense component and array language.
+ * These selectors are deliberately feature-owned; other Inspector components
+ * keep the shared Braze component chrome. */
+
+.rail-right .rail-scroll > .mesh-filter-section,
+.rail-right .rail-scroll > .mesh-renderer-section {
+  margin-top: 3px;
+  border-radius: 2px;
+}
+
+.rail-right .rail-scroll > .mesh-renderer-section > .inspector-section__body {
+  padding: 0 8px 7px;
+}
+
+/* Foldouts use the same labelled-divider language as InspectorGroup
+ * (inspector.css): label, then a hairline rule filling the row. */
+.mesh-renderer-foldout {
+  min-width: 0;
+  margin-top: var(--sp-2);
+}
+
+.mesh-renderer-foldout:first-child {
+  margin-top: 0;
+}
+
+.mesh-renderer-foldout__head {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-1);
+  width: 100%;
+  min-height: var(--inspector-group-head-h);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-2);
+  text-align: left;
+  cursor: pointer;
+  list-style: none;
+}
+
+.mesh-renderer-foldout__head::-webkit-details-marker {
+  display: none;
+}
+
+.mesh-renderer-foldout__head::before {
+  color: var(--muted-2);
+  font-size: var(--fs-2xs);
+  content: "\25B6";
+  transform: scale(0.72);
+}
+
+.mesh-renderer-foldout[open] > .mesh-renderer-foldout__head::before {
+  transform: rotate(90deg) scale(0.72);
+}
+
+.mesh-renderer-foldout__head:hover {
+  color: var(--text-1);
+}
+
+.mesh-renderer-foldout__head:focus-visible {
+  outline: 1px solid var(--focus);
+  outline-offset: -1px;
+}
+
+.mesh-renderer-foldout__title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+}
+
+.mesh-renderer-foldout__title::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--hairline);
+}
+
+.mesh-renderer-foldout__meta {
+  display: inline-grid;
+  place-items: center;
+  min-width: 35px;
+  height: 18px;
+  padding: 0 6px;
+  border: 1px solid var(--well-border);
+  border-radius: var(--r-xs);
+  background: var(--inspector-input);
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.mesh-renderer-foldout__body {
+  min-width: 0;
+  padding: 0 0 7px 12px;
+}
+
+.mesh-renderer-settings .mesh-renderer-foldout__body {
+  padding-left: 12px;
+}
+
+.mesh-renderer-settings .inspector-row {
+  --inspector-row-label-w: 116px;
+}
+
+.mesh-renderer-settings .inspector-row__control > .editor-checkbox {
+  display: grid;
+}
+
+.mesh-renderer-materials {
+  display: grid;
+  min-width: 0;
+  padding: 3px;
+  border: 1px solid var(--well-border);
+  background: var(--layer-well);
+}
+
+.mesh-renderer-material-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 14px 82px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 34px;
+  padding: 5px 6px;
+  transition: background-color var(--t-fast) var(--ease);
+}
+
+.mesh-renderer-material-row + .mesh-renderer-material-row {
+  border-top: 1px solid var(--inspector-row-divider);
+}
+
+.mesh-renderer-material-row.is-drop-target {
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.mesh-renderer-material-row__handle {
+  display: inline-grid;
+  place-items: center;
+  color: var(--text-3);
+  cursor: grab;
+}
+
+.mesh-renderer-material-row__label {
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesh-renderer-material-field {
+  position: relative;
+  display: grid;
+  grid-template-columns: 23px minmax(0, 1fr) 23px;
+  min-width: 0;
+  height: 24px;
+  overflow: visible;
+  border: 1px solid var(--well-border);
+  border-radius: var(--r-xs);
+  background: var(--inspector-input);
+  color: var(--text-1);
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mesh-renderer-material-field:hover,
+.mesh-renderer-material-field:focus-within {
+  border-color: var(--well-border-hover);
+  background: var(--bg-input-2);
+}
+
+.mesh-renderer-material-field:disabled {
+  color: var(--text-3);
+  cursor: default;
+}
+
+.mesh-renderer-material-field__swatch {
+  --material-color: var(--text-3);
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.68);
+  border-radius: 50%;
+  background: var(--material-color);
+  box-shadow: none;
+}
+
+.mesh-renderer-material-field.is-empty .mesh-renderer-material-field__swatch {
+  border-color: var(--well-border-hover);
+  background: transparent;
+  box-shadow: none;
+}
+
+.mesh-renderer-material-field__name {
+  overflow: hidden;
+  min-width: 0;
+  font-size: var(--fs-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mesh-renderer-material-field__reveal {
+  display: inline-grid;
+  place-items: center;
+  height: 22px;
+  border-left: 1px solid var(--well-border);
+  color: var(--muted-2);
+}
+
+.mesh-renderer-material-field:hover .mesh-renderer-material-field__reveal,
+.mesh-renderer-material-field:focus-visible .mesh-renderer-material-field__reveal {
+  color: var(--text-1);
+}
+
+@media (max-width: 1180px) {
+  .mesh-renderer-material-row {
+    grid-template-columns: 12px 72px minmax(0, 1fr);
+  }
+}

@@ -1,0 +1,9 @@
+.model-import-model-tab {
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-2);
+}
+
+.model-import-model-tab > .inspector-group {
+  margin-top: 0;
+}

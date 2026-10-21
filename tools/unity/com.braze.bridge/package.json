@@ -1,0 +1,17 @@
+{
+  "name": "com.braze.bridge",
+  "displayName": "Braze Bridge",
+  "version": "0.1.0",
+  "unity": "6000.0",
+  "description": "Exports selected Unity static prefabs to self-contained GLB files with Braze provenance manifests.",
+  "keywords": [
+    "braze",
+    "gltf",
+    "glb",
+    "prefab",
+    "export"
+  ],
+  "author": {
+    "name": "Braze"
+  }
+}

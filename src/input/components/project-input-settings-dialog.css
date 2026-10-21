@@ -1,0 +1,4 @@
+.input-settings-dialog { position: fixed; inset: 0; z-index: 300; display: grid; place-items: center; padding: 24px; background: var(--overlay-scrim); }
+.input-settings-dialog__panel { width: min(440px, 100%); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; outline: none; }
+.input-settings-dialog__panel > header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.input-settings-dialog__panel h2 { margin: 0; font-size: 14px; }

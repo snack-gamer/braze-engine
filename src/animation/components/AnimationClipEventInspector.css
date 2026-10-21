@@ -1,0 +1,16 @@
+.animation-clip-event-inspector__title {
+  display: inline-flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.animation-clip-event-inspector__time {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+}
+
+.animation-clip-event-inspector__properties { padding: 5px 8px 7px; }
+.animation-clip-event-inspector__properties .editor-input { width: 100%; }

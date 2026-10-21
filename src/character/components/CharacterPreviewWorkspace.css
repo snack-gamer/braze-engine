@@ -1,0 +1,17 @@
+.character-preview-workspace[hidden] { display: none; }
+
+.character-preview-workspace {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-width: 0;
+  min-height: 0;
+  background: #171a1f;
+}
+
+.character-preview-workspace.is-resizable {
+  height: clamp(300px, 44vh, 520px);
+  min-height: 240px;
+  max-height: min(720px, calc(100vh - 150px));
+  overflow: hidden;
+  resize: vertical;
+}

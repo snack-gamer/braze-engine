@@ -1,0 +1,40 @@
+.character-rig-import-tab {
+  display: grid;
+  gap: var(--sp-1);
+}
+
+.character-rig-status {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--sp-2);
+  align-items: start;
+  margin: var(--sp-1) var(--sp-2);
+  padding: var(--sp-2);
+  border: 1px solid var(--component-divider);
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--component-card) 86%, transparent);
+}
+
+.character-rig-status--detected svg {
+  color: var(--success, #68b889);
+}
+
+.character-rig-status--pending svg {
+  color: var(--warning, #d4aa64);
+}
+
+.character-rig-status span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.character-rig-status small {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.character-rig-configure {
+  justify-self: end;
+  margin: var(--sp-2);
+}

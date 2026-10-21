@@ -1,0 +1,256 @@
+.add-component {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 14px 8px 10px;
+}
+
+/* Shared Add Component / Create palette. The viewport host remains clear so
+ * the opaque editor window floats over context instead of erasing it. */
+.catalog-palette {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: grid;
+  place-items: center;
+  background: transparent;
+}
+
+.catalog-palette > div {
+  width: min(680px, 94vw);
+  max-height: 84vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--bg-input-2);
+  border-radius: var(--r-lg);
+  background: var(--layer-window);
+  box-shadow: var(--shadow-float);
+  color: var(--text-1);
+}
+
+.catalog-palette > div > header {
+  height: 46px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--bg-input-2);
+  background: var(--layer-canvas);
+}
+
+.catalog-palette > div > header > span:first-child {
+  width: 19px;
+  height: 19px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--accent-light);
+}
+
+.catalog-palette > div > header h2 {
+  flex: none;
+  margin: 0;
+  color: var(--text);
+  font: var(--fw-semibold) var(--fs-md)/1 var(--font-ui);
+}
+
+.catalog-palette > div > header > label {
+  height: 30px;
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  border: 1px solid var(--bg-input-2);
+  border-radius: var(--r-md);
+  background: var(--layer-well);
+  color: var(--muted-2);
+}
+
+.catalog-palette > div > header > label:focus-within {
+  border-color: var(--focus);
+}
+
+.catalog-palette > div > header > label input {
+  min-width: 0;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font: var(--fs-md) var(--font-ui);
+}
+
+.catalog-palette > div > header > label input::placeholder {
+  color: var(--muted-2);
+}
+
+.catalog-palette > div > header kbd {
+  flex: none;
+  padding: 3px 7px;
+  border: 1px solid var(--bg-input-2);
+  border-radius: var(--r-sm);
+  background: var(--layer-well);
+  color: var(--muted-2);
+  font: var(--fs-xs)/1 var(--font-mono);
+  letter-spacing: .08em;
+}
+
+.catalog-palette > div > div {
+  min-height: 0;
+  padding: 4px 14px 14px;
+  overflow-y: auto;
+}
+
+.catalog-palette > div > div::-webkit-scrollbar {
+  width: 10px;
+}
+
+.catalog-palette > div > div::-webkit-scrollbar-thumb {
+  border: 3px solid var(--layer-canvas);
+  border-radius: var(--r-lg);
+  background: var(--surface-2);
+}
+
+.catalog-palette > div > div > section {
+  --component-group: var(--muted);
+  margin-top: 13px;
+}
+
+.catalog-palette > div > div > section:first-child {
+  margin-top: 6px;
+}
+
+.catalog-palette > div > div > section[data-category="Animation"] {
+  --component-group: var(--component-animation);
+}
+
+.catalog-palette > div > div > section[data-category="Effects"] {
+  --component-group: var(--component-effects);
+}
+
+.catalog-palette > div > div > section[data-category="Mesh"],
+.catalog-palette > div > div > section[data-category="Import"] {
+  --component-group: var(--component-mesh);
+}
+
+.catalog-palette > div > div > section[data-category="Modifiers"] {
+  --component-group: var(--component-modifiers);
+}
+
+.catalog-palette > div > div > section[data-category="Physics"],
+.catalog-palette > div > div > section[data-category="Create"] {
+  --component-group: var(--component-physics);
+}
+
+.catalog-palette > div > div > section[data-category="Rendering"] {
+  --component-group: var(--component-rendering);
+}
+
+.catalog-palette > div > div > section > header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+.catalog-palette > div > div > section > header > i {
+  width: 5px;
+  height: 5px;
+  flex: none;
+  border-radius: var(--r-xs);
+  background: var(--component-group);
+}
+
+.catalog-palette > div > div > section > header > h3 {
+  margin: 0;
+  color: var(--text-1);
+  font: var(--fw-semibold) var(--fs-sm)/1 var(--font-mono);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.catalog-palette > div > div > section > header > small {
+  color: var(--muted-2);
+  font: var(--fs-2xs)/1 var(--font-mono);
+}
+
+.catalog-palette > div > div > section > header > hr {
+  height: 1px;
+  flex: 1;
+  margin: 0;
+  border: 0;
+  background: var(--hairline);
+}
+
+.catalog-palette > div > div > section > div {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(146px, 1fr));
+  gap: 5px;
+}
+
+.catalog-palette__item {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  color: var(--text-1);
+  cursor: pointer;
+  text-align: left;
+  transition: background .1s, border-color .1s;
+}
+
+.catalog-palette__item:hover:not(:disabled),
+.catalog-palette__item:focus-visible:not(:disabled) {
+  border-color: var(--hairline-strong);
+  outline: 0;
+  background: color-mix(in srgb, var(--component-group) 13%, var(--surface-2));
+}
+
+.catalog-palette__item:disabled {
+  cursor: not-allowed;
+  opacity: .42;
+}
+
+.catalog-palette__item > span:first-child {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-md);
+  background: color-mix(in srgb, var(--component-group) 15%, transparent);
+  color: var(--component-group);
+}
+
+.catalog-palette__item > span:first-child .editor-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.catalog-palette__item > span:last-child {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  color: var(--text);
+  font: var(--fw-medium) var(--fs-sm)/1.2 var(--font-ui);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.catalog-palette__empty {
+  margin: 0;
+  padding: 24px;
+  color: var(--muted-2);
+  font: var(--fs-base) var(--font-ui);
+  text-align: center;
+}

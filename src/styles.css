@@ -1,0 +1,16 @@
+/* Ordered compatibility surface. Keep feature imports in original cascade order. */
+
+@import "./styles/app-shell.css";
+@import "./styles/inspector-component-chrome.css";
+@import "./styles/catalog-palette.css";
+@import "./styles/hierarchy.css";
+@import "./styles/scene-workspace.css";
+@import "./styles/animation-authoring.css";
+@import "./styles/media-stage.css";
+@import "./styles/inspector-content.css";
+@import "./styles/overlays-menus.css";
+@import "./styles/inspector-assets.css";
+@import "./styles/hierarchy-actions.css";
+@import "./styles/project-assets.css";
+@import "./styles/dialogs.css";
+@import "./styles/material-slots.css";

@@ -1,0 +1,15 @@
+.input-map__content { padding: 12px; display: grid; gap: 12px; }
+.input-map label { display: grid; gap: 4px; min-width: 0; font-size: 11px; }
+.input-map input { width: 100%; min-width: 0; box-sizing: border-box; }
+.input-map select { width: 100%; min-width: 0; }
+.input-map__actions { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: 10px; }
+.input-map__actions legend, .input-map__project h3 { font-size: 12px; font-weight: 600; margin: 0 0 8px; }
+.input-map__action { padding: 10px; border: 1px solid var(--border); border-radius: 5px; display: grid; gap: 8px; }
+.input-map__action-fields { display: grid; grid-template-columns: minmax(0, 1fr) 90px; gap: 8px; }
+.input-map__action-fields > button { grid-column: 1 / -1; justify-self: start; }
+.input-map__binding { padding-top: 8px; border-top: 1px solid var(--border); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.input-map__binding > button { align-self: end; justify-self: start; }
+.input-map__hint { margin: 0; font-size: 11px; color: var(--muted); line-height: 1.5; overflow-wrap: anywhere; }
+.input-map__buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+.input-map__project { border-top: 1px solid var(--border); padding-top: 12px; display: grid; gap: 8px; }
+.input-map [role="alert"] { margin: 0; font-size: 11px; line-height: 1.5; color: var(--danger); overflow-wrap: anywhere; }

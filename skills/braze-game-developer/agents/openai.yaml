@@ -1,0 +1,4 @@
+interface:
+  display_name: "Braze Game Developer"
+  short_description: "Build and iterate games inside Braze Engine"
+  default_prompt: "Use $braze-game-developer to build my game in Braze, one testable scene and mechanic at a time."

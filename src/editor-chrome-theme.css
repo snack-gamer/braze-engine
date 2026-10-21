@@ -1,0 +1,435 @@
+/* Engine bar, docks, hierarchy, browser, and viewport chrome.
+ * All values reference tokens from theme.css. Flat surfaces + 1px borders; the
+ * only shadow is --shadow-float on floating layers. Shared control visuals
+ * live in ui/controls.css. */
+.topbar {
+  gap: var(--sp-2);
+  padding: 0 9px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-panel-header);
+}
+/* Play mode: a thin flat accent strip under the top bar — unmistakable, no glow. */
+.topbar--playmode {
+  background: var(--bg-panel-header);
+  border-bottom: 1px solid var(--accent);
+}
+.brand { gap: var(--sp-2); }
+.brand-mark {
+  width: var(--icon-size-brand);
+  height: var(--icon-size-brand);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--accent-light);
+}
+.brand-meta h1 {
+  color: var(--text);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0;
+}
+.brand-meta p { display: none; }
+.topbar-divider { background: var(--border); }
+.top-actions { gap: var(--sp-1); }
+.history-cluster { gap: 1px; }
+.topbar-divider { height: 16px; margin-inline: 2px; }
+.top-pass-cluster .animation-workflow-toggle,
+.top-pass-cluster .sequencer-workflow-toggle { color: var(--muted); }
+.top-pass-cluster .animation-workflow-toggle.active,
+.top-pass-cluster .sequencer-workflow-toggle.active {
+  background: var(--state-on-fill);
+  color: var(--state-on-ink);
+}
+
+.workspace { background: var(--bg-base); }
+.assets,
+.rail-left,
+.rail-right {
+  background: var(--panel-body);
+}
+.assets,
+.rail-left { border-right: 1px solid var(--border); }
+.rail-right { border-left: 1px solid var(--border); }
+
+.rail-left .rail-section > .rail-heading:first-child,
+.assets__head,
+.assets__toolbar {
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-chrome);
+}
+.rail-left .rail-section > .rail-heading:first-child { min-height: 34px; padding-inline: var(--sp-3); }
+.rail-heading { color: var(--muted); }
+.hierarchy-search,
+.assets__search {
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--panel-input);
+  transition: border-color var(--t-fast) var(--ease);
+}
+.hierarchy-search:focus-within,
+.assets__search:focus-within { border-color: var(--focus); color: var(--text); }
+.object-row {
+  min-height: 28px;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  color: var(--text-1);
+  transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.object-row:hover { background: var(--bg-hover); }
+.object-row.selected,
+.object-row.selected:nth-child(even) {
+  background: var(--accent-softer);
+}
+.object-row.active,
+.object-row.active:nth-child(even) {
+  background: var(--accent-soft);
+}
+.object-list {
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--panel-well);
+}
+.assets__tiles { background: var(--panel-well); }
+.asset-tile {
+  border: 1px solid transparent;
+  border-radius: var(--r-xs);
+  background: transparent;
+  transition: background-color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+.asset-tile:hover { background: var(--bg-hover); }
+.asset-tile.selected {
+  background: var(--accent-softer);
+  border-color: transparent;
+}
+.asset-tile.focused {
+  background: var(--accent-soft);
+  border-color: var(--focus);
+}
+.assets__tiles.list { gap: 0; }
+.assets__tiles.list .asset-tile,
+.assets__tiles.list > div > .asset-tile {
+  border-color: transparent;
+  background: transparent;
+}
+.assets__tiles.list .asset-tile:hover { background: var(--bg-hover); }
+.assets__tiles.list .asset-tile.focused,
+.assets__tiles.list .asset-tile.selected {
+  background: var(--accent-soft);
+  border-color: transparent;
+}
+.assets__crumb.current { color: var(--text); background: transparent; }
+
+/* -------------------------------------------------------------------------
+ * Hierarchy — compact, grounded scene tree
+ * ---------------------------------------------------------------------- */
+.rail-left .rail-section {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
+}
+
+.rail-left .rail-section > .rail-heading:first-child {
+  min-height: 28px;
+  margin: 0;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-chrome);
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.rail-left .rail-heading .rail-meta {
+  min-width: 18px;
+  color: var(--text-3);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-regular);
+  text-align: right;
+}
+
+.hierarchy-toolbar {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--sp-1);
+  min-height: 36px;
+  padding: var(--sp-1) var(--sp-2);
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-body);
+}
+
+.hierarchy-virtual-spacer {
+  grid-column: 1 / -1;
+  width: 1px;
+  min-width: 1px;
+  pointer-events: none;
+}
+
+.rail-left .add-menu__trigger {
+  height: var(--h-control-compact);
+  padding: 0 var(--sp-2);
+  border-color: transparent;
+  border-radius: var(--r-xs);
+  color: var(--text-2);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-regular);
+}
+
+.rail-left .add-menu__trigger:hover,
+.rail-left .add-menu__trigger.open {
+  border-color: transparent;
+  background: var(--bg-hover);
+}
+
+.hierarchy-search {
+  flex: 1 1 auto;
+  grid-template-columns: 14px minmax(0, 1fr);
+  gap: 6px;
+  height: var(--h-control-compact);
+  min-width: 0;
+  margin: 0;
+  padding: 0 var(--sp-2);
+  border-radius: var(--r-xs);
+  background: var(--panel-input);
+}
+
+.hierarchy-search input {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-regular);
+}
+
+.hierarchy-search input::placeholder {
+  color: var(--text-3);
+}
+
+.object-list {
+  flex: 1 1 auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-content: start;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-height: none;
+  overflow: auto;
+  padding-block-end: var(--sp-1);
+  border: 0;
+  border-radius: 0;
+  background: var(--panel-body);
+}
+
+.object-row {
+  height: 22px;
+  min-height: 22px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-1);
+}
+
+.object-row:nth-child(even) {
+  background: transparent;
+}
+
+.object-row:hover,
+.object-row:hover:nth-child(even) {
+  background: var(--bg-hover);
+}
+
+.object-row.selected,
+.object-row.selected:nth-child(even) {
+  background: var(--accent-softer);
+}
+
+.object-row.active,
+.object-row.active:nth-child(even) {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.object-row.active::before {
+  width: 0;
+}
+
+.object-row.tinted,
+.object-row.tinted:nth-child(even) {
+  background: color-mix(in srgb, var(--row-color) 12%, var(--panel-body));
+}
+
+.object-row.tinted:hover,
+.object-row.tinted:hover:nth-child(even) {
+  background: color-mix(in srgb, var(--row-color) 16%, var(--bg-hover));
+}
+
+.object-row.tinted.active,
+.object-row.tinted.active:nth-child(even) {
+  background: color-mix(in srgb, var(--row-color) 14%, var(--accent-soft));
+  outline: 0;
+}
+
+.object-row.tinted::before,
+.object-row.tinted.active::before {
+  width: 2px;
+}
+
+.object-row__lead {
+  min-width: 0;
+  gap: 4px;
+  padding: 0 3px 0 calc(3px + var(--row-depth, 0) * 14px);
+  overflow: hidden;
+}
+
+.object-row__chevron {
+  width: 12px;
+  height: 18px;
+  color: var(--text-3);
+}
+
+.object-row__chevron:hover {
+  color: var(--text-1);
+}
+
+.object-row__type-icon {
+  flex: 0 0 auto;
+  color: var(--text-2);
+  opacity: 0.9;
+}
+
+.object-name {
+  min-width: 0;
+  overflow: hidden;
+  color: inherit;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-regular);
+  line-height: 1;
+  text-overflow: ellipsis;
+}
+
+.object-name-input {
+  height: 18px;
+  padding: 0 3px;
+  border-radius: var(--r-xs);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-regular);
+}
+
+.object-actions {
+  gap: 0;
+  padding: 0 2px;
+  border-left: 0;
+}
+
+.row-icon {
+  width: 18px;
+  height: 20px;
+  border-radius: var(--r-xs);
+  color: var(--text-3);
+  opacity: 0;
+  transition: opacity var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+
+.object-row:hover .row-icon,
+.object-row.active .row-icon,
+.row-icon.active {
+  opacity: 0.78;
+}
+
+.row-icon:hover,
+.object-row:hover .row-icon:hover {
+  background: var(--bg-active);
+  color: var(--text);
+  opacity: 1;
+}
+
+.row-icon.active,
+.row-icon.camera-view-icon.active-view {
+  color: var(--text-1);
+  opacity: 1;
+}
+
+.modifier-tags {
+  gap: 1px;
+  min-width: 0;
+  padding: 0 3px 0 0;
+  overflow: hidden;
+}
+
+.modifier-tag,
+.modifier-add {
+  width: 14px;
+  height: 16px;
+  border: 0;
+  border-radius: var(--r-xs);
+  background: transparent;
+  color: var(--text-3);
+  opacity: 0.72;
+}
+
+.modifier-tag:hover,
+.modifier-add:hover {
+  background: var(--bg-hover);
+  color: var(--text-1);
+  opacity: 1;
+}
+
+.rail-left .material-chip {
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+  margin: 0 2px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-xs);
+  text-shadow: none;
+}
+
+.rail-left .material-chip > span:first-child {
+  display: none;
+}
+
+.rail-left .material-chip-remove {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  place-items: center;
+  color: var(--text);
+  font-size: 8px;
+  opacity: 0;
+}
+
+.rail-left .material-chip:hover .material-chip-remove {
+  opacity: 1;
+}
+
+.object-list-empty {
+  padding: 10px 8px;
+  font-size: var(--fs-xs);
+}
+
+.overlay-pill,
+.overlay-action {
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-panel-header);
+  box-shadow: var(--shadow-float);
+}
+.overlay-pill button.active,
+.overlay-action.active { background: var(--accent); color: var(--on-accent); }
+.component-menu,
+.shortcuts-modal__panel {
+  border: 1px solid var(--menu-border);
+  border-radius: var(--r-md);
+  background: var(--menu-surface);
+  box-shadow: var(--shadow-float);
+}
+.shortcuts-modal kbd {
+  border: 1px solid var(--border);
+  border-radius: var(--r-xs);
+  background: var(--surface-3);
+  color: var(--text);
+}

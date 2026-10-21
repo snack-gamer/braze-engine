@@ -1,0 +1,32 @@
+.model-import.inspector-section .inspector-section__body {
+  display: grid;
+  gap: var(--sp-1);
+}
+
+.model-import__grid {
+  display: grid;
+  gap: 0;
+}
+
+.model-import__footer {
+  display: grid;
+  gap: var(--sp-1);
+  margin-top: var(--sp-1);
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--component-divider);
+}
+
+.model-import__status {
+  margin: 0;
+}
+
+.model-import__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--sp-1);
+}
+
+.model-import__status.is-error {
+  color: var(--danger);
+}

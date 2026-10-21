@@ -1,0 +1,207 @@
+/* Compact renderer instrumentation with a clear headline/counters/details
+ * hierarchy. The surface stays flat so it belongs to the editor chrome. */
+.viewport-hud {
+  position: absolute;
+  z-index: 12;
+  top: var(--sp-2);
+  left: var(--sp-2);
+  box-sizing: border-box;
+  width: 216px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--layer-window);
+  color: var(--text-1);
+  font-family: var(--font-ui);
+  pointer-events: none;
+  user-select: none;
+  transition: width var(--t-base) var(--ease);
+}
+
+.viewport-hud__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  min-height: 24px;
+  padding: 0 7px;
+  border-bottom: 1px solid var(--hairline);
+  border-radius: calc(var(--r-sm) - 1px) calc(var(--r-sm) - 1px) 0 0;
+  background: var(--layer-window-chrome);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: border-color var(--t-base) var(--ease);
+}
+
+.viewport-hud__head:focus-visible {
+  border-radius: var(--r-md);
+  outline: 1px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.viewport-hud__chevron {
+  color: var(--muted-2);
+  transition: color var(--t-fast) var(--ease), transform var(--t-base) var(--ease);
+}
+
+.viewport-hud__head:hover .viewport-hud__chevron { color: var(--text); }
+.viewport-hud.is-collapsed .viewport-hud__chevron { transform: rotate(-90deg); }
+
+.viewport-hud__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+}
+
+.viewport-hud__live {
+  color: var(--muted-2);
+  font: var(--fw-semibold) 8.5px/1 var(--font-mono);
+  letter-spacing: 0.05em;
+}
+
+.viewport-hud__body {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows var(--t-base) var(--ease), opacity var(--t-fast) var(--ease);
+}
+
+.viewport-hud__body-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding: var(--sp-1) var(--sp-2) var(--sp-2);
+  transition: padding-block var(--t-base) var(--ease);
+}
+
+.viewport-hud.is-collapsed .viewport-hud__body {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+
+.viewport-hud.is-collapsed .viewport-hud__head {
+  border-bottom-color: transparent;
+  border-radius: calc(var(--r-sm) - 1px);
+}
+
+.viewport-hud.is-collapsed .viewport-hud__body-inner {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.viewport-hud.is-collapsed {
+  width: 70px;
+}
+
+.viewport-hud.is-collapsed .viewport-hud__live {
+  display: none;
+}
+
+.viewport-hud__total {
+  padding: 3px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.viewport-hud__total > span,
+.viewport-hud__stat > span,
+.viewport-hud__row > span {
+  display: block;
+  color: var(--text-2);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-medium);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.viewport-hud__total strong {
+  display: block;
+  margin-top: 2px;
+  color: var(--text);
+  font: var(--fw-bold) 20px/1 var(--font-mono);
+  letter-spacing: -0.02em;
+}
+
+.viewport-hud__total small {
+  display: block;
+  margin-top: 1px;
+  color: var(--muted-2);
+  font: var(--fw-regular) 9px/1.15 var(--font-mono);
+  white-space: nowrap;
+}
+
+.viewport-hud__counts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.viewport-hud__stat {
+  min-width: 0;
+}
+
+.viewport-hud__stat strong {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--text-1);
+  font: var(--fw-bold) 15px/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viewport-hud__stat small {
+  display: block;
+  margin-top: 1px;
+  overflow: hidden;
+  color: var(--muted-2);
+  font: var(--fw-regular) 8.5px/1.15 var(--font-mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viewport-hud__row {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  min-height: 24px;
+  border-bottom: 1px solid var(--hairline-soft);
+}
+
+.viewport-hud__row:last-child {
+  border-bottom: 0;
+}
+
+.viewport-hud__row > div {
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.viewport-hud__row strong {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-1);
+  font: var(--fw-semibold) var(--fs-xs)/1.05 var(--font-mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viewport-hud__row small {
+  display: block;
+  min-width: 0;
+  margin-top: 1px;
+  overflow: hidden;
+  color: var(--muted-2);
+  font: var(--fw-regular) 8.5px/1.05 var(--font-mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 860px) {
+  .viewport-hud { width: 204px; }
+  .viewport-hud.is-collapsed { width: 70px; }
+}

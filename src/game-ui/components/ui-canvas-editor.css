@@ -1,0 +1,7 @@
+.ui-canvas-row,.ui-canvas-fields label{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0}
+.ui-canvas-editor p{white-space:normal;overflow-wrap:anywhere}.ui-canvas-preview{min-width:0;width:100%}
+.ui-canvas-row select,.ui-canvas-fields input,.ui-canvas-fields select{min-width:0;max-width:58%;flex:1}
+.ui-canvas-fields input[type=checkbox],.ui-canvas-row input[type=checkbox]{flex:none}
+.ui-canvas-preview__frame{position:relative;min-width:0;width:100%;overflow:hidden;margin:8px 0;background:var(--layer-well);border:1px solid var(--border);border-radius:4px}
+.ui-canvas-document{margin-top:12px}.ui-canvas-document textarea{display:block;width:100%;min-height:220px;resize:vertical;font:11px/1.5 monospace}
+.ui-canvas-document button{margin:6px 6px 0 0}

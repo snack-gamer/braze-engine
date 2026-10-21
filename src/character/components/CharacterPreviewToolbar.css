@@ -1,0 +1,99 @@
+.character-preview-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--sp-2);
+  align-items: center;
+  min-height: 46px;
+  padding: 6px var(--sp-2);
+  border-top: 1px solid var(--component-divider);
+  background: var(--panel-chrome);
+}
+
+.character-preview-toolbar__player {
+  display: grid;
+  grid-template-columns: auto minmax(120px, 190px) minmax(100px, 1fr) auto;
+  gap: var(--sp-2);
+  align-items: center;
+  min-width: 0;
+  padding: 3px;
+  border: 1px solid var(--component-divider);
+  border-radius: var(--r-md);
+  background: var(--layer-contained);
+}
+
+.character-preview-toolbar__player select {
+  min-width: 0;
+}
+
+.character-preview-toolbar .character-preview-toolbar__play {
+  width: var(--h-control);
+  height: var(--h-control);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  background: var(--accent-soft);
+  color: var(--accent-light);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text) 8%, transparent);
+}
+
+.character-preview-toolbar .character-preview-toolbar__play:hover:not(:disabled) {
+  border-color: var(--accent-2);
+  background: color-mix(in srgb, var(--accent-soft) 72%, var(--accent));
+  color: var(--text);
+}
+
+.character-preview-toolbar .character-preview-toolbar__play:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: inset 0 1px 2px var(--well-deep);
+}
+
+.character-preview-toolbar .character-preview-toolbar__play[aria-pressed="true"] {
+  border-color: var(--accent-2);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.character-preview-toolbar__player .editor-range-control {
+  min-width: 80px;
+}
+
+.character-preview-toolbar__player output {
+  display: flex;
+  gap: 4px;
+  color: var(--muted-2);
+  font: var(--fs-xs)/1 var(--font-mono);
+  white-space: nowrap;
+}
+
+.character-preview-toolbar__player output strong {
+  color: var(--text-1);
+  font-weight: var(--fw-medium);
+}
+
+.character-preview-toolbar__tools {
+  display: flex;
+  gap: var(--sp-1);
+  align-items: center;
+}
+
+.character-preview-toolbar--display-only {
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 38px;
+}
+
+.character-preview-toolbar--display-only .character-preview-toolbar__tools {
+  justify-self: end;
+}
+
+@media (max-width: 820px) {
+  .character-preview-toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .character-preview-toolbar__player {
+    grid-template-columns: auto minmax(100px, 1fr) minmax(80px, 1fr);
+  }
+
+  .character-preview-toolbar__player output,
+  .character-preview-toolbar__tools .ghost-button {
+    display: none;
+  }
+}

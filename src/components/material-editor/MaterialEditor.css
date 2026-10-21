@@ -1,0 +1,170 @@
+.brdf-editor {
+  display: grid;
+  gap: 10px;
+}
+
+.brdf-header {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 10px;
+  align-items: stretch;
+}
+
+.brdf-header__body {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.brdf-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.brdf-header__meta span {
+  min-height: 22px;
+  padding: 5px 7px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--bg-input);
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: 1;
+  text-transform: capitalize;
+}
+
+.brdf-preview {
+  display: grid;
+  place-items: center;
+  min-height: 92px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background-color: var(--bg-input);
+  background-image: var(--check-bg);
+  background-size: 16px 16px;
+  overflow: hidden;
+}
+
+.brdf-preview__sphere {
+  width: 68px;
+  height: 68px;
+  border-radius: 999px;
+  background:
+    var(--material-preview-image),
+    var(--material-preview-color);
+  background-size: cover, auto;
+  background-position: center;
+  outline: 1px solid var(--hairline-strong);
+  outline-offset: -1px;
+}
+
+.brdf-name {
+  margin: 0;
+}
+
+.brdf-workbench {
+  display: grid;
+  grid-template-columns: 124px minmax(0, 1fr);
+  gap: 14px;
+  min-height: 0;
+}
+
+.brdf-channel-list {
+  display: grid;
+  align-content: start;
+  padding: 2px 0;
+  background: transparent;
+}
+
+.brdf-channel-list button {
+  display: grid;
+  grid-template-columns: 7px 15px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
+  min-height: 31px;
+  padding: 6px 7px;
+  border: 0;
+  border-bottom: 1px solid var(--hairline);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-2);
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease);
+}
+
+.brdf-channel-list button:last-child {
+  border-bottom: 0;
+}
+
+.brdf-channel-list button:hover {
+  background: transparent;
+  color: var(--text-1);
+}
+
+.brdf-channel-list button.active {
+  background: transparent;
+  color: var(--accent-light);
+  font-weight: 700;
+  border-left: 2px solid var(--accent);
+  margin-left: -2px;
+}
+
+.brdf-channel-dot {
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--muted-2);
+  border-radius: 999px;
+}
+
+.brdf-channel-dot.enabled {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.brdf-channel-list strong {
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brdf-channel-surface {
+  display: grid;
+  align-content: start;
+  gap: 9px;
+  min-width: 0;
+  padding: 2px 0 2px 14px;
+  border-left: 1px solid var(--hairline);
+}
+
+.brdf-channel-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  color: var(--text-1);
+}
+
+.brdf-channel-title strong {
+  overflow: hidden;
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.brdf-channel-panel {
+  display: grid;
+  align-content: start;
+  gap: 9px;
+}

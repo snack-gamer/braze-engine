@@ -1,0 +1,116 @@
+/* ---------------------------------------------------------------- */
+/* In-app confirm modal (replaces window.confirm)                    */
+/* ---------------------------------------------------------------- */
+
+.confirm-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+}
+
+.confirm-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.confirm-modal__panel {
+  position: relative;
+  min-width: 320px;
+  max-width: 420px;
+  padding: 16px 18px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: var(--shadow-float);
+  color: var(--text);
+}
+
+.confirm-modal__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: var(--text);
+  font-size: var(--fs-md);
+  font-weight: 700;
+}
+
+.confirm-modal__icon {
+  color: var(--accent-2);
+}
+
+.confirm-modal__message {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+.confirm-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.confirm-modal__danger {
+  border-color: rgba(244, 109, 117, 0.55);
+  background: rgba(244, 109, 117, 0.18);
+  color: #ffd5d8;
+}
+
+.confirm-modal__danger:hover {
+  background: rgba(244, 109, 117, 0.28);
+  color: #fff;
+}
+
+.confirm-modal__primary {
+  border-color: rgba(255, 255, 255, 0.55);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.confirm-modal__primary:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.folder-import-modal__panel {
+  width: min(420px, calc(100vw - 28px));
+  max-width: 420px;
+}
+
+.folder-import-modal__drop {
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  min-height: 150px;
+  margin: 12px 0 14px;
+  padding: 18px;
+  border: 1px dashed rgba(255, 255, 255, 0.36);
+  border-radius: 9px;
+  background: #0b1012;
+  color: #8f999d;
+  text-align: center;
+}
+
+.folder-import-modal__drop.active {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--accent);
+}
+
+.folder-import-modal__drop strong {
+  color: #d8e0e3;
+  font-size: var(--fs-md);
+}
+
+.folder-import-modal__drop span {
+  max-width: 290px;
+  color: #8d979b;
+  font-size: var(--fs-xs);
+  line-height: 1.35;
+}

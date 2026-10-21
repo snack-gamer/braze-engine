@@ -1,0 +1,63 @@
+/* Authoritative Play/Edit feedback shared by the transport and Game view. */
+.topbar.topbar--playing {
+  border-bottom-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--layer-window-chrome));
+}
+
+.topbar.topbar--paused {
+  border-bottom-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--layer-window-chrome));
+}
+
+.topbar .playback-cluster .playback-button[aria-pressed="true"],
+.topbar .playback-cluster .playback-button[aria-pressed="true"]:hover,
+.topbar .playback-cluster .playback-button[aria-pressed="true"]:focus-visible {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.game-view::after {
+  position: absolute;
+  z-index: 9;
+  inset: 0;
+  border: 2px solid transparent;
+  pointer-events: none;
+  content: "";
+}
+
+.game-view--playing::after { border-color: color-mix(in srgb, var(--accent) 82%, transparent); }
+.game-view--paused::after { border-color: color-mix(in srgb, var(--warning) 82%, transparent); }
+
+.game-view__mode-badge {
+  position: absolute;
+  z-index: 7;
+  top: var(--sp-2);
+  left: var(--sp-2);
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 0 7px;
+  border: 1px solid var(--layer-outline);
+  border-radius: var(--r-sm);
+  background: var(--layer-window);
+  color: var(--muted-2);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+
+.game-view__mode-badge.is-playing {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 20%, var(--layer-window));
+  color: var(--accent-light);
+}
+
+.game-view__mode-badge.is-paused {
+  border-color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 18%, var(--layer-window));
+  color: var(--warning);
+}
+
+.game-view-toolbar__runtime.is-playing { color: var(--accent-light); }
+.game-view-toolbar__runtime.is-paused { color: var(--warning); }

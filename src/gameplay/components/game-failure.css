@@ -1,0 +1,15 @@
+.gameplay-failure {
+  position: absolute;
+  inset: 16px 16px auto;
+  z-index: 2;
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  color: #fff;
+  background: #341f25;
+  border: 1px solid #b97986;
+  border-radius: 6px;
+  font: 14px/1.4 system-ui, sans-serif;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+}

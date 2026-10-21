@@ -1,0 +1,332 @@
+.animation-panel--clip-events {
+  grid-template-rows: minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+}
+
+.animation-clip-events-editor {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--layer-canvas);
+  color: var(--text-2);
+}
+
+.animation-clip-events-toolbar {
+  display: flex;
+  flex: 0 0 auto;
+  min-height: 38px;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 3px 6px;
+  border-bottom: 1px solid var(--border);
+  background: var(--layer-window);
+}
+
+.animation-clip-events-workspace {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+.animation-clip-events-toolbar__identity {
+  display: grid;
+  min-width: 140px;
+  line-height: 1.1;
+}
+
+.animation-clip-events-toolbar__identity strong {
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+}
+
+.animation-clip-events-toolbar__identity span,
+.animation-clip-events-toolbar__duration {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.animation-clip-events-toolbar__duration { margin-right: auto; }
+.animation-clip-events-toolbar__dirty { color: var(--warning); font-size: var(--fs-xs); }
+
+.animation-clip-timeline-shell {
+  min-width: 720px;
+  border-bottom: 1px solid var(--border);
+  background: var(--layer-canvas);
+}
+
+.animation-clip-timeline__header,
+.animation-clip-event-row,
+.animation-clip-key-row {
+  display: grid;
+  grid-template-columns: minmax(230px, 26%) minmax(420px, 1fr);
+}
+
+.animation-clip-timeline__header,
+.animation-clip-event-row {
+  padding-right: var(--animation-clip-scrollbar-width, 0);
+}
+
+.animation-clip-timeline__header { min-height: 38px; }
+
+.animation-clip-transport {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 7px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--layer-window);
+}
+
+.animation-clip-transport__buttons { display: flex; gap: 2px; }
+
+.animation-clip-transport__time {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+}
+
+.animation-clip-transport__time input {
+  width: 48px;
+  height: 22px;
+  border: 1px solid var(--hairline-medium);
+  border-radius: var(--r-xs);
+  background: var(--bg-input);
+  color: var(--text-1);
+  font: inherit;
+  text-align: right;
+}
+
+.animation-clip-timeline__ruler {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  background: var(--layer-window);
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.animation-clip-timeline__ruler > span {
+  position: absolute;
+  bottom: 3px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  transform: translateX(3px);
+  white-space: nowrap;
+}
+
+.animation-clip-timeline__ruler > span > i {
+  position: absolute;
+  bottom: -3px;
+  left: -3px;
+  width: 1px;
+  height: 8px;
+  background: var(--hairline-strong);
+}
+
+.animation-clip-timeline__playhead {
+  position: absolute;
+  z-index: 6;
+  inset-block: 0;
+  width: 1px;
+  background: var(--text-1);
+  pointer-events: none;
+}
+
+.animation-clip-timeline__playhead > i {
+  position: absolute;
+  top: 0;
+  left: -5px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid var(--text-1);
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+}
+
+.animation-clip-timeline__playhead:focus-visible > i { filter: drop-shadow(0 0 2px var(--accent)); }
+.animation-clip-event-row { min-height: 28px; }
+
+.animation-clip-event-row__label,
+.animation-clip-key-row__label {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+  padding: 0 9px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--hairline-soft);
+  background: var(--layer-window);
+}
+
+.animation-clip-event-row__label strong,
+.animation-clip-key-row__label strong {
+  overflow: hidden;
+  color: var(--text-1);
+  font-size: var(--fs-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.animation-clip-event-row__label span,
+.animation-clip-key-row__label span,
+.animation-clip-key-row__label i {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-style: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.animation-clip-key-row__label i { margin-left: auto; opacity: .7; }
+
+.animation-clip-event-line,
+.animation-clip-key-row__surface {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--hairline-soft);
+  background: var(--layer-canvas);
+  touch-action: none;
+}
+
+.animation-clip-event-line { cursor: context-menu; }
+.animation-clip-event-line:focus-visible { outline: 1px solid var(--focus); outline-offset: -1px; }
+.animation-clip-key-rows { max-height: min(42vh, 340px); overflow-x: hidden; overflow-y: auto; }
+.animation-clip-key-row { min-height: 25px; }
+.animation-clip-key-row.summary { min-height: 28px; }
+
+.animation-clip-key-row.summary .animation-clip-key-row__label,
+.animation-clip-key-row.summary .animation-clip-key-row__surface { background: var(--layer-raised); }
+
+.animation-clip-key-row__surface { --animation-key-color: var(--text-2); cursor: ew-resize; }
+.animation-clip-key-row.summary .animation-clip-key-row__surface { --animation-key-color: var(--warning); }
+
+.animation-clip-key-canvas {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.animation-clip-timeline__grid-line {
+  position: absolute;
+  z-index: 0;
+  inset-block: 0;
+  width: 1px;
+  background: var(--hairline-soft);
+  pointer-events: none;
+}
+
+.animation-clip-timeline__playhead-line {
+  position: absolute;
+  z-index: 5;
+  inset-block: 0;
+  width: 1px;
+  background: var(--text-1);
+  pointer-events: none;
+}
+
+.animation-clip-event-marker {
+  position: absolute;
+  z-index: 7;
+  top: 1px;
+  width: 16px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  transform: translateX(-8px);
+  cursor: ew-resize;
+}
+
+.animation-clip-event-marker__flag {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  width: 8px;
+  height: 10px;
+  background: var(--text-1);
+  clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%);
+}
+
+.animation-clip-event-marker::after {
+  position: absolute;
+  top: 12px;
+  bottom: 1px;
+  left: 7px;
+  width: 1px;
+  background: var(--text-2);
+  content: "";
+}
+
+.animation-clip-event-marker[data-selected] > .animation-clip-event-marker__flag,
+.animation-clip-event-marker[data-selected]::after {
+  background: var(--accent);
+}
+
+.animation-clip-event-marker:focus-visible { outline: none; }
+.animation-clip-event-marker:focus-visible > .animation-clip-event-marker__flag {
+  filter: drop-shadow(0 0 2px var(--accent));
+}
+
+.animation-clip-event-menu {
+  position: fixed;
+  z-index: 1200;
+  min-width: 180px;
+  padding: 4px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-sm);
+  background: var(--layer-raised);
+  box-shadow: var(--shadow-float);
+}
+
+.animation-clip-event-menu button {
+  display: block;
+  width: 100%;
+  padding: 6px 9px;
+  border: 0;
+  border-radius: var(--r-xs);
+  background: transparent;
+  color: var(--text-1);
+  text-align: left;
+}
+
+.animation-clip-event-menu button:hover { background: var(--layer-hover); }
+
+.animation-clip-keys-status {
+  padding: 8px 9px 8px calc(26% + 9px);
+  border-bottom: 1px solid var(--hairline-soft);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.animation-clip-keys-status.error { color: var(--danger); }
+
+.animation-clip-events-hint {
+  margin: 0;
+  padding: 6px 9px;
+  border-bottom: 1px solid var(--hairline-soft);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.animation-clip-events-message,
+.animation-clip-events-error {
+  margin: 8px;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.animation-clip-events-error { color: var(--danger); }

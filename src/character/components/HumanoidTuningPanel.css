@@ -1,0 +1,38 @@
+.humanoid-tuning {
+  display: grid;
+  gap: var(--sp-2);
+  padding-bottom: var(--sp-2);
+}
+
+.humanoid-tuning > header {
+  margin-bottom: calc(-1 * var(--sp-2));
+}
+
+.humanoid-tuning__actions {
+  display: flex;
+  gap: var(--sp-1);
+}
+
+.humanoid-tuning > header .ghost-button {
+  border-color: var(--border-strong);
+  background: var(--layer-raised);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text) 8%, transparent);
+}
+
+.humanoid-tuning__intro {
+  margin: 0;
+  padding: 8px;
+  border-bottom: 1px solid var(--component-divider);
+  background: color-mix(in srgb, var(--accent) 5%, var(--component-card));
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+}
+
+.humanoid-tuning .inspector-group {
+  margin-inline: var(--sp-2);
+}
+
+.humanoid-tuning .inspector-row {
+  padding-inline: var(--sp-2);
+}

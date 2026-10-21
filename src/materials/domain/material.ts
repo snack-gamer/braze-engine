@@ -1,0 +1,65 @@
+/**
+ * A shared authored material in the project library. Scene objects link to it
+ * by `materialId`, so one authored edit updates every linked runtime material.
+ */
+export type Material = {
+  id: string;
+  name: string;
+  color: string;
+  roughness: number;
+  metalness: number;
+  specularIntensity: number;
+  clearcoat: number;
+  clearcoatRoughness: number;
+  ior: number;
+  transmission: number;
+  emissive: string;
+  emissiveIntensity: number;
+  opacity: number;
+  normalScale: number;
+  aoIntensity: number;
+  alphaCutoff: number;
+  envMapIntensity: number;
+  thickness: number;
+  sheen: number;
+  sheenRoughness: number;
+  sheenColor: string;
+  side: "front" | "back" | "double";
+  wireframe: boolean;
+  baseColorTextureUrl?: string;
+  baseColorTextureName?: string;
+  baseColorTextureFilename?: string;
+  baseColorTextureFlipY?: boolean;
+  normalTextureUrl?: string;
+  normalTextureName?: string;
+  normalTextureFilename?: string;
+  normalTextureFlipY?: boolean;
+  bumpScale: number;
+  bumpTextureUrl?: string;
+  bumpTextureName?: string;
+  bumpTextureFilename?: string;
+  bumpTextureFlipY?: boolean;
+  roughnessTextureUrl?: string;
+  roughnessTextureName?: string;
+  roughnessTextureFilename?: string;
+  roughnessTextureFlipY?: boolean;
+  metalnessTextureUrl?: string;
+  metalnessTextureName?: string;
+  metalnessTextureFilename?: string;
+  metalnessTextureFlipY?: boolean;
+  emissiveTextureUrl?: string;
+  emissiveTextureName?: string;
+  emissiveTextureFilename?: string;
+  emissiveTextureFlipY?: boolean;
+  alphaTextureUrl?: string;
+  alphaTextureName?: string;
+  alphaTextureFilename?: string;
+  alphaTextureFlipY?: boolean;
+  aoTextureUrl?: string;
+  aoTextureName?: string;
+  aoTextureFilename?: string;
+  aoTextureFlipY?: boolean;
+  sourceAssetFilename?: string;
+  sourceMaterialSlotKey?: string;
+  sourceMaterialName?: string;
+};
