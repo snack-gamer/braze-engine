@@ -1,12 +1,13 @@
 import * as THREE from "three";
 import { DEFAULT_EDITOR_GRID_STYLE } from "../editor/domain/editor-grid-style";
 
-const GRID_PATTERN_SIZE = 256;
-const CELLS_PER_PATTERN = 10;
+const MAJOR_LINE_INTERVAL = 10;
 const DEFAULT_CELL_SIZE = 1;
+const MAX_STEPS_PER_SIDE = 1_000;
+type GridLines = THREE.LineSegments<THREE.BufferGeometry, THREE.LineBasicMaterial>;
 
 export type EditorGrid = Readonly<{
-  object: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+  object: THREE.Group;
   setVisible: (visible: boolean) => void;
   setOpacity: (opacity: number) => void;
   setColor: (color: string) => void;
@@ -24,46 +25,51 @@ export type EditorGridOptions = Readonly<{
   visible?: boolean;
 }>;
 
-/** A single depth-tested grid surface shared by scene and asset-preview canvases. */
+/** ViStudio's thin line grid, shared by Scene and asset-preview canvases. */
 export function createEditorGrid(options: EditorGridOptions): EditorGrid {
-  const texture = createGridPatternTexture();
-  const geometry = new THREE.PlaneGeometry(1, 1);
-  const material = new THREE.MeshBasicMaterial({
-    color: options.color,
-    map: texture,
-    transparent: true,
-    opacity: clamp01(options.opacity),
-    depthTest: true,
-    depthWrite: false,
-    toneMapped: false,
-    side: THREE.DoubleSide,
-  });
-  const object = new THREE.Mesh(geometry, material);
+  const object = new THREE.Group();
   object.name = "Braze Editor Grid";
   object.userData.editorChrome = true;
-  object.rotation.x = -Math.PI * 0.5;
   object.position.y = finiteOr(options.groundHeight, 0);
-  object.renderOrder = -100;
-  object.raycast = () => undefined;
+  const minor = createLines("Minor", options.color, -9000);
+  const major = createLines("Major", options.color, -8999);
+  const lines = [minor, major];
+  object.add(...lines);
 
   let disposed = false;
   let requestedVisible = options.visible ?? true;
   let requestedOpacity = clamp01(options.opacity);
+  let previousCellSize = 0;
+  let previousSteps = 0;
   const syncVisibility = () => {
     object.visible = requestedVisible && requestedOpacity > 0;
   };
-  syncVisibility();
+  const syncOpacity = () => {
+    minor.material.opacity = requestedOpacity * DEFAULT_EDITOR_GRID_STYLE.minorLineOpacity;
+    major.material.opacity = requestedOpacity;
+    syncVisibility();
+  };
   const setExtent = (requestedSize: number, requestedCellSize = DEFAULT_CELL_SIZE) => {
     if (disposed) return;
     const size = positiveFiniteOr(requestedSize, 2);
-    const cellSize = positiveFiniteOr(requestedCellSize, DEFAULT_CELL_SIZE);
-    object.scale.set(size, size, 1);
-    texture.repeat.set(size / (cellSize * CELLS_PER_PATTERN), size / (cellSize * CELLS_PER_PATTERN));
-    // Keep the origin on a major line when the visible extent changes.
-    texture.offset.set(-texture.repeat.x / 2, -texture.repeat.y / 2);
-    texture.updateMatrix();
-    object.updateMatrix();
+    // Bound geometry even for extreme preview sizes or tiny requested cells.
+    const cellSize = Math.max(positiveFiniteOr(requestedCellSize, DEFAULT_CELL_SIZE), size / (2 * MAX_STEPS_PER_SIDE));
+    const steps = Math.min(MAX_STEPS_PER_SIDE, Math.ceil(size / cellSize / 2));
+    if (cellSize === previousCellSize && steps === previousSteps) return;
+    previousCellSize = cellSize;
+    previousSteps = steps;
+    const half = steps * cellSize;
+    const minorPositions: number[] = [];
+    const majorPositions: number[] = [];
+    for (let index = -steps; index <= steps; index += 1) {
+      const offset = index * cellSize;
+      const positions = index % MAJOR_LINE_INTERVAL === 0 ? majorPositions : minorPositions;
+      positions.push(-half, 0, offset, half, 0, offset, offset, 0, -half, offset, 0, half);
+    }
+    replacePositions(minor, minorPositions);
+    replacePositions(major, majorPositions);
   };
+  syncOpacity();
   setExtent(options.size, options.cellSize);
 
   return {
@@ -76,12 +82,12 @@ export function createEditorGrid(options: EditorGridOptions): EditorGrid {
     setOpacity: (opacity) => {
       if (disposed) return;
       requestedOpacity = clamp01(opacity);
-      material.opacity = requestedOpacity;
-      syncVisibility();
+      syncOpacity();
     },
     setColor: (color) => {
       if (disposed) return;
-      material.color.set(color);
+      minor.material.color.set(color);
+      major.material.color.set(color);
     },
     setExtent,
     setGroundHeight: (height) => {
@@ -91,49 +97,35 @@ export function createEditorGrid(options: EditorGridOptions): EditorGrid {
       if (disposed) return;
       disposed = true;
       object.removeFromParent();
-      geometry.dispose();
-      material.dispose();
-      texture.dispose();
+      for (const line of lines) {
+        line.geometry.dispose();
+        line.material.dispose();
+      }
+      object.clear();
     },
   };
 }
 
-function createGridPatternTexture(): THREE.DataTexture {
-  const data = new Uint8Array(GRID_PATTERN_SIZE * GRID_PATTERN_SIZE * 4);
-  const pixelsPerCell = GRID_PATTERN_SIZE / CELLS_PER_PATTERN;
-  for (let y = 0; y < GRID_PATTERN_SIZE; y += 1) {
-    for (let x = 0; x < GRID_PATTERN_SIZE; x += 1) {
-      const distanceX = distanceToGridLine(x, pixelsPerCell);
-      const distanceY = distanceToGridLine(y, pixelsPerCell);
-      const major = distanceToPatternEdge(x) <= 1.25 || distanceToPatternEdge(y) <= 1.25;
-      const minor = distanceX <= 0.7 || distanceY <= 0.7;
-      const alpha = major ? 255 : minor ? Math.round(255 * DEFAULT_EDITOR_GRID_STYLE.minorLineOpacity) : 0;
-      const offset = (y * GRID_PATTERN_SIZE + x) * 4;
-      data[offset] = 255;
-      data[offset + 1] = 255;
-      data[offset + 2] = 255;
-      data[offset + 3] = alpha;
-    }
-  }
-  const texture = new THREE.DataTexture(data, GRID_PATTERN_SIZE, GRID_PATTERN_SIZE, THREE.RGBAFormat);
-  texture.name = "Braze Grid Pattern";
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.magFilter = THREE.LinearFilter;
-  texture.minFilter = THREE.LinearMipmapLinearFilter;
-  texture.generateMipmaps = true;
-  texture.colorSpace = THREE.NoColorSpace;
-  texture.needsUpdate = true;
-  return texture;
+function createLines(name: string, color: string, renderOrder: number): GridLines {
+  const material = new THREE.LineBasicMaterial({
+    color, transparent: true, depthTest: true, depthWrite: false, toneMapped: false,
+  });
+  const line = new THREE.LineSegments(new THREE.BufferGeometry(), material);
+  line.name = `Braze Grid ${name}`;
+  line.userData.editorChrome = true;
+  // Draw before transparent scene content, but respect opaque surface depth.
+  line.renderOrder = renderOrder;
+  line.raycast = () => undefined;
+  return line;
 }
 
-function distanceToGridLine(pixel: number, pixelsPerCell: number): number {
-  const offset = pixel % pixelsPerCell;
-  return Math.min(offset, pixelsPerCell - offset);
-}
-
-function distanceToPatternEdge(pixel: number): number {
-  return Math.min(pixel, GRID_PATTERN_SIZE - 1 - pixel);
+function replacePositions(line: GridLines, positions: number[]): void {
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  geometry.computeBoundingSphere();
+  const previous = line.geometry;
+  line.geometry = geometry;
+  previous.dispose();
 }
 
 function positiveFiniteOr(value: number, fallback: number): number {

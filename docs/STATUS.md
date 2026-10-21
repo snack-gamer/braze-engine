@@ -130,7 +130,41 @@ acceptance contract must not be retroactively labeled passed by these tests.
 
 ## Latest change acceptance
 
-Standalone open-source extraction, 2026-10-21, initial public snapshot:
+Neutral ViStudio-style editor grid, 2026-10-21, based on `451f2bc`:
+
+- Replaced the textured plane with two thin line batches shared by Scene and
+  asset previews. Major lines remain ten cells apart; origin lines use the same
+  grey as the grid, without red/blue axes. Existing controls and preferences
+  remain intact. Geometry changes are bounded and disposed; styling reuses GPU
+  resources and adds no frame-loop work.
+- Checks passed: docs, architecture, TypeScript, 436 Vitest files / 1,760 tests,
+  236 Node tests, 20 soak files / 24 tests, and production bundle budgets
+  (36 chunks, 3,264,557 JavaScript bytes). Seven relevant browser checks passed
+  across the initial run and focused rerun, covering grid controls/reload,
+  model Inspector previews/imports, and live authoring/Play lifetimes. The new
+  pixel check initially counted the viewport border; excluding that border
+  corrected the test without changing rendering.
+- A separate same-agent acceptance pass used the repository skill and all
+  authoring through discovered HTTP v1 tools (43 operations). It created two
+  differently sized blocks, a camera and light in an isolated project, previewed
+  and applied a revision-guarded batch, exercised undo/redo, camera viewpoints,
+  manual Gizmos controls, save/reload and Play/Stop with no browser errors.
+  The first fixture omitted a game camera and Play supplied one; the repeated
+  pass authored an explicit camera so object-count expectations were stable.
+- Viewed the near/far Scene, model preview, and reloaded block-study captures.
+  Lines are thin and neutral, major/minor contrast is visible, and opaque blocks
+  occlude the ground grid. Browser captures are under `test-results`; the
+  independent receipt and images are under the temporary project
+  `braze-grid-acceptance-j1r9d4/acceptance` in the OS temp directory.
+- Limits: no separate evaluation agent or hardware performance measurement.
+  Editor grid preferences have no public gameplay API or automation command;
+  manual controls and browser inspection are the supported path. Gameplay input
+  and static export are not applicable to this editor-chrome visual repair.
+  Automated servers were stopped; the user's 5179 review server remains running.
+
+### Historical public snapshot
+
+Standalone open-source extraction, 2026-10-21:
 
 - The engine is the repository root. Launch and server paths share an explicit
   project-root resolver; the default is ignored `.braze/workspace`. An adjacent

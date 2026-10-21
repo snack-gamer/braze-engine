@@ -129,7 +129,7 @@ test.describe("model asset Inspector", () => {
     await expect(rail.getByText("Imported mesh", { exact: true })).toBeVisible();
   });
 
-  test("shows a real model preview and keeps pipeline identifiers out of the authoring view", async ({ page }) => {
+  test("shows a real model preview and keeps pipeline identifiers out of the authoring view", async ({ page }, testInfo) => {
     await page.goto("/");
     const tile = page.locator(".model-tile").filter({ hasText: modelAsset.name });
     await expect(tile).toBeVisible();
@@ -144,6 +144,7 @@ test.describe("model asset Inspector", () => {
     expect(drawingBuffer.width).toBeGreaterThan(0);
     expect(drawingBuffer.height).toBeGreaterThan(0);
     expect(Math.max(drawingBuffer.width, drawingBuffer.height)).toBeLessThanOrEqual(1024);
+    await preview.screenshot({ path: testInfo.outputPath("model-preview-grid.png") });
 
     await expect(preview).toHaveCSS("resize", "vertical");
     const initialPreviewBounds = await preview.boundingBox();

@@ -337,15 +337,22 @@ completion, keyboard completion, pause, or Stop—commit authored state.
 This split gives Scene and Game views immediate feedback while keeping the
 React application shell outside the frame loop.
 
-Scene and interactive asset previews share `createEditorGrid`. The grid is one
-depth-tested textured plane rather than intersecting transparent line meshes;
-visibility, opacity, color, extent, and ground height update without replacing
-geometry, material, or texture resources. Main-scene values remain editor
-preferences, while short-lived asset preview values stay preview UI state.
-The shared grid style follows ViStudio's blue-grey lines, 0.56 opacity and
-0.52 minor/major contrast; the Scene grid defaults to a 100-unit extent.
-Changing extent keeps the pattern anchored at world origin. Only the complete
-old stock preference tuple is upgraded; customized grid settings are preserved.
+Scene and interactive asset previews share `createEditorGrid`, adapted from
+ViStudio's thin line grid. Two `LineSegments` batches draw minor and major lines
+with depth testing, no depth writes, and early transparent ordering. Major lines
+occur every ten cells, including neutral lines through the origin; there are no
+colored axes or grid textures. Visibility, opacity, color and ground height reuse
+geometry and materials. Extent/cell changes replace and dispose only geometry;
+unchanged layouts are reused. Extreme extents coarsen spacing to bound the grid
+to 8,004 vertices. Disposal releases both batches and removes the group.
+Main-scene values remain editor preferences; asset preview values stay preview
+UI state. The shared blue-grey style uses 0.56 opacity and 0.52 minor/major
+contrast. Scene defaults are one-unit cells across a 100-unit extent; previews
+scale cells to the model. Extents round outward to whole cells anchored at world
+origin. Customized preferences are preserved. Gizmos and preview grid controls
+own the manual workflow. Grid preferences have no automation operation or public
+gameplay API: this is editor chrome, excluded from game rendering and authored
+scene data. Agents can inspect it through browser captures and manual controls.
 Interactive and generated asset previews use the application-owned WebGPU
 session. Interactive previews participate in `EngineLoop`; static previews use
 one serialized hidden surface and wait for queue completion before readback.
