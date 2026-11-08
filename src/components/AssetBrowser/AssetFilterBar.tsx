@@ -16,13 +16,14 @@ const filterTones: Partial<Record<AssetFilter, EditorTone>> = {
 };
 
 /** One compact filter surface shared by search and folder browsing. */
-export function AssetFilterBar({ value, onChange }: {
-  value: AssetFilter; onChange: (value: AssetFilter) => void;
+export function AssetFilterBar({ value, onChange, allowed }: {
+  value: AssetFilter; onChange: (value: AssetFilter) => void; allowed?: readonly AssetFilter[];
 }) {
   return <div className="assets__filters editor-action-strip" role="group" aria-label="Asset type filters">
     {ASSET_FILTERS.map(({ id, label }) => <button key={id} type="button"
       className="icon-button editor-tooltip" data-tooltip={label === "All" ? "All assets" : label}
       aria-label={id === "all" ? "All assets" : id === "favorites" || id === "recent" ? label : `All ${label}`}
+      disabled={allowed && !allowed.includes(id)} title={allowed && !allowed.includes(id) ? `${label}: incompatible with this reference` : label}
       aria-pressed={value === id} onClick={() => onChange(id)}>
       <EditorIcon name={filterIcons[id]} size="toolbar"
         className={`category-glyph ${toneClassName(filterTones[id] ?? "neutral")}`} />

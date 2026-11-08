@@ -1,3 +1,4 @@
+import { rendererPatch } from "../../mesh-renderer/application/renderer-authoring";
 import { captureCameraSettings, DEFAULT_CAMERA_SETTINGS } from "../../camera/domain/camera-settings";
 import { assignMeshPatch } from "../../mesh/application/mesh-assignment";
 import { removeComponentPatch } from "../../lib/components";
@@ -60,6 +61,9 @@ export function executeObjectCommands(input: SceneObject[], commands: unknown, {
           objects = next; break;
         }
         case "component.set": {
+          if (command.component === "meshRenderer") {
+            objects = updateAuthoredSceneObject(objects, command.id, rendererPatch(existing, command.values)); break;
+          }
           if (command.component === "meshFilter") {
             objects = updateAuthoredSceneObject(objects, command.id, assignMeshPatch(existing, command.values.mesh, assetCatalog?.importedAssets)); break;
           }
@@ -93,7 +97,7 @@ export function executeObjectCommands(input: SceneObject[], commands: unknown, {
             })();
           objects = updateAuthoredSceneObject(objects, command.id, patch); break;
         }
-        case "component.remove": objects = updateAuthoredSceneObject(objects, command.id, command.component === "meshFilter" ? removeComponentPatch(existing, "meshFilter") : command.component === "animator" ? { animator: undefined } : command.component === "uiCanvas" ? { uiCanvas: undefined } : command.component === "behaviors"
+        case "component.remove": objects = updateAuthoredSceneObject(objects, command.id, ["meshFilter", "meshRenderer"].includes(command.component) ? removeComponentPatch(existing, command.component as "meshFilter" | "meshRenderer") : command.component === "animator" ? { animator: undefined } : command.component === "uiCanvas" ? { uiCanvas: undefined } : command.component === "behaviors"
           ? { behaviors: undefined } : command.component === "rigidbody"
           ? { rigidbody: undefined } : command.component === "joint" ? { joint: undefined } : command.component === "characterController" ? { characterController: undefined } : { colliders: command.colliderId ? existing.colliders?.filter((item) => item.id !== command.colliderId) : undefined }); break;
       }

@@ -1,0 +1,30 @@
+import { expect, it } from "vitest";
+import { Group, Mesh, BoxGeometry, MeshStandardMaterial } from "three";
+import { makeObject } from "../../lib/payload";
+import { rendererPatch, resetRendererPatch } from "./renderer-authoring";
+import { executeObjectCommands } from "../../automation/application/object-commands";
+import { serializeSceneObject } from "../../scene/serialization/scene-object-encoder";
+import { parseSceneObjects } from "../../scene/serialization/scene-object-decoder";
+import { syncMeshRendererFlags } from "../adapters/three-renderer-flags";
+import { applyTransform } from "../../three/transform";
+it("shares strict renderer edits with tools and preserves mesh/physics through save", () => {
+  const source = makeObject("cube", 0, { id: "a", position: [2,3,4], materialId: "orange", meshRenderer: { receiveShadows: false } });
+  const next = executeObjectCommands([source], [{ op: "component.set", id: "a", component: "meshRenderer", values: { castShadows: false, materialId: null } }], { requireCamera: false }).objects[0];
+  expect(next.position).toEqual(source.position); expect(next.primitive).toBe(source.primitive); expect(next.materialId).toBeUndefined();
+  expect(next.meshRenderer).toEqual({ receiveShadows: false, castShadows: false });
+  expect(parseSceneObjects([serializeSceneObject(next)])[0].meshRenderer).toEqual(next.meshRenderer);
+  expect(() => rendererPatch(source, { motionVectors: true })).toThrow("Unsupported");
+  expect(() => rendererPatch(source, { enabled: "false" })).toThrow("boolean");
+  expect(() => rendererPatch(source, { materialBindings: [{slotKey:"a",materialId:"x"},{slotKey:"a",materialId:"y"}] })).toThrow("unique");
+  expect(resetRendererPatch(next).meshRenderer).toEqual({ enabled: true, castShadows: true, receiveShadows: true });
+});
+it("renderer visibility affects only its body and restores shadow flags", () => {
+  const node = new Group(), child = new Group(), body = new Mesh(new BoxGeometry(), new MeshStandardMaterial()); node.add(body, child);
+  const disabled = makeObject("cube", 0, { meshRenderer: { enabled: false, castShadows: false, receiveShadows: false } });
+  applyTransform(node, disabled); syncMeshRendererFlags(body, disabled);
+  expect(body.visible).toBe(false); expect(node.visible && child.visible).toBe(true); expect(body.castShadow).toBe(false);
+  syncMeshRendererFlags(body, { ...disabled, meshRenderer: undefined });
+  expect(body.visible && body.castShadow && body.receiveShadow).toBe(true);
+  syncMeshRendererFlags(body, { ...disabled, meshRenderer: {enabled:true}, removedComponents:["meshRenderer"] });
+  expect(body.visible).toBe(false); body.geometry.dispose(); (body.material as MeshStandardMaterial).dispose();
+});

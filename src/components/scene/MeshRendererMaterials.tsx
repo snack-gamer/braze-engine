@@ -1,19 +1,16 @@
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
+import { InspectorObjectField } from "../InspectorObjectField";
+import { MaterialPicker } from "../../mesh-renderer/components/MaterialPicker";
 import type { Material } from "../../types";
 import { assetDisplayName } from "../../lib/format";
-import { EditorIcon } from "../../ui/EditorIcon";
 import { MATERIAL_TYPE } from "../AssetBrowser/drag";
 import { MeshRendererFoldout } from "./MeshRendererFoldout";
 
-export type MeshRendererMaterialSlot = {
-  key: string;
-  sourceName?: string;
-  materialId?: string;
-};
+import type { RendererMaterialSlot } from "../../mesh-renderer/application/renderer-material-slots";
 
 type MeshRendererMaterialsProps = {
   materials: Material[];
-  slots: MeshRendererMaterialSlot[];
+  slots: RendererMaterialSlot[];
   onAssign: (slotKey: string, materialId: string) => void;
 };
 
@@ -22,6 +19,7 @@ export function MeshRendererMaterials({
   slots,
   onAssign,
 }: MeshRendererMaterialsProps) {
+  const [picking, setPicking] = useState<string | null>(null);
   const materialById = new Map(materials.map((material) => [material.id, material]));
 
   return (
@@ -48,38 +46,24 @@ export function MeshRendererMaterials({
               onDrop={(event) => {
                 if (!event.dataTransfer.types.includes(MATERIAL_TYPE)) return;
                 event.preventDefault();
-                onAssign(slot.key, event.dataTransfer.getData(MATERIAL_TYPE));
+                const id = event.dataTransfer.getData(MATERIAL_TYPE);
+                if (materialById.has(id)) onAssign(slot.key, id);
               }}
             >
-              <span className="mesh-renderer-material-row__handle" aria-hidden="true">
-                <EditorIcon name="dragHandle" size="compact" />
-              </span>
               <span className="mesh-renderer-material-row__label">{label}</span>
-              <button
-                type="button"
-                className={`mesh-renderer-material-field ${material ? "" : "is-empty"}`}
-                disabled={!material}
-                title={material ? `Reveal ${displayName} in Project` : "Drop a material here"}
-                aria-label={material ? `Reveal ${displayName} in Project` : `No material assigned to ${label}`}
-                onClick={() => material && window.dispatchEvent(new CustomEvent(
-                  "tgan:focus-material",
-                  { detail: { id: material.id } },
-                ))}
-              >
-                <span
-                  className="mesh-renderer-material-field__swatch"
-                  style={material ? { "--material-color": material.color } as CSSProperties : undefined}
-                  aria-hidden="true"
-                />
-                <span className="mesh-renderer-material-field__name">{displayName}</span>
-                <span className="mesh-renderer-material-field__reveal" aria-hidden="true">
-                  <EditorIcon name="reveal" size="control" />
-                </span>
-              </button>
+              <InspectorObjectField name={slot.materialId && !material ? "Missing (Material)" : displayName}
+                placeholder="None (Material)" pickLabel={`Select material for ${label}`} onPick={() => setPicking(slot.key)}
+                onClear={() => onAssign(slot.key, "")}
+                title={slot.materialId && !material ? `Missing material: ${slot.materialId}` : displayName}
+                icon={<span className="mesh-renderer-material-field__swatch" style={material ? { "--material-color": material.color } as CSSProperties : undefined} />}
+                onReveal={material ? () => window.dispatchEvent(new CustomEvent("tgan:focus-material", { detail: { id: material.id } })) : undefined} />
             </div>
           );
         })}
       </div>
+      {picking !== null && <MaterialPicker materials={materials}
+        value={slots.find((slot) => slot.key === picking)?.materialId ?? null}
+        onChoose={(id) => { onAssign(picking, id ?? ""); setPicking(null); }} onClose={() => setPicking(null)} />}
     </MeshRendererFoldout>
   );
 }

@@ -178,7 +178,7 @@ export function App() {
   useSceneActivation({ sceneSync, selection, animatorWorkspace, importedClipPreview });
   sceneLoadedRef.current = sceneSync.loaded;
   useEditorAutomation({ objectsHistory, sceneSync, playback, physicsWorld, prefabModeActive,
-    activeObjectId, selectSceneObject, camera, setCamera });
+    activeObjectId, selectSceneObject, camera, setCamera, materials: materialStore.materials });
   useSceneSaveShortcut({
     disabled: prefabModeActive || playback.active || timeline.playing || !sceneSync.loaded,
     save: sceneSync.saveNow,

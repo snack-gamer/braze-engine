@@ -1,3 +1,5 @@
+import { rendererMaterialSlots } from "../../mesh-renderer/application/renderer-material-slots";
+import { isMeshRenderObject } from "../../lib/components";
 import { useSceneWorkspace } from "../../scene/components/SceneWorkspaceContext";
 import { createStaticSceneQueryCache } from "../application/static-scene-query";
 import { useRenderSession } from "../../rendering/application/RenderSessionProvider";
@@ -8,7 +10,7 @@ import { flushSync } from "react-dom";
 import type { useHistory } from "../../hooks/useHistory";
 import type { useSceneSync } from "../../hooks/useSceneSync";
 import type { ScenePlaySessionController } from "../../editor/session/useScenePlaySaveSession";
-import type { CameraState, SceneObject } from "../../types";
+import type { CameraState, Material, SceneObject } from "../../types";
 import type { PhysicsWorldController } from "../../physics/application/use-physics-world-controller";
 import { SCENE_DOCUMENT_VERSION } from "../../scene/serialization/scene-document";
 import { serializeSceneObject } from "../../scene/serialization/scene-object-encoder";
@@ -22,6 +24,7 @@ import { editorAuthoringAssets } from "./editor-authoring-assets";
 import { reconcileSceneAssetReferences } from "../../assets/application/scene-asset-resolution";
 
 type Input = {
+  materials: Material[];
   objectsHistory: ReturnType<typeof useHistory<SceneObject[]>>;
   sceneSync: ReturnType<typeof useSceneSync>;
   playback: ScenePlaySessionController;
@@ -67,7 +70,10 @@ export function useEditorAutomation(input: Input) {
     if (request.operation === "editor.inspect") {
       const offset = request.offset ?? 0, limit = request.limit ?? 100;
       if (!Number.isInteger(offset) || Number(offset) < 0 || !Number.isInteger(limit) || Number(limit) < 1 || Number(limit) > 200) throw new Error("Invalid pagination (limit 1–200).");
-      return { ...status(), items: objects.slice(Number(offset), Number(offset) + Number(limit)).map(serializeSceneObject) };
+      const page = objects.slice(Number(offset), Number(offset) + Number(limit));
+      return { ...status(), items: page.map(serializeSceneObject),
+        materials: current.materials.map(({ id, name }) => ({ id, name })),
+        rendererSlots: await Promise.all(page.filter(isMeshRenderObject).map(async (object) => ({ objectId: object.id, slots: rendererMaterialSlots(object, current.materials, await (await import("../../mesh-renderer/adapters/source-material-slots")).sourceMaterialSlots(object)) }))) };
     }
     if (request.operation === "editor.validate") return validateAutomationScene(document());
     if (request.operation === "editor.edit") {

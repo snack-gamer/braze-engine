@@ -1,3 +1,4 @@
+import { syncMeshRendererFlags } from "../mesh-renderer/adapters/three-renderer-flags";
 import { assignCameraCullingBody } from "../camera/adapters/camera-culling";
 import * as THREE from "three";
 import type { Material, SceneObject } from "../types";
@@ -196,24 +197,6 @@ export function invalidateNodeAssetLoad(runtime: Runtime, node: THREE.Group): vo
   }
 }
 
-function syncMeshRendererFlags(body: THREE.Object3D, object: SceneObject): boolean {
-  let changed = false;
-  const castShadows = object.meshRenderer?.castShadows;
-  const receiveShadows = object.meshRenderer?.receiveShadows;
-  body.traverse((child) => {
-    const mesh = child as THREE.Mesh;
-    if (!mesh.isMesh) return;
-    if (castShadows !== undefined && mesh.castShadow !== castShadows) {
-      mesh.castShadow = castShadows;
-      changed = true;
-    }
-    if (receiveShadows !== undefined && mesh.receiveShadow !== receiveShadows) {
-      mesh.receiveShadow = receiveShadows;
-      changed = true;
-    }
-  });
-  return changed;
-}
 
 export function syncNode(
   runtime: Runtime,

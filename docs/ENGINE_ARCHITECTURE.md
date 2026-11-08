@@ -524,6 +524,23 @@ through an asset lease and own their materials. Existing generation guards disca
 stale loads. Skinned meshes and animated object replacement are rejected. Whole-model
 imports remain compatible; they do not silently become single-mesh references.
 
+### Mesh Renderer ownership
+
+`src/mesh-renderer/application` owns strict renderer edit capture, Reset defaults and
+material-slot resolution shared by the Inspector and live authoring discovery.
+UI selection/clearing, saved scene/prefab commands and live edits reuse these patches.
+Material and mesh pickers share `AssetReferencePicker` interaction and styling;
+feature owners supply eligible choices. Renderer Inspector and pickers load on demand.
+
+`src/mesh-renderer/adapters/three-renderer-flags.ts` applies enabled/removal and
+shadow flags to the owned render body. Entity transform visibility remains independent
+so disabling a renderer does not hide child entities or remove physics. Body material
+instances remain consumer-owned; source geometry/textures retain existing leases.
+Cold whole-model slot discovery reads stamped source slots under a short-lived lease
+from the existing imported source pool, including public imports without generated
+material assets. It releases on success/failure; cancelled UI queries do not publish.
+No new renderer loop, material cache or GPU ownership is introduced.
+
 ## 6. Undo transactions
 
 History records authored operations, not DOM event frequency. Continuous

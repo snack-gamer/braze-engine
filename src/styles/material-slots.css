@@ -107,12 +107,12 @@
 .mesh-renderer-material-row {
   position: relative;
   display: grid;
-  grid-template-columns: 14px 82px minmax(0, 1fr);
+  grid-template-columns: 82px minmax(0, 1fr);
   align-items: center;
   gap: 7px;
   min-width: 0;
-  min-height: 34px;
-  padding: 5px 6px;
+  min-height: 26px;
+  padding: 2px 6px;
   transition: background-color var(--t-fast) var(--ease);
 }
 
@@ -125,13 +125,6 @@
   box-shadow: inset 0 0 0 1px var(--accent);
 }
 
-.mesh-renderer-material-row__handle {
-  display: inline-grid;
-  place-items: center;
-  color: var(--text-3);
-  cursor: grab;
-}
-
 .mesh-renderer-material-row__label {
   overflow: hidden;
   color: var(--text-2);
@@ -140,73 +133,17 @@
   white-space: nowrap;
 }
 
-.mesh-renderer-material-field {
-  position: relative;
-  display: grid;
-  grid-template-columns: 23px minmax(0, 1fr) 23px;
-  min-width: 0;
-  height: var(--inspector-input-h);
-  overflow: visible;
-  border: 1px solid var(--inspector-field-border);
-  border-radius: var(--inspector-field-radius);
-  background: var(--inspector-input);
-  color: var(--text-1);
-  padding: 0;
-  text-align: left;
-  cursor: pointer;
-}
-
-.mesh-renderer-material-field:hover,
-.mesh-renderer-material-field:focus-within {
-  border-color: var(--inspector-field-hover-border);
-  background: var(--bg-input-2);
-}
-
-.mesh-renderer-material-field:disabled {
-  color: var(--text-3);
-  cursor: default;
-}
-
 .mesh-renderer-material-field__swatch {
   --material-color: var(--text-3);
   display: inline-block;
-  width: 18px;
-  height: 18px;
+  width: var(--icon-size-compact);
+  height: var(--icon-size-compact);
   border: 1px solid var(--component-outline);
   border-radius: 50%;
   background: var(--material-color);
   box-shadow: none;
 }
 
-.mesh-renderer-material-field.is-empty .mesh-renderer-material-field__swatch {
-  border-color: var(--inspector-field-hover-border);
-  background: transparent;
-  box-shadow: none;
-}
-
-.mesh-renderer-material-field__name {
-  overflow: hidden;
-  min-width: 0;
-  font-size: var(--fs-xs);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.mesh-renderer-material-field__reveal {
-  display: inline-grid;
-  place-items: center;
-  height: 22px;
-  border-left: 1px solid var(--inspector-field-border);
-  color: var(--muted-2);
-}
-
-.mesh-renderer-material-field:hover .mesh-renderer-material-field__reveal,
-.mesh-renderer-material-field:focus-visible .mesh-renderer-material-field__reveal {
-  color: var(--text-1);
-}
-
 @media (max-width: 1180px) {
-  .mesh-renderer-material-row {
-    grid-template-columns: 12px 72px minmax(0, 1fr);
-  }
+  .mesh-renderer-material-row { grid-template-columns: 72px minmax(0, 1fr); }
 }

@@ -14,7 +14,7 @@ import type { Material, ModifierPinSelection, SceneObject } from "../../types";
 import { ColliderSection, RigidbodySection } from "../physics/PhysicsSections";
 import { PhysicsValidation } from "../physics/PhysicsValidation";
 import { DirectionalLightSection } from "./DirectionalLightSection";
-import { MaterialSection } from "./MaterialSection";
+const MaterialSection = lazy(() => import("./MaterialSection").then((module) => ({ default: module.MaterialSection })));
 import { ModifierSection } from "./ModifierSection";
 import { SpriteRendererSection } from "./SpriteRendererSection";
 import { TransformSection, type AnimatedTransformChannels } from "./TransformSection";
@@ -88,7 +88,7 @@ const sectionRenderers: Record<SceneInspectorSectionId, InspectorSectionRenderer
     <DirectionalLightSection object={activeObject} updateObject={updateObject} />
   ),
   meshRenderer: ({ activeObject, materialLibrary, updateObject }) => (
-    <MaterialSection object={activeObject} materialLibrary={materialLibrary} updateObject={updateObject} />
+    <Suspense fallback={<InspectorSectionLoading label="Mesh Renderer" />}><MaterialSection object={activeObject} materialLibrary={materialLibrary} updateObject={updateObject} /></Suspense>
   ),
   spriteRenderer: ({ activeObject, updateObject }) => (
     <SpriteRendererSection object={activeObject} updateObject={updateObject} />

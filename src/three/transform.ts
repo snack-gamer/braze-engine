@@ -30,12 +30,8 @@ export function applyTransform(target: THREE.Object3D, object: SceneObject) {
     );
   }
   target.scale.set(object.scale[0], object.scale[1], object.scale[2]);
-  // Mesh Filter absence removes its body during reconciliation, not child objects.
-  const removed = object.removedComponents;
-  target.visible =
-    object.visible &&
-    !removed?.includes("meshRenderer") &&
-    object.meshRenderer?.enabled !== false;
+  // Component visibility belongs to the render body; descendants stay independent.
+  target.visible = object.visible;
 }
 
 export function roundTransform(value: number) {

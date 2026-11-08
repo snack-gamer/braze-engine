@@ -222,6 +222,13 @@ Discover sessions and identify one intended tab. Inspect before editing:
 {"operation":"editor.inspect","sessionId":"from-discovery","offset":0,"limit":100}
 ```
 
+`editor.inspect` also returns material IDs/names and `rendererSlots` for the paginated
+mesh objects. Use `materialId` for a `__whole__` slot, or `materialBindings` with the
+reported imported slot keys. `component.set` / `component.remove` support
+`meshRenderer`; settings, clearing and runtime limitations are defined in the
+[Mesh Renderer contract](./GAMEPLAY_RUNTIME.md#authored-mesh-renderer). The material
+catalog is live-editor discovery; public material creation remains unsupported.
+
 Live edits use numeric revisions and object history; saved-scene edits use byte
 hashes and do not update a tab's unsaved state. Preview with the inspected revision,
 then repeat with `apply: true` after checking the result. Preview is a technical

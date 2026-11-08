@@ -100,9 +100,41 @@ competing skin, arbitrary width or tighter spacing override.
   shared `objectPicker` glyph. Keep the full button hit area; do not enlarge the
   ring to fill it or substitute an empty circle.
 - Searchable asset pickers use a viewport-bounded native modal dialog with an internal
-  scrolling list, search autofocus, arrow/Home/End navigation, Enter/Space selection,
+  scrolling results, search autofocus, arrow/Home/End navigation, Enter confirmation,
   Escape cancellation and focus restoration. Opening never moves Inspector rows.
   Stop editor shortcuts inside the dialog and retain the shared field/type tokens.
+
+Asset browser modals use 92% of the window width and 88% of its height, with a
+small viewport gutter on compact screens. Do not cap them at a fixed desktop box.
+Reuse the Project window's `editor-toolbar`, segmented icon buttons, integrated
+search and `EditorRange` chrome. Keep filters compact and accessible by name,
+with quiet hairline group separators rather than chunky button backgrounds. Reuse
+the full Project type-filter strip; incompatible types stay disabled with explanatory
+tooltips. Favorites reads Project favorites (meshes inherit their source model's
+favorite); confirmed choices enter the same 24-item Recent list. Mounted picker
+and Project views must synchronize preference changes without a reload. Tile
+glyphs scale modestly with zoom (about 28px inside a 72px background at the default
+88px tile size), using theme icon roles as bounds. Reduce excess background space
+before enlarging glyphs, and apply sizing through identity wrappers as well as SVGs.
+Include
+name/path search, source and folder filters, name sorting, grid/list views, preview
+zoom, result counts and selected-asset details. Type eligibility comes from the
+field owner; do not permit incompatible types or offer nonfunctional Scene tabs. Single
+click/Space changes the pending choice and detail footer. Double-click, Enter or
+Select applies one history edit; Cancel/Escape changes nothing. Show clear empty
+results and page beyond 60 items, keeping thumbnail work bounded. Material spheres
+reuse the Project thumbnail cache, not a renderer per tile. Mesh choices currently
+use type glyphs, not misleading whole-model images for individual mesh subassets.
+Keep search, toolbar, results and details separated by spacing and hairlines; use
+shared icon size roles and retain usable picker/control hit areas at narrow widths.
+
+Material rows follow the same reference-field contract. Keep `Element n` labels,
+14px swatches, a separate picker button and consistent field baselines. Use the
+shared `AssetReferencePicker` for searchable mesh and material choices. A material
+count is read-only while slots come from the mesh; do not show drag handles or
+add/remove buttons without a working ordering or multi-pass rendering contract.
+Clearing a slot restores its mesh/default surface. Component Reset clears overrides
+and restores enabled/shadow/output defaults through one Undo transaction.
 
 ## Object identity and hierarchy
 

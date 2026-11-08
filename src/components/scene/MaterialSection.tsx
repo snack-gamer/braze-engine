@@ -1,11 +1,14 @@
-import { lazy, Suspense } from "react";
-const MeshFilterSection = lazy(() => import("../../mesh/components/MeshFilterSection").then((module) => ({ default: module.MeshFilterSection })));
+import { sourceMaterialSlots } from "../../mesh-renderer/adapters/source-material-slots";
+import type { RendererMaterialSlot } from "../../mesh-renderer/application/renderer-material-slots";
+import { rendererMaterialSlots } from "../../mesh-renderer/application/renderer-material-slots";
+import { rendererPatch, resetRendererPatch } from "../../mesh-renderer/application/renderer-authoring";
+import { useEffect, useState } from "react";
+import { MeshFilterSection } from "../../mesh/components/MeshFilterSection";
 import type { Material, PrimitiveKind, SceneObject } from "../../types";
 import { isComponentRemoved, removeComponentPatch } from "../../lib/components";
 import { SceneComponentSection } from "./SceneComponentPresentation";
 import {
   MeshRendererMaterials,
-  type MeshRendererMaterialSlot,
 } from "./MeshRendererMaterials";
 import { MeshRendererSettings } from "./MeshRendererSettings";
 
@@ -29,70 +32,35 @@ export function hasMaterialControls(primitive: PrimitiveKind): boolean {
   return MATERIAL_PRIMITIVES.has(primitive);
 }
 
-function assetFilenameFromUrl(url: string | undefined): string | undefined {
-  if (!url) return undefined;
-  try {
-    const parsed = new URL(url, window.location.href);
-    const prefix = "/3d-models/";
-    if (!parsed.pathname.startsWith(prefix)) return undefined;
-    return decodeURIComponent(parsed.pathname.slice(prefix.length));
-  } catch {
-    return undefined;
-  }
-}
-
 export function MaterialSection(props: MaterialSectionProps) {
   const { object, materialLibrary, updateObject } = props;
-  const assetFilename = assetFilenameFromUrl(object.assetUrl);
-  const generatedSlots = assetFilename && !object.assetMeshBinding
-    ? materialLibrary.filter((material) => material.sourceAssetFilename === assetFilename && material.sourceMaterialSlotKey)
-    : [];
-  const importedSlotMap = new Map<string, { slotKey: string; sourceName?: string; materialId?: string }>();
-  const useGeneratedSlotDefaults = object.importedMaterialBindings === undefined;
-  for (const material of generatedSlots) {
-    importedSlotMap.set(material.sourceMaterialSlotKey!, {
-      slotKey: material.sourceMaterialSlotKey!,
-      sourceName: material.sourceMaterialName || material.name,
-      materialId: useGeneratedSlotDefaults ? material.id : undefined,
-    });
-  }
-  for (const binding of object.importedMaterialBindings ?? []) {
-    importedSlotMap.set(binding.slotKey, {
-      slotKey: binding.slotKey,
-      sourceName: binding.sourceName ?? importedSlotMap.get(binding.slotKey)?.sourceName,
-      materialId: binding.materialId,
-    });
-  }
-  const importedSlots: MeshRendererMaterialSlot[] = Array.from(importedSlotMap.values()).map((slot) => ({
-    key: slot.slotKey,
-    sourceName: slot.sourceName,
-    materialId: slot.materialId,
-  }));
-  const hasImportedSlots = importedSlots.length > 0;
-  const materialSlots: MeshRendererMaterialSlot[] = hasImportedSlots
-    ? importedSlots
-    : [{ key: "__whole__", materialId: object.materialId }];
+  const [source, setSource] = useState<{ url?: string; slots: RendererMaterialSlot[] }>({ slots: [] });
+  useEffect(() => {
+    let active = true;
+    void sourceMaterialSlots(object).then((slots) => { if (active) setSource({ url: object.assetUrl, slots }); });
+    return () => { active = false; };
+  }, [object.assetUrl, object.assetMeshBinding, object.assetMissing, object.primitive]);
+  const materialSlots = rendererMaterialSlots(object, materialLibrary, !object.assetMeshBinding && source.url === object.assetUrl ? source.slots : []);
+  const importedSlots = materialSlots.filter((slot) => slot.key !== "__whole__");
 
   const patchRenderer = (patchValue: NonNullable<SceneObject["meshRenderer"]>) => {
-    updateObject(object.id, {
-      meshRenderer: { ...object.meshRenderer, ...patchValue },
-    });
+    updateObject(object.id, rendererPatch(object, patchValue));
   };
 
   const assignWholeObjectMaterial = (materialId: string) => {
-    updateObject(object.id, { materialId: materialId || undefined });
+    updateObject(object.id, rendererPatch(object, { materialId: materialId || null }));
   };
 
   const assignImportedSlot = (slotKey: string, materialId: string) => {
-    const existing = object.importedMaterialBindings ?? [];
-    const sourceName = importedSlotMap.get(slotKey)?.sourceName;
+    const existing = importedSlots.filter((slot) => slot.materialId).map((slot) => ({ slotKey: slot.key, materialId: slot.materialId!, sourceName: slot.sourceName }));
+    const sourceName = importedSlots.find((slot) => slot.key === slotKey)?.sourceName;
     const next = materialId
       ? [
           ...existing.filter((binding) => binding.slotKey !== slotKey),
           { slotKey, materialId, sourceName },
         ]
       : existing.filter((binding) => binding.slotKey !== slotKey);
-    updateObject(object.id, { importedMaterialBindings: next, materialId: undefined });
+    updateObject(object.id, rendererPatch(object, { materialBindings: next, materialId: null }));
   };
 
   const assignMaterial = (slotKey: string, materialId: string) => {
@@ -105,7 +73,7 @@ export function MaterialSection(props: MaterialSectionProps) {
 
   return (
     <>
-      {showFilter && <Suspense fallback={null}><MeshFilterSection key={object.id} object={object} updateObject={updateObject} /></Suspense>}
+      {showFilter && <MeshFilterSection key={object.id} object={object} updateObject={updateObject} />}
 
       {showRenderer && (
       <SceneComponentSection
@@ -118,6 +86,7 @@ export function MaterialSection(props: MaterialSectionProps) {
           onChange: (checked) => patchRenderer({ enabled: checked }),
           ariaLabel: "Enable Mesh Renderer",
         }}
+        onReset={() => updateObject(object.id, resetRendererPatch(object))}
         onRemove={() => updateObject(object.id, removeComponentPatch(object, "meshRenderer"))}
       >
         <MeshRendererMaterials
@@ -131,7 +100,7 @@ export function MaterialSection(props: MaterialSectionProps) {
           includeInRender={object.renderVisible !== false}
           onCastShadowsChange={(castShadows) => patchRenderer({ castShadows })}
           onReceiveShadowsChange={(receiveShadows) => patchRenderer({ receiveShadows })}
-          onIncludeInRenderChange={(renderVisible) => updateObject(object.id, { renderVisible })}
+          onIncludeInRenderChange={(renderVisible) => updateObject(object.id, rendererPatch(object, { includeInRender: renderVisible }))}
         />
       </SceneComponentSection>
       )}

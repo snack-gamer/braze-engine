@@ -131,6 +131,40 @@ acceptance contract must not be retroactively labeled passed by these tests.
 
 ## Latest change acceptance
 
+Mesh Renderer and asset browser, 2026-11-09, based on `91d7fd9`:
+
+- Essential Mesh Renderer authoring supports material picking, reveal, clearing,
+  drop assignment, Reset, removal, enabled/shadow/output settings and Undo. Imported
+  whole-model slots are discovered from source metadata even without generated
+  material assets; editing one slot preserves other effective assignments. Disabling
+  the renderer affects its body, preserving children and colliders. Undo to omitted
+  shadow settings restores defaults. Public scene/live/prefab edits share validation;
+  live inspection exposes material IDs and resolved slot keys.
+- Mesh/material picker buttons open the shared responsive asset browser. It uses
+  Project toolbar controls, search, compatible type filters, Favorites/Recent, source/folder filters, name sorting, grid/list,
+  preview zoom, balanced glyph/background sizing, paged results and staged selection details. Materials reuse physical
+  sphere thumbnails. Mesh subassets currently use type glyphs. Rules and remaining
+  renderer/runtime limitations are recorded in EDITOR_DESIGN and GAMEPLAY_RUNTIME.
+- Fresh independent public acceptance used the retained isolated project
+  `/private/tmp/braze-mesh-filter-acceptance-20261109`, including two mesh consumers,
+  an independent child and a two-material whole model. It exercised strict rejection,
+  settings/material transactions, discovery, independent slots, clear, Undo/Redo,
+  save and prefab paths. Embedded manual review verified child visibility, material
+  browser search/zoom/list/cancellation and a matching API-free static export.
+  Play/Pause/Step/Stop/restart preserved authored objects. Pausing before the first
+  physics step left collider-backed visuals unpublished until Step; this existing
+  initialization limitation is not a renderer parity claim.
+- Evidence: `renderer-acceptance/receipt.json` in the isolated project,
+  `/private/tmp/braze-asset-browser-final.png`, `/private/tmp/braze-renderer-play.png`,
+  `/private/tmp/braze-renderer-player.png`. Independent screenshot review passed the
+  wide responsive modal; browser checks also cover 1000px and 1800px windows.
+- Verification: 449 Vitest files / 1,798 tests, 238 Node tests, 20 soak files /
+  24 tests, 12 relevant browser checks, types, docs, architecture with zero exceptions
+  and the production bundle budget (39 chunks / 3,275,418 JavaScript bytes). Shared
+  Favorites/Recent synchronization and the 24-item retention limit passed browser
+  assertions and independent source review. No release/deployment or main-project mutation.
+
+
 Hierarchy icon spacing and object picker, 2026-11-09:
 
 - Component badges and action buttons now share slot widths and glyph sizes,

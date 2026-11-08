@@ -33,7 +33,7 @@ export const automationCapabilities = {
     "component.remove": { required: ["id", "component"], optional: ["colliderId"] },
   },
   primitives: AUTOMATION_PRIMITIVES,
-  components: ["rigidbody", "collider", "characterController", "joint", "behaviors", "uiCanvas", "animator"],
+  components: ["meshFilter", "meshRenderer", "rigidbody", "collider", "characterController", "joint", "behaviors", "uiCanvas", "animator"],
   animator: { componentSet: "replace", version: "braze/animator-component-v2", controllerVersion: "braze/animator-controller-v1",
     limits: ANIMATOR_DOCUMENT_LIMITS, eligibility: "ready imported FBX/glTF main model; same as Inspector", controller: "embedded",
     manual: "Animator Inspector and Behavior Map; scene/Prefab Mode history and save", runtime: "context.animation",

@@ -33,7 +33,7 @@ test("Mesh Renderer follows Unity's material-array workflow", async ({ page }) =
   const layout = await meshRenderer.evaluate((element) => {
     const row = element.querySelector<HTMLElement>(".mesh-renderer-material-row")!;
     const label = row.querySelector<HTMLElement>(".mesh-renderer-material-row__label")!.getBoundingClientRect();
-    const field = row.querySelector<HTMLElement>(".mesh-renderer-material-field")!.getBoundingClientRect();
+    const field = row.querySelector<HTMLElement>(".object-field")!.getBoundingClientRect();
     const count = element.querySelector<HTMLElement>(".mesh-renderer-foldout__meta")!;
     return {
       fieldAfterLabel: field.left >= label.right,
@@ -106,7 +106,7 @@ test("component menus and enabled checkboxes work independently of disclosure", 
   await page.keyboard.press("Enter");
   const menu = page.getByRole("menu", { name: "Mesh Renderer options" });
   await expect(menu).toBeVisible();
-  await expect(menu.getByRole("menuitem", { name: "Remove Component" })).toBeFocused();
+  await expect(menu.getByRole("menuitem", { name: "Reset" })).toBeFocused();
   const menuBox = await menu.boundingBox();
   expect(menuBox!.x + menuBox!.width).toBeLessThanOrEqual(page.viewportSize()!.width);
   await page.keyboard.press("Escape");
@@ -407,3 +407,71 @@ function applyScenePatch(scene: JsonRecord, patch: JsonRecord): JsonRecord {
     objects: [...objects.values()],
   };
 }
+
+
+test("renderer material picker clears one slot, preserves others and supports undo", async ({ page }) => {
+  await installMeshRendererFixture(page); await page.goto("/");
+  const renderer = page.locator(".mesh-renderer-section"), fields = renderer.locator(".object-field");
+  await renderer.getByRole("button", { name: "Select material for Element 0", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Select Material", exact: true });
+  await expect(dialog).toBeVisible(); await expect(page.getByRole("searchbox", { name: "Search materials" })).toBeFocused();
+  await page.getByRole("option", { name: /None \(Material\)/ }).dblclick();
+  await expect(dialog).toHaveCount(0);
+  await expect(renderer.getByRole("button", { name: "Reveal Trim in Project", exact: true })).toBeVisible();
+  await expect(renderer.getByRole("button", { name: "Reveal Popped in Project", exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: /^Undo/ }).click();
+  await expect(renderer.getByRole("button", { name: "Reveal Popped in Project", exact: true })).toBeVisible();
+  await fields.first().focus(); await page.keyboard.press("Delete");
+  await expect(renderer.getByRole("button", { name: "Reveal Popped in Project", exact: true })).toHaveCount(0);
+  await renderer.getByRole("button", { name: "Select material for Element 0", exact: true }).click();
+  await page.getByRole("searchbox", { name: "Search materials" }).fill("Popped");
+  await page.keyboard.press("ArrowDown"); await page.keyboard.press("Enter");
+  await expect(renderer.getByRole("button", { name: "Reveal Popped in Project", exact: true })).toBeVisible();
+  await renderer.getByRole("button", { name: "Mesh Renderer options", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Reset", exact: true }).click();
+  await expect(renderer.getByRole("checkbox", { name: "Enable Mesh Renderer" })).toBeChecked();
+  await expect(renderer.getByRole("combobox", { name: "Cast Shadows" })).toHaveValue("on");
+});
+
+
+test("asset browser filters, zooms, previews selection and cancels without assignment", async ({ page }) => {
+  await installMeshRendererFixture(page);
+  await page.addInitScript(() => localStorage.setItem("tgan.assetFavorites", JSON.stringify(["material:body-material"])));
+  await page.goto("/");
+  const renderer = page.locator(".mesh-renderer-section");
+  const pick = renderer.getByRole("button", { name: "Select material for Element 0", exact: true });
+  await pick.click();
+  const dialog = page.getByRole("dialog", { name: "Select Material", exact: true });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "All Models", exact: true })).toBeDisabled();
+  await expect(dialog.getByRole("button", { name: "All Materials", exact: true })).toBeEnabled();
+  await dialog.getByRole("button", { name: "Favorites", exact: true }).click();
+  await expect(dialog.getByRole("listbox", { name: "Materials", exact: true }).getByRole("option")).toHaveCount(1);
+  await expect(dialog.getByRole("option", { name: /Popped/ })).toBeVisible();
+  await dialog.getByRole("button", { name: "All assets", exact: true }).click();
+  await dialog.getByRole("button", { name: "Larger previews" }).click();
+  await expect(dialog.getByRole("slider", { name: "Preview size" })).toHaveValue("104");
+  await dialog.getByRole("button", { name: "List view", exact: true }).click();
+  await expect(dialog.getByRole("slider", { name: "Preview size" })).toBeDisabled();
+  await dialog.getByRole("combobox", { name: "Asset folder" }).selectOption("Materials/Characters");
+  await expect(dialog.getByRole("option", { name: /Popped/ })).toBeVisible();
+  await dialog.getByRole("searchbox", { name: "Search materials" }).fill("no-such-material");
+  await expect(dialog.getByText("No matching assets. Try another search or filter.")).toBeVisible();
+  await dialog.getByRole("button", { name: "Clear search" }).click();
+  await dialog.getByRole("combobox", { name: "Asset folder" }).selectOption("");
+  await dialog.getByRole("combobox", { name: "Sort assets" }).selectOption("za");
+  await dialog.getByRole("option", { name: /Trim/ }).click();
+  await expect(dialog.locator("footer strong")).toHaveText("Trim");
+  await expect(renderer.getByRole("button", { name: "Reveal Popped in Project", exact: true })).toHaveCount(1);
+  await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+  await expect(dialog).toHaveCount(0); await expect(pick).toBeFocused();
+  await pick.click(); await dialog.getByRole("option", { name: /Trim/ }).click();
+  await dialog.getByRole("button", { name: "Select", exact: true }).click();
+  await expect(renderer.getByRole("button", { name: "Reveal Trim in Project", exact: true })).toHaveCount(2);
+  await pick.click(); await dialog.getByRole("button", { name: "Recent", exact: true }).click();
+  await expect(dialog.getByRole("option", { name: /Trim/ })).toBeVisible();
+  await expect(dialog.getByRole("listbox", { name: "Materials", exact: true }).getByRole("option")).toHaveCount(1);
+  await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+  await page.getByRole("button", { name: "Recent", exact: true }).click();
+  await expect(page.locator(".asset-tile").filter({ hasText: "Trim" })).toBeVisible();
+});

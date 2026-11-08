@@ -561,6 +561,40 @@ whole-model references; diagnostics reject mesh subassets and empty filters in t
 subset. Public JavaScript does not yet expose procedural geometry or live mesh
 replacement. Use authored mesh references, or existing whole-model runtime spawning.
 
+## Authored Mesh Renderer
+
+Mesh Renderer supports enabled state, Cast Shadows On/Off, Receive Shadows and
+Include in Render. Disabling or removing it hides only the object's render body;
+children and colliders remain independent. Include in Render retains editor visibility
+while excluding the object from Game/output according to the existing presentation policy.
+
+Material rows use mesh/import-derived slots, a shared asset browser with search,
+source/folder filters, sort, grid/list, thumbnail zoom and pending-selection details,
+Project reveal,
+drag/drop, Delete/Backspace clearing and Undo. Clearing uses the original mesh surface
+(or the primitive default). Whole-object material overrides apply to every slot;
+editing one imported slot preserves other effective assignments and clears the whole
+override. Reset clears material overrides and restores enabled/shadow/output defaults.
+
+`component.set` with `component: "meshRenderer"` merges the boolean fields `enabled`,
+`castShadows`, `receiveShadows`, `includeInRender`; optional `materialId` assigns a
+whole-object material, or `null` clears it. `materialBindings` replaces imported-slot
+assignments with up to 128 unique `{slotKey, materialId, sourceName?}` entries; `[]`
+clears them. Use discovered material IDs: command validation accepts unknown IDs, but existing
+material-library reconciliation can clear unresolved assignments. Scene, live editor and
+saved prefab authoring use the same validation and patches. `component.remove`
+suppresses the renderer; setting it restores the component. `editor.inspect` exposes
+the live material ID/name catalog and resolved `rendererSlots` for each returned mesh
+object. `__whole__` means use `materialId`; other keys use `materialBindings`.
+Material creation/library editing still uses the Project UI, not a public CRUD tool.
+
+Authored scenes and static exports support these settings. Runtime material mutation
+has no public JavaScript API. Runtime-spawned primitive prefabs still require enabled
+rendering/shadows and no authored material overrides; model prefab subset diagnostics
+remain authoritative. Material-array resizing/reordering and extra-slot multi-pass
+rendering, Two Sided/Shadows Only, baked GI, probes, motion vectors, dynamic occlusion
+and rendering-layer masks remain unsupported and have no decorative controls.
+
 ## Object layers
 
 Objects have one numeric `layer` (0 to 31), defaulting to 0 in older documents.

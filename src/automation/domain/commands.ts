@@ -1,3 +1,4 @@
+import { captureRendererEdit } from "../../mesh-renderer/application/renderer-authoring";
 import { captureCameraPatch } from "../../camera/domain/camera-settings";
 import type { CameraSettings } from "../../scene/domain/camera";
 import { captureEntityLayer } from "../../world/domain/entity-layers";
@@ -21,8 +22,8 @@ export type SceneCommand =
   | { op: "object.create"; id: string; primitive: typeof AUTOMATION_PRIMITIVES[number]; values?: ObjectPatch; assetRef?: { guid: string; localId: string } }
   | { op: "object.update"; id: string; values: ObjectPatch }
   | { op: "object.delete"; id: string }
-  | { op: "component.set"; id: string; component: "meshFilter" | "rigidbody" | "collider" | "characterController" | "joint" | "behaviors" | "uiCanvas" | "animator"; values: Record<string, unknown> }
-  | { op: "component.remove"; id: string; component: "meshFilter" | "rigidbody" | "collider" | "characterController" | "joint" | "behaviors" | "uiCanvas" | "animator"; colliderId?: string };
+  | { op: "component.set"; id: string; component: "meshRenderer" | "meshFilter" | "rigidbody" | "collider" | "characterController" | "joint" | "behaviors" | "uiCanvas" | "animator"; values: Record<string, unknown> }
+  | { op: "component.remove"; id: string; component: "meshRenderer" | "meshFilter" | "rigidbody" | "collider" | "characterController" | "joint" | "behaviors" | "uiCanvas" | "animator"; colliderId?: string };
 
 const patches = new Set(["camera", "name", "tags", "layer", "color", "visible", "parentId", "position", "rotation", "scale"]);
 const fields = {
@@ -103,6 +104,10 @@ export function parseSceneCommands(input: unknown): SceneCommand[] {
       case "object.delete": return { op: raw.op, id };
       case "component.set":
       case "component.remove": {
+        if (raw.component === "meshRenderer") {
+          return raw.op === "component.remove" ? { op: raw.op, id, component: raw.component }
+            : { op: raw.op, id, component: raw.component, values: captureRendererEdit(raw.values) };
+        }
         if (raw.component === "meshFilter") {
           if (raw.op === "component.remove") return { op: raw.op, id, component: raw.component };
           const input = record(raw.values, "meshFilter");

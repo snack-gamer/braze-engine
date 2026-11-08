@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export function usePersistedString<T extends string>(
   key: string,
@@ -46,33 +46,36 @@ export function usePersistedNumber(
   return [value, setPersisted];
 }
 
-export function usePersistedJson<T>(
-  key: string,
-  fallback: T,
-  valid: (value: unknown) => value is T,
-): [T, (next: T | ((previous: T) => T)) => void] {
-  const [value, setValue] = useState<T>(() => {
-    if (typeof window === "undefined") return fallback;
-    try {
-      const raw = window.localStorage.getItem(key);
-      if (!raw) return fallback;
-      const parsed = JSON.parse(raw) as unknown;
-      return valid(parsed) ? parsed : fallback;
-    } catch {
-      return fallback;
-    }
-  });
+function readJson<T>(key: string, fallback: T, valid: (value: unknown) => value is T): T {
+  try {
+    const parsed: unknown = JSON.parse(window.localStorage.getItem(key) ?? "null");
+    return valid(parsed) ? parsed : fallback;
+  } catch { return fallback; }
+}
+
+/** Mounted Project and picker consumers observe the same preference changes. */
+export function usePersistedJson<T>(key: string, fallback: T, valid: (value: unknown) => value is T):
+  [T, (next: T | ((previous: T) => T)) => void] {
+  const [value, setValue] = useState<T>(() => readJson(key, fallback, valid));
+  const current = useRef(value); current.current = value;
+  useEffect(() => {
+    const receive = (event: Event) => {
+      const change = (event as CustomEvent<{ key: string; value: unknown }>).detail;
+      if (event.type === "storage" ? (event as StorageEvent).key !== key : change?.key !== key) return;
+      const next = change && valid(change.value) ? change.value : readJson(key, current.current, valid);
+      current.current = next; setValue(next);
+    };
+    window.addEventListener("braze:asset-preference", receive);
+    window.addEventListener("storage", receive);
+    return () => { window.removeEventListener("braze:asset-preference", receive); window.removeEventListener("storage", receive); };
+  }, [key, valid]);
   const setPersisted = useCallback((next: T | ((previous: T) => T)) => {
-    setValue((previous) => {
-      const resolved = typeof next === "function" ? (next as (value: T) => T)(previous) : next;
-      try {
-        window.localStorage.setItem(key, JSON.stringify(resolved));
-      } catch {
-        // Preferences remain usable in memory.
-      }
-      return resolved;
-    });
-  }, [key]);
+    const previous = readJson(key, current.current, valid);
+    const resolved = typeof next === "function" ? (next as (value: T) => T)(previous) : next;
+    current.current = resolved; setValue(resolved);
+    try { window.localStorage.setItem(key, JSON.stringify(resolved)); } catch { /* Retain in-memory preferences. */ }
+    window.dispatchEvent(new CustomEvent("braze:asset-preference", { detail: { key, value: resolved } }));
+  }, [key, valid]);
   return [value, setPersisted];
 }
 

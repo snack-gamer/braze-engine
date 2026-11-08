@@ -24,6 +24,8 @@ const reference = object({ entityId: identifier }, ["entityId"]);
 const behaviorValue = { anyOf: [number, boolean, { type: "string", maxLength: BEHAVIOR_DOCUMENT_LIMITS.stringLength }, reference, { type: "null" }] };
 
 export const componentValueSchemas: Record<string, JsonSchema> = {
+  meshRenderer: object({ enabled: boolean, castShadows: boolean, receiveShadows: boolean, includeInRender: boolean,
+    materialId: nullable(identifier), materialBindings: { type: "array", maxItems: 128, items: object({ slotKey: identifier, materialId: identifier, sourceName: identifier }, ["slotKey", "materialId"]) } }),
   meshFilter: meshFilterSchema,
   animator: animatorComponentSchema,
   uiCanvas: uiDocumentSchema,

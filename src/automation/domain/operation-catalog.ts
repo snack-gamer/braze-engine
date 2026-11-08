@@ -69,7 +69,7 @@ export const automationOperationCatalog: readonly AutomationOperation[] = [
   live("editor.status", "Inspect loading, mode, revision, scene identity and physics readiness. Play success alone does not prove readiness."),
   live("editor.behaviors", "Discover stock/project stable behavior IDs, versions, fields, defaults and bounds from the Inspector registry. Does not create a Play world."),
   live("editor.ui", "Inspect running screen-space UI: screen IDs, current node text/values/styles, active tween count, focused node and up to 200 image/font resource states in presentation (null without an active Game view). Requires ready Play. Optionally select screenId and paginate its nodes. This is runtime state, not saved authoring or a screenshot.", { screenId: identifier, ...pagination }),
-  live("editor.inspect", "Inspect live authored objects, status and numeric revision. Paginate by objectCount; runtime GPU poses are not authored transforms.", pagination),
+  live("editor.inspect", "Inspect live authored objects, status, numeric revision, material IDs/names and rendererSlots for the returned objects. Slot key __whole__ uses materialId; imported keys use materialBindings. Paginate by objectCount; runtime GPU poses are not authored transforms.", pagination),
   live("editor.validate", "Validate live authored physics/components without mutating or playing."),
   live("editor.edit", "Preview/apply an atomic live Edit Mode batch. Inspect numeric revision and sceneInstanceId first. One batch is one undo entry; save separately." + editHelp,
     { baseRevision: { type: "integer", minimum: 0 }, ...edits }, ["baseRevision", "commands"], "write"),
