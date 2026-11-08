@@ -55,7 +55,7 @@
   margin-top: 7px;
   padding: 9px 8px 8px;
   border: 1px solid var(--layer-outline);
-  border-radius: 5px;
+  border-radius: var(--r-md);
   background: var(--layer-well);
   transition: opacity var(--t-base) var(--ease);
 }
@@ -78,7 +78,7 @@
   height: 20px;
   padding: 0;
   border: 1px solid var(--layer-outline);
-  border-radius: 3px;
+  border-radius: var(--r-md);
   background: transparent;
   cursor: pointer;
 }

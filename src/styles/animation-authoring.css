@@ -119,7 +119,7 @@
   height: var(--h-control);
   padding: 0 6px;
   border: 1px solid var(--hairline-strong);
-  border-radius: 6px;
+  border-radius: var(--r-md);
   background: #3b3b3b;
   color: var(--muted);
   font-size: var(--fs-xs);
@@ -166,7 +166,7 @@
   min-height: 74px;
   padding: 14px;
   border: 1px solid var(--hairline);
-  border-radius: 7px;
+  border-radius: var(--r-md);
   background: #1f1f1f;
   color: #8f9da0;
 }
@@ -225,7 +225,7 @@
   height: 100%;
   overflow: hidden;
   border: 1px solid var(--hairline);
-  border-radius: 7px;
+  border-radius: var(--r-md);
   background: #1f1f1f;
 }
 
@@ -464,7 +464,7 @@
   min-width: 0;
   padding: 0;
   border: 1px solid rgba(242, 246, 240, 0.95);
-  border-radius: 2px;
+  border-radius: var(--r-md);
   background: var(--key-color);
   transform: translate(-50%, -50%) rotate(45deg);
   cursor: grab;
@@ -635,7 +635,7 @@
   height: 34px;
   overflow: hidden;
   border: 1px solid rgba(102, 123, 128, 0.28);
-  border-radius: 7px;
+  border-radius: var(--r-md);
   background: rgba(5, 8, 9, 0.78);
   cursor: ew-resize;
 }
@@ -657,7 +657,7 @@
   bottom: 4px;
   width: 2px;
   transform: translateX(-1px);
-  border-radius: 2px;
+  border-radius: var(--r-md);
   background: #dadcde;
   pointer-events: none;
 }
@@ -669,7 +669,7 @@
   min-width: 18px;
   overflow: hidden;
   border: 1px solid rgba(77, 207, 221, 0.42);
-  border-radius: 5px;
+  border-radius: var(--r-md);
   background: rgba(42, 106, 141, 0.78);
   color: #d5e3e5;
   cursor: pointer;
@@ -709,7 +709,7 @@
   max-width: 180px;
   padding: 0 8px;
   border: 1px solid rgba(77, 207, 221, 0.24);
-  border-radius: 6px;
+  border-radius: var(--r-md);
   background: rgba(28, 68, 74, 0.38);
   color: #c8d3d5;
   cursor: pointer;
@@ -755,7 +755,7 @@
   height: 31px;
   padding: 3px 7px;
   border: 1px solid rgba(77, 207, 221, 0.18);
-  border-radius: 6px;
+  border-radius: var(--r-md);
   background: rgba(8, 13, 14, 0.74);
   color: #c8d3d5;
   cursor: pointer;
@@ -859,4 +859,9 @@
   .animation-clip-toggle {
     display: none;
   }
+}
+
+.animation-tabs button.active, .animation-subtabs button.active {
+  background: var(--tab-active-fill);
+  color: var(--tab-active-ink);
 }

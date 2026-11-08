@@ -192,7 +192,7 @@ test("editor transport preserves Play, Pause, Step, and Stop semantics", async (
   await expect(statsToggle).toHaveAttribute("aria-expanded", "true");
   await page.getByRole("tab", { name: "Scene", exact: true }).click();
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()))
-    .toBe("#477fb8");
+    .toBe("#7899c4");
   const surfaceHierarchy = await page.evaluate(() => {
     const style = getComputedStyle(document.documentElement);
     const color = (selector: string) => {
@@ -223,8 +223,8 @@ test("editor transport preserves Play, Pause, Step, and Stop semantics", async (
       hierarchyWell: color(".object-list"),
     };
   });
-  expect(surfaceHierarchy.tokens).toEqual(["#191a1d", "#222326", "#27282c", "#303136", "#383a40"]);
-  expect(surfaceHierarchy.inspectorCard).toBe("rgba(0, 0, 0, 0)");
+  expect(surfaceHierarchy.tokens).toEqual(["#202124", "#303134", "#343539", "#3d3f43", "#45474c"]);
+  expect(surfaceHierarchy.inspectorCardBrightness).toBeGreaterThanOrEqual(surfaceHierarchy.inspectorWindowBrightness);
   expect(surfaceHierarchy.inspectorHeadBrightness).toBeGreaterThan(surfaceHierarchy.inspectorWindowBrightness);
   expect(surfaceHierarchy.hierarchyWell).toBe(surfaceHierarchy.inspectorWindow);
   const physicsSettings = page.getByRole("button", { name: "Physics settings", exact: true });

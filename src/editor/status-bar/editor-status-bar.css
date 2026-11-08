@@ -8,12 +8,17 @@
   height: var(--statusbar-h);
   min-width: 0;
   overflow: hidden;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--panel-divider);
   background: var(--bg-panel-header);
   color: var(--text-2);
-  font: var(--fw-medium) var(--fs-2xs)/1 var(--font-ui);
+  font: var(--fw-regular) var(--statusbar-font-size)/var(--statusbar-line-height) var(--font-ui);
   user-select: none;
 }
+
+/* Semantic tags must not introduce browser-default size or weight jumps. */
+.editor-status-bar :is(strong, small) { font: inherit; }
+.editor-status-bar strong { font-weight: var(--fw-medium); }
+.editor-status-bar .editor-icon { flex: 0 0 auto; }
 
 .editor-status-bar__context,
 .editor-status-bar__activity,
@@ -25,7 +30,7 @@
 }
 
 .editor-status-bar__context {
-  gap: var(--sp-1);
+  gap: var(--statusbar-gap);
   padding-inline: var(--sp-2);
 }
 
@@ -43,10 +48,10 @@
 
 .editor-status-bar__activity {
   justify-content: center;
-  gap: var(--sp-1);
+  gap: var(--statusbar-gap);
   padding-inline: var(--sp-2);
-  border-right: 1px solid var(--border);
-  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--panel-divider);
+  border-left: 1px solid var(--panel-divider);
 }
 
 .editor-status-bar__activity strong { color: var(--text-1); }
@@ -76,15 +81,16 @@
 .editor-status-bar__metric {
   display: inline-flex;
   align-items: center;
-  gap: var(--sp-1);
+  gap: var(--statusbar-gap);
   height: 100%;
   padding-inline: var(--sp-2);
-  border-left: 1px solid var(--border);
+  border-left: 1px solid var(--panel-divider);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
 .editor-status-bar__metric small { color: var(--text-3); }
-.editor-status-bar__metric strong { color: var(--text-1); font-weight: var(--fw-semibold); }
+.editor-status-bar__metric strong { color: var(--text-1); }
 .editor-status-bar__metric.is-info strong { color: var(--accent-light); }
 .editor-status-bar__metric.is-warning strong { color: var(--warning); }
 .editor-status-bar__metric.is-danger strong { color: var(--danger); }

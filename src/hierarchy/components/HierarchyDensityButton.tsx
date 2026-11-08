@@ -18,7 +18,7 @@ export function HierarchyDensityButton({ density, onToggle }: HierarchyDensityBu
       title={compact ? "Compact rows on — click for large rows" : "Click for compact rows"}
       onClick={onToggle}
     >
-      <EditorIcon name="rowDensity" size="control" />
+      <EditorIcon name="rowDensity" size="toolbar" />
     </button>
   );
 }

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, type DragEvent } from "react";
+import { useCallback, useMemo, useState, type DragEvent, type ReactNode } from "react";
 import { trailingHierarchyDropTarget } from "../hierarchy-drop";
 import { canDeleteHierarchySelection, flattenHierarchyRows } from "../hierarchy-model";
 import type { Material, PrimitiveKind, SceneObject } from "../../types";
@@ -11,6 +11,7 @@ import { useHierarchyDensity } from "../hooks/useHierarchyDensity";
 import { useHierarchySelection } from "../hooks/useHierarchySelection";
 
 type HierarchyPanelProps = {
+  renderTree?: (tree: ReactNode, filtering: boolean) => ReactNode;
   objects: SceneObject[];
   activeObjectId: string;
   activeCameraId: string;
@@ -151,6 +152,29 @@ export function HierarchyPanel(props: HierarchyPanelProps) {
     addAssetToHierarchy(asset);
   }, [addAssetToHierarchy]);
 
+  const tree = (
+    <HierarchyList
+      rows={rows}
+      density={density}
+      hasSolo={objects.some((object) => object.solo)}
+      activeObjectId={activeObjectId}
+      activeCameraId={activeCameraId}
+      viewThroughCameraId={viewThroughCameraId}
+      collapsed={collapsed}
+      toggleCollapsed={toggleCollapsed}
+      lockedRootId={lockedRootId}
+      trailingDropTarget={trailingDropTarget}
+      selection={selection}
+      materials={materials}
+      updateObject={updateObject}
+      assignMaterialToObject={assignMaterialToObject}
+      lookThroughCamera={lookThroughCamera}
+      frameObject={frameObject}
+      moveObject={moveObject}
+      openContextMenu={openContextMenu}
+    />
+  );
+
   return (
     <aside
       className={`rail rail-left ${assetDropActive ? "asset-drop-active" : ""}`}
@@ -169,39 +193,20 @@ export function HierarchyPanel(props: HierarchyPanelProps) {
       }}
       onDropCapture={handleAssetDrop}
     >
-      <div className="rail-section">
+      <div className="rail-section" data-hierarchy-density={density}>
         <div className="rail-heading">
           <span>Hierarchy</span>
           <span className="rail-meta" title={`${objects.length} scene objects`}>{objects.length}</span>
         </div>
-        <div className="hierarchy-toolbar">
+        <div className="hierarchy-toolbar editor-toolbar" role="toolbar" aria-label="Hierarchy tools">
           <HierarchyAddMenu addPrimitive={addPrimitive} addCamera={addCamera} />
-          <label className="hierarchy-search" aria-label="Search hierarchy">
-            <EditorIcon name="search" size="row-action" />
+          <label className="hierarchy-search editor-toolbar__search" aria-label="Search hierarchy">
+            <EditorIcon name="search" size="toolbar" />
             <input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search" />
           </label>
           <HierarchyDensityButton density={density} onToggle={toggleDensity} />
         </div>
-        <HierarchyList
-          rows={rows}
-          density={density}
-          hasSolo={objects.some((object) => object.solo)}
-          activeObjectId={activeObjectId}
-          activeCameraId={activeCameraId}
-          viewThroughCameraId={viewThroughCameraId}
-          collapsed={collapsed}
-          toggleCollapsed={toggleCollapsed}
-          lockedRootId={lockedRootId}
-          trailingDropTarget={trailingDropTarget}
-          selection={selection}
-          materials={materials}
-          updateObject={updateObject}
-          assignMaterialToObject={assignMaterialToObject}
-          lookThroughCamera={lookThroughCamera}
-          frameObject={frameObject}
-          moveObject={moveObject}
-          openContextMenu={openContextMenu}
-        />
+        {props.renderTree ? props.renderTree(tree, Boolean(searchQuery.trim())) : tree}
       </div>
 
       {menu && menuObject && (

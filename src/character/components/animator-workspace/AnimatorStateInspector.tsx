@@ -111,7 +111,7 @@ export function AnimatorStateInspector({
         <header><strong>Outgoing edges</strong><span>{state.transitions.length}</span></header>
         {state.transitions.map((transition) => (
           <button type="button" key={transition.id} className="animator-edge-row" onClick={() => onSelectTransition(transition.id)}>
-            <span>→ {destinationName(layer, transition, !location.ownerMachineId)}</span>
+            <span><EditorIcon name="transition" size="compact" /> {destinationName(layer, transition, !location.ownerMachineId)}</span>
             <small>{transition.conditions.length} conditions</small>
           </button>
         ))}

@@ -10,6 +10,7 @@ import {
   syncNode,
 } from "./reconcile";
 import type { Runtime } from "./runtime";
+import { stampGltfSubAssetBindings } from "./imported-subasset-bindings";
 
 const stubLoads = new WeakMap<AssetCache, Map<string, Promise<LoadedAsset>>>();
 const stubReleases = new WeakMap<AssetCache, Map<string, ReturnType<typeof vi.fn>>>();
@@ -132,6 +133,25 @@ function removeNode(runtime: Runtime, node: THREE.Group, objectId: string): void
 }
 
 describe("async scene asset reconciliation", () => {
+  it("keeps collider helpers separate while attaching, coloring and clearing an imported mesh", async () => {
+    const object = { ...assetObject("mesh", "/tests/mesh.glb"), assetMeshBinding: { localId: "mesh:Box", name: "Box", sourceIndex: 0, nodePath: null } };
+    const node = createNode(object), runtime = runtimeFor(object, node), load = deferred<LoadedAsset>();
+    setAssetLoad(runtime, object.assetUrl!, load.promise);
+    const surface = { ...material("orange", 0.5), color: "#e67128" }, onAnimations = vi.fn();
+    syncNode(runtime, node, object, true, surface, [surface], undefined, onAnimations);
+    const helper = new THREE.Group(); helper.userData.colliderGizmo = true; node.add(helper);
+    const source = new THREE.Group(), mesh = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial()); source.add(mesh);
+    stampGltfSubAssetBindings(new Map([[mesh, { meshes: 0 }]]));
+    load.resolve({ object: source, animations: [new THREE.AnimationClip("Source node animation", 1, [])] });
+    await load.promise; await Promise.resolve();
+    const body = findBody(node)!;
+    expect(body).not.toBe(helper); expect(node.children[0]).toBe(helper);
+    expect(((body.children[0] as THREE.Mesh).material as THREE.MeshPhysicalMaterial).color.getHexString()).toBe("e67128");
+    expect(onAnimations).not.toHaveBeenCalled();
+    syncNode(runtime, node, { ...object, meshFilter: { empty: true } }, true, surface, [surface]);
+    expect(findBody(node)).toBeNull(); expect(helper.parent).toBe(node);
+    expect(assetRelease(runtime, object.assetUrl!)).toHaveBeenCalledOnce(); disposeObject(node); disposeObject(source);
+  });
   it("does not clone, attach, or publish animations after the owning node is removed", async () => {
     const object = assetObject("removed-model", "/tests/removed-model.glb");
     const node = createNode(object);

@@ -5,6 +5,15 @@ Status: GPU impulse physics with a spatial large-world path; 10,000 active bodie
 This guide owns supported physics and the explicitly planned technical targets
 below. [STATUS.md](./STATUS.md) owns prioritization and current evidence.
 
+## Object layer defaults
+
+A collider without an explicit `collisionLayer` inherits its owning object's layer
+(default 0), including child colliders in compound bodies. The Collider Inspector
+shows Object layer or a numeric override. Explicit layer 0 and collision masks are
+preserved. Runtime primitive and character create commands apply the same default
+before physics capture. Layer names are project labels for stable indices 0 to 31;
+renaming a slot does not change filtering. Camera rendering masks remain separate.
+
 ## Current implementation
 
 The rigid solver uses Box2D-inspired substepped soft impulses in 3D WGSL. It is

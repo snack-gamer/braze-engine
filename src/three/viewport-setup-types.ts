@@ -38,6 +38,7 @@ export type ViewportSetupArgs = {
   viewportHudHost?: HTMLElement;
   initial: {
     viewportMode: "scene" | "game";
+    cameraProjection?: "perspective" | "orthographic";
     renderSize: { width: number; height: number } | null;
     lowResolution: boolean;
     transformMode: TransformMode;

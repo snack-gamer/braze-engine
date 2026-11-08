@@ -1,3 +1,4 @@
+import { renderCameraIncludesLayer } from "../../camera/adapters/camera-culling";
 import { ParticleEffectView, type PassTargetState } from "@particles/gpu";
 import * as THREE from "three";
 import type { ParticleEffectSettings, SceneObject } from "../../types";
@@ -14,6 +15,7 @@ import { ParticleActivityObserver } from "./particle-activity-observer";
 
 type ParticleEntry = {
   objectId: string;
+  layer: number;
   signature: string;
   view: ParticleEffectView;
 };
@@ -150,9 +152,10 @@ export function createParticleViewport(_host: HTMLElement, options: ParticleView
           });
           view.name = object.name || "Particle Effect";
           if (settings.autoPlay) view.play();
-          entry = { objectId: object.id, signature: pipelineSignature, view };
+          entry = { objectId: object.id, layer: object.layer ?? 0, signature: pipelineSignature, view };
           entries.set(object.id, entry);
         }
+        entry.layer = object.layer ?? 0;
         syncEntryForAdmittedRender(entry, objectMap);
       }
       for (const id of entries.keys()) {
@@ -167,7 +170,7 @@ export function createParticleViewport(_host: HTMLElement, options: ParticleView
     },
     renderToPass(pass, camera, targetState) {
       if (!gpu || !shouldRender || entries.size === 0) return;
-      for (const entry of entries.values()) entry.view.render(pass, camera, targetState);
+      for (const entry of entries.values()) if (renderCameraIncludesLayer(camera, entry.layer)) entry.view.render(pass, camera, targetState);
     },
     dispose() {
       disposed = true;

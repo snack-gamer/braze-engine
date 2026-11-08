@@ -113,7 +113,6 @@ export function HierarchyRow(props: HierarchyRowProps) {
         <EditorIcon
           name={primitiveIconNames[object.primitive]}
           size="tree"
-          weight="strong"
           className={`object-row__type-icon object-row__type-icon--${object.primitive} ${toneClassName(hierarchyObjectTone(props.row))} ${isActiveCamera ? "active" : ""}`}
           aria-hidden
         />
@@ -143,15 +142,9 @@ export function HierarchyRow(props: HierarchyRowProps) {
         <MaterialChip object={object} materials={props.materials} onAssignMaterial={props.onAssignMaterial} />
       </span>
 
+      <HierarchyComponentIndicators object={object} />
       <span className="object-actions">
-        <RowAction
-          active={Boolean(object.solo)}
-          title={object.solo ? "Unsolo" : "Solo — hide everything else"}
-          icon="solo"
-          filled={object.solo}
-          onClick={() => props.onUpdateObject(object.id, { solo: !object.solo })}
-        />
-        {isCamera ? (
+        {isCamera && (
           <RowAction
             active={isViewThroughCamera}
             className={`camera-view-icon ${isViewThroughCamera ? "active-view" : ""}`}
@@ -159,9 +152,14 @@ export function HierarchyRow(props: HierarchyRowProps) {
             icon="cameraView"
             onClick={() => props.onLookThroughCamera(object.id)}
           />
-        ) : (
-          <span className="row-icon row-icon--placeholder" aria-hidden />
         )}
+        <RowAction
+          active={Boolean(object.solo)}
+          title={object.solo ? "Unsolo" : "Solo — hide everything else"}
+          icon="solo"
+          filled={object.solo}
+          onClick={() => props.onUpdateObject(object.id, { solo: !object.solo })}
+        />
         <RowAction
           active={!object.visible}
           title={object.visible ? "Hide in editor" : "Show in editor"}
@@ -175,7 +173,6 @@ export function HierarchyRow(props: HierarchyRowProps) {
           onClick={() => props.onUpdateObject(object.id, { locked: !object.locked })}
         />
       </span>
-      <HierarchyComponentIndicators object={object} />
     </button>
   );
 }
@@ -211,7 +208,7 @@ function MaterialChip(props: {
   return (
     <span
       className="material-chip"
-      title={`Material: ${material.name} — click ✕ to unassign`}
+      title={`Material: ${material.name} (remove to unassign)`}
       style={{ background: material.color }}
       onClick={(event) => event.stopPropagation()}
     >
@@ -224,9 +221,16 @@ function MaterialChip(props: {
           event.stopPropagation();
           props.onAssignMaterial(props.object.id, null);
         }}
+        aria-label="Remove material"
+        onKeyDown={(event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          event.stopPropagation();
+          props.onAssignMaterial(props.object.id, null);
+        }}
         title="Remove material"
       >
-        ✕
+        <EditorIcon name="close" size="micro" />
       </span>
     </span>
   );

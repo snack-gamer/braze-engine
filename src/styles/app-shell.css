@@ -81,7 +81,7 @@ p {
   display: grid;
   place-items: center;
   border: 1px solid var(--border-strong);
-  border-radius: 7px;
+  border-radius: var(--r-md);
   background: var(--surface-3);
   color: var(--accent);
 }
@@ -165,7 +165,7 @@ p {
 .playback-cluster {
   display: inline-grid;
   grid-template-columns: repeat(3, var(--h-control));
-  grid-template-rows: var(--h-input);
+  grid-template-rows: var(--control-transport-button-size);
   align-items: center;
   justify-self: center;
   min-width: 0;
@@ -218,13 +218,7 @@ p {
   background: var(--inspector-body);
   overflow: hidden;
 
-  --inspector-raised-2: var(--layer-hover);   /* highest elevation */
-  /* Inspector wells recess RELATIVE to the card they sit on (see --well in
-   * theme.css) — an absolute near-black here punched holes through every
-   * nesting level and dominated the panel. */
-  --inspector-input: var(--well);
-  --bg-input: var(--well);
-  --bg-input-2: var(--well-deep);
+
 }
 
 .rail-scroll {

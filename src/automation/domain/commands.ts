@@ -1,24 +1,30 @@
+import { captureCameraPatch } from "../../camera/domain/camera-settings";
+import type { CameraSettings } from "../../scene/domain/camera";
+import { captureEntityLayer } from "../../world/domain/entity-layers";
 import type { Vec3 } from "../../scene/domain/scene-values";
 import { captureEntityTags } from "../../world/domain/entity-tags";
 import { captureBehaviorComponent, type BehaviorComponent } from "../../behaviors/domain/behavior-component";
 import { captureUiDocument } from "../../game-ui/domain/ui-validation";
 import { assertAnimatorAuthoringShape } from "../../character/domain/animator-authoring-shape";
+import { captureMeshReference } from "../../mesh/domain/mesh-reference";
 
 export const AUTOMATION_VERSION = 1;
 export const AUTOMATION_PRIMITIVES = ["cube", "sphere", "plane", "transform", "camera", "directionalLight", "gltf", "fbx"] as const;
 export type ObjectPatch = {
+  camera?: Partial<CameraSettings>;
   name?: string; color?: string; visible?: boolean; parentId?: string;
   tags?: readonly string[];
+  layer?: number;
   position?: Vec3; rotation?: Vec3; scale?: Vec3;
 };
 export type SceneCommand =
   | { op: "object.create"; id: string; primitive: typeof AUTOMATION_PRIMITIVES[number]; values?: ObjectPatch; assetRef?: { guid: string; localId: string } }
   | { op: "object.update"; id: string; values: ObjectPatch }
   | { op: "object.delete"; id: string }
-  | { op: "component.set"; id: string; component: "rigidbody" | "collider" | "characterController" | "joint" | "behaviors" | "uiCanvas" | "animator"; values: Record<string, unknown> }
-  | { op: "component.remove"; id: string; component: "rigidbody" | "collider" | "characterController" | "joint" | "behaviors" | "uiCanvas" | "animator"; colliderId?: string };
+  | { op: "component.set"; id: string; component: "meshFilter" | "rigidbody" | "collider" | "characterController" | "joint" | "behaviors" | "uiCanvas" | "animator"; values: Record<string, unknown> }
+  | { op: "component.remove"; id: string; component: "meshFilter" | "rigidbody" | "collider" | "characterController" | "joint" | "behaviors" | "uiCanvas" | "animator"; colliderId?: string };
 
-const patches = new Set(["name", "tags", "color", "visible", "parentId", "position", "rotation", "scale"]);
+const patches = new Set(["camera", "name", "tags", "layer", "color", "visible", "parentId", "position", "rotation", "scale"]);
 const fields = {
   rigidbody: new Set(["enabled", "bodyType", "massMode", "mass", "density", "useGravity", "linearDamping", "angularDamping", "interpolation"]),
   joint: new Set(["enabled", "kind", "connectedObjectId", "anchor", "connectedAnchor", "axis", "restLength", "collideConnected", "limitsEnabled", "minAngle", "maxAngle"]),
@@ -37,6 +43,8 @@ function values(value: unknown, allowed: Set<string>): Record<string, unknown> {
   const result = record(value, "values");
   for (const [key, item] of Object.entries(result)) {
     if (!allowed.has(key)) throw new Error(`Unsupported field: ${key}`);
+    if (key === "camera") { captureCameraPatch(item); continue; }
+    if (key === "layer") { captureEntityLayer(item); continue; }
     if (key === "tags") { captureEntityTags(item); continue; }
     if (key === "geometry") {
       const geometry = record(item, "geometry");
@@ -95,6 +103,12 @@ export function parseSceneCommands(input: unknown): SceneCommand[] {
       case "object.delete": return { op: raw.op, id };
       case "component.set":
       case "component.remove": {
+        if (raw.component === "meshFilter") {
+          if (raw.op === "component.remove") return { op: raw.op, id, component: raw.component };
+          const input = record(raw.values, "meshFilter");
+          if (Object.keys(input).some((key) => key !== "mesh")) throw new Error("Mesh Filter accepts only mesh.");
+          return { op: raw.op, id, component: raw.component, values: { mesh: captureMeshReference(input.mesh) } };
+        }
         if (raw.component === "animator") {
           if (raw.op === "component.remove") return { op: raw.op, id, component: raw.component };
           const input = record(raw.values, "animator"); assertAnimatorAuthoringShape(input);

@@ -1,6 +1,7 @@
 import type { LibraryAsset } from "../../lib/api";
 import { versionedModelAssetUrl } from "../../lib/model-import-settings";
 import type { SceneObject } from "../../types";
+import { resolveMeshAsset } from "../../mesh/application/resolve-mesh-asset";
 
 const MODEL_ASSET_RE = /\.(fbx|usdz|usd|glb|gltf)$/i;
 
@@ -81,6 +82,11 @@ export function reconcileSceneAssetReferences(
   const next = items.map((object) => {
     if (!object.assetRef) return object;
     const asset = byGuid.get(object.assetRef.guid);
+    if (object.assetRef.localId && object.assetRef.localId !== "main") {
+      const resolved = resolveMeshAsset(object, asset, asset && runtimeUrlForLibraryAsset(asset, object.assetUrl));
+      changed ||= resolved !== object;
+      return resolved;
+    }
     if (!asset) {
       if (object.assetMissing && !object.assetUrl) return object;
       changed = true;

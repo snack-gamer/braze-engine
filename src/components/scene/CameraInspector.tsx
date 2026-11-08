@@ -1,7 +1,7 @@
+import { CameraLensControls, CameraEnvironmentControls } from "../../camera/components/CameraLensControls";
+import { CameraCullingMask } from "../../camera/components/CameraCullingMask";
 import { InspectorColor } from "../InspectorColor";
-import { InspectorNumberInput } from "../InspectorNumberInput";
 import { InspectorRow } from "../InspectorRow";
-import { InspectorSlider } from "../InspectorSlider";
 import { InspectorToggle } from "../InspectorToggle";
 import { VectorField } from "../VectorField";
 import { defaultCameraSettings } from "../../constants";
@@ -10,7 +10,8 @@ import { EditorIcon } from "../../ui/EditorIcon";
 import { AddComponentButton } from "./AddComponentButton";
 import { CameraDepthOfFieldSection } from "./CameraDepthOfFieldSection";
 import { InspectorSection } from "./InspectorSection";
-import { PanelHeader } from "./PanelHeader";
+import { SceneObjectHeader } from "./SceneObjectHeader";
+import { InspectorGroup } from "../InspectorGroup";
 import { PrefabInstanceCard } from "./PrefabInstanceCard";
 import type { AnimatedTransformChannels } from "./SceneInspector";
 import { EntityTagHeader } from "../../world/components/EntityTagHeader";
@@ -63,36 +64,11 @@ export function CameraInspector(props: Props) {
 
   return (
     <form className="rail-scroll" autoComplete="off" data-form-type="other" onSubmit={(event) => event.preventDefault()}>
-      <PanelHeader
-        title={cameraObject.name || "(unnamed)"}
-        tone="rendering"
-        icon={<EditorIcon name="objectCamera" size="control" />}
-        actions={(
-          <>
-            <button
-              className={`icon-button ${cameraObject.visible ? "" : "active"}`}
-              type="button"
-              onClick={() => updateObject(cameraObject.id, { visible: !cameraObject.visible })}
-              title={cameraObject.visible ? "Hide" : "Show"}
-            >
-              <EditorIcon name={cameraObject.visible ? "visible" : "hidden"} size="control" />
-            </button>
-            <button
-              className={`icon-button ${cameraObject.locked ? "active" : ""}`}
-              type="button"
-              onClick={() => updateObject(cameraObject.id, { locked: !cameraObject.locked })}
-              title={cameraObject.locked ? "Unlock" : "Lock"}
-            >
-              <EditorIcon name={cameraObject.locked ? "locked" : "unlocked"} size="control" />
-            </button>
-          </>
-        )}
-      />
-      <EntityTagHeader object={cameraObject} objects={objects} onChange={(tags) => updateObject(cameraObject.id, { tags })} />
-      {/* Unity-style single inspector: Transform first, then the camera's
-          own component sections stacked in one scroll. */}
+      <SceneObjectHeader object={cameraObject} updateObject={updateObject} />
+      <EntityTagHeader object={cameraObject} objects={objects} onLayerChange={(layer) => updateObject(cameraObject.id, { layer })} onChange={(tags) => updateObject(cameraObject.id, { tags })} />
+      <PrefabInstanceCard object={cameraObject} />
 
-      <InspectorSection id="camera.transform" title="Transform" defaultOpen>
+      <InspectorSection id="camera.transform" title="Transform" icon={<EditorIcon name="transformMove" size="control" />} defaultOpen>
         {COORD_LABELS.map(({ key, label }) => {
           const values = key === "position" ? cameraObject.position : settings.target;
           const animatedAxes = key === "position" ? animatedTransformChannels?.position : undefined;
@@ -117,106 +93,66 @@ export function CameraInspector(props: Props) {
         })}
       </InspectorSection>
 
-      <InspectorSection id="camera.lens" title="Lens" icon={<EditorIcon name="focus" size="control" />} defaultOpen>
-        <InspectorRow label="FOV">
-          <InspectorSlider
-            value={settings.fov}
-            min={18}
-            max={95}
-            step={1}
-            decimals={0}
-            unit="°"
-            ariaLabel="FOV"
-            onChange={(value) => patchSettings({ fov: value })}
-          />
-        </InspectorRow>
-        <InspectorRow label="Near">
-          <InspectorNumberInput
-            min={0.001}
-            step={0.01}
-            decimals={3}
-            value={settings.near}
-            ariaLabel="Near"
-            onChange={(value) => patchSettings({ near: Math.max(0.001, value) })}
-          />
-        </InspectorRow>
-        <InspectorRow label="Far">
-          <InspectorNumberInput
-            min={1}
-            step={1}
-            decimals={0}
-            value={settings.far}
-            ariaLabel="Far"
-            onChange={(value) => patchSettings({ far: Math.max(1, value) })}
-          />
-        </InspectorRow>
-      </InspectorSection>
-
-      {hasDepthOfField && (
-        <CameraDepthOfFieldSection cameraObject={cameraObject} objects={objects} updateObject={updateObject} />
-      )}
-
-      <InspectorSection id="camera.identity" title="Camera" icon={<EditorIcon name="object" size="control" />}>
-        <InspectorRow label="Name">
-          <input
-            type="text"
-            value={cameraObject.name}
-            autoComplete="off"
-            data-form-type="other"
-            onChange={(event) => updateObject(cameraObject.id, { name: event.target.value })}
-          />
-        </InspectorRow>
-        <InspectorRow
-          label="Row tint"
-          actions={(
-            <InspectorToggle
-              checked={Boolean(cameraObject.rowColorEnabled)}
-              ariaLabel="Enable hierarchy row tint"
-              onChange={(checked) =>
-                updateObject(cameraObject.id, {
-                  rowColorEnabled: checked,
-                  rowColor: checked ? rowColor : cameraObject.rowColor,
-                })
-              }
-            />
-          )}
-        >
-          <InspectorColor
-            value={rowColor}
-            disabled={!cameraObject.rowColorEnabled}
-            ariaLabel="Hierarchy row tint color"
-            onChange={(color) =>
-              updateObject(cameraObject.id, { rowColor: color, rowColorEnabled: true })
-            }
-          />
-        </InspectorRow>
-
-        <div className="camera-action-row">
-          <button
-            type="button"
-            className="ghost-button"
-            onClick={() => lookThroughCamera(cameraObject.id)}
-            title="Snap the editor view to this camera"
-          >
-            <EditorIcon name="cameraView" size="control" /> Look through
-          </button>
-          {isActive ? (
-            <span className="rail-meta active-pill" title="Final renders use this camera">
-              ● Render camera
-            </span>
-          ) : (
+      <InspectorSection id="camera.settings" title="Camera" icon={<EditorIcon name="objectCamera" size="control" />} defaultOpen
+        onReset={() => patchSettings({ ...defaultCameraSettings, target: settings.target })}>
+        <CameraLensControls settings={settings} onChange={patchSettings} />
+        <InspectorGroup id="camera.rendering" title="Rendering">
+          <InspectorRow label="Culling Mask"><CameraCullingMask value={settings.cullingMask ?? 0xffffffff} onChange={(cullingMask) => patchSettings({ cullingMask })} /></InspectorRow>
+          <div className="inspector-actions">
             <button
               type="button"
               className="ghost-button"
-              onClick={() => setActiveCamera(cameraObject.id)}
-              title="Make this the camera that final renders use"
+              onClick={() => lookThroughCamera(cameraObject.id)}
+              title="Snap the editor view to this camera"
             >
-              Set as render camera
+              <EditorIcon name="cameraView" size="control" /> Look through
             </button>
-          )}
-        </div>
-        <PrefabInstanceCard object={cameraObject} />
+            {isActive ? (
+              <span className="rail-meta active-pill" title="Final renders use this camera">
+                <EditorIcon name="status" size="status" filled /> Render camera
+              </span>
+            ) : (
+              <button
+                type="button"
+                className="ghost-button"
+                onClick={() => setActiveCamera(cameraObject.id)}
+                title="Make this the camera that final renders use"
+              >
+                Set as render camera
+              </button>
+            )}
+          </div>
+        </InspectorGroup>
+        <CameraEnvironmentControls settings={settings} onChange={patchSettings} />
+        <InspectorGroup id="camera.editor" title="Editor" defaultOpen={false}>
+          <InspectorRow
+            label="Row tint"
+            actions={(
+              <InspectorToggle
+                checked={Boolean(cameraObject.rowColorEnabled)}
+                ariaLabel="Enable hierarchy row tint"
+                onChange={(checked) =>
+                  updateObject(cameraObject.id, {
+                    rowColorEnabled: checked,
+                    rowColor: checked ? rowColor : cameraObject.rowColor,
+                  })
+                }
+              />
+            )}
+          >
+            <InspectorColor
+              value={rowColor}
+              disabled={!cameraObject.rowColorEnabled}
+              ariaLabel="Hierarchy row tint color"
+              onChange={(color) =>
+                updateObject(cameraObject.id, { rowColor: color, rowColorEnabled: true })
+              }
+            />
+          </InspectorRow>
+
+        </InspectorGroup>
       </InspectorSection>
+      {hasDepthOfField && <CameraDepthOfFieldSection cameraObject={cameraObject} objects={objects} updateObject={updateObject} />}
 
       <BehaviorInspector object={cameraObject} objects={objects} updateObject={updateObject} />
       <AddComponentButton object={cameraObject} updateObject={updateObject} />

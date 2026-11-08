@@ -401,27 +401,15 @@ Rules:
 
 ### Surface hierarchy
 
-Editor surfaces follow one neutral elevation ladder: canvas/well, window,
-contained region, component card, component header, raised/hover. A child
-container must be subtly brighter than the surface that owns it so Inspector
-components, hierarchy rows, asset tiles, and popovers remain visually distinct.
+Follow the mandatory [editor design guide](./EDITOR_DESIGN.md#surface-hierarchy)
+for shared surfaces, palette and interaction states.
 
-Rules:
+### Inspector layout and popup design (mandatory)
 
-- Consume the shared `--layer-*` tokens from `editor-theme.css`; feature CSS
-  must not invent another near-identical grey.
-- Keep selectors with the feature surface that owns them. Compatibility entry
-  stylesheets may contain ordered imports only; they are not a home for new
-  rules. Treat import order and intentional cross-feature overrides as part of
-  the public cascade contract.
-- Use brightness, a quiet outline, and at most a shallow shadow to communicate
-  containment. Do not assign alternating arbitrary greys to sibling cards.
-- Inputs remain recessed wells inside components; headers and hover states move
-  upward by one elevation level.
-- Interaction accent, semantic status colors, and 3D axis colors do not define
-  structural elevation.
-- A new panel must be checked in normal, hover, selected, disabled, and focus
-  states against both its parent surface and neighboring panels.
+The [editor design guide](./EDITOR_DESIGN.md#inspector-layout-and-popup-design-mandatory)
+owns Inspector sizing, spacing, popup behavior, identity alignment, field text
+and persistent hierarchy action visibility. These are requirements for every
+editor change, not optional styling suggestions.
 
 ## 14. Naming and APIs
 

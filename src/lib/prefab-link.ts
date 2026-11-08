@@ -4,6 +4,7 @@ import type { PrefabLink, PrefabOverrideKey } from "../scene/domain/prefab-link"
 const prefabOverrideKeys: PrefabOverrideKey[] = [
   "name",
   "tags",
+  "layer",
   "color",
   "visibility",
   "lock",

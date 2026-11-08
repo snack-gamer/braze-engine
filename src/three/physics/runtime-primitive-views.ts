@@ -1,3 +1,5 @@
+import { cameraCullingMask, subscribeCameraCulling, forgetCameraCulling } from "../../camera/adapters/camera-culling";
+import { cameraIncludesLayer } from "../../camera/domain/camera-settings";
 import * as THREE from "three";
 import type { RuntimePrimitive } from "../../world/domain/runtime-primitive";
 import type { PhysicsBodyBinding } from "../../physics/runtime/pose-binding";
@@ -57,12 +59,12 @@ function createGroup(kind: "box" | "sphere", start: number, capacity: number, po
 
 /** Two draw groups per view, sparse attributes on changes, no per-instance frame walk. */
 export function createRuntimePrimitiveViews(poses: PhysicsPoseBuffers, start: number, capacity: number, retire: () => Promise<void>) {
-  const records = new Map<number, { primitive: RuntimePrimitive; binding?: PhysicsBodyBinding }>();
+  const records = new Map<number, { primitive: RuntimePrimitive; binding?: PhysicsBodyBinding; layer: number }>();
   const views = new Map<Runtime, ReturnType<typeof createGroup>[]>();
   let disposed = false;
   const detach = (runtime: Runtime) => {
     const groups = views.get(runtime); if (!groups) return;
-    views.delete(runtime); groups.forEach((group) => group.mesh.removeFromParent());
+    views.delete(runtime); forgetCameraCulling(runtime, groups); groups.forEach((group) => group.mesh.removeFromParent());
     runtime.invalidateShadowCasterMaterials?.(); markSceneDirty(runtime);
     // Already submitted draws may still use these attributes/materials.
     void retire().catch(() => undefined).then(() => groups.forEach((group) => group.dispose()));
@@ -73,13 +75,15 @@ export function createRuntimePrimitiveViews(poses: PhysicsPoseBuffers, start: nu
       const groups: ReturnType<typeof createGroup>[] = [];
       try {
         groups.push(createGroup("box", start, capacity, poses)); groups.push(createGroup("sphere", start, capacity, poses));
-        for (const [index, value] of records) groups.forEach((group) => group.change(index, value.primitive, value.binding));
+        subscribeCameraCulling(runtime, groups, (mask) => {
+          for (const [index, value] of records) groups.forEach((group) => group.change(index, cameraIncludesLayer(mask, value.layer) ? value.primitive : null, value.binding));
+        });
         groups.forEach((group) => runtime.scene.add(group.mesh)); views.set(runtime, groups); markSceneDirty(runtime);
-      } catch (error) { groups.forEach((group) => group.dispose()); throw error; }
+      } catch (error) { forgetCameraCulling(runtime, groups); groups.forEach((group) => group.dispose()); throw error; }
     },
-    change(index: number, primitive: RuntimePrimitive | null, binding?: PhysicsBodyBinding) {
-      if (primitive) records.set(index, { primitive, binding }); else records.delete(index);
-      for (const [runtime, groups] of views) { groups.forEach((group) => group.change(index, primitive, binding)); markSceneDirty(runtime); }
+    change(index: number, primitive: RuntimePrimitive | null, binding?: PhysicsBodyBinding, layer = 0) {
+      if (primitive) records.set(index, { primitive, binding, layer }); else records.delete(index);
+      for (const [runtime, groups] of views) { groups.forEach((group) => group.change(index, cameraIncludesLayer(cameraCullingMask(runtime), layer) ? primitive : null, binding)); markSceneDirty(runtime); }
     },
     detach,
     dispose() { if (disposed) return; disposed = true; for (const runtime of views.keys()) detach(runtime); records.clear(); },

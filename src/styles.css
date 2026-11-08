@@ -1,7 +1,6 @@
 /* Ordered compatibility surface. Keep feature imports in original cascade order. */
 
 @import "./styles/app-shell.css";
-@import "./styles/inspector-component-chrome.css";
 @import "./styles/catalog-palette.css";
 @import "./styles/hierarchy.css";
 @import "./styles/scene-workspace.css";

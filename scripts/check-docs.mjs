@@ -11,7 +11,7 @@ const files = [...new Set(execFileSync('git', ['ls-files', '-co', '--exclude-sta
   .filter((file) => file && !file.startsWith('vendor/') && existsSync(path.join(root, file)));
 const actual = readdirSync(path.join(engine, 'docs')).filter((file) => file.endsWith('.md')).sort();
 const failures = [];
-if (actual.join('\n') !== [...ENGINE_GUIDES].sort().join('\n')) failures.push('Engine docs must use the eight authoritative guides; update their existing sections.');
+if (actual.join('\n') !== [...ENGINE_GUIDES].sort().join('\n')) failures.push('Engine docs must use the authoritative guide catalog; update the owning guide.');
 for (const file of files) {
   for (const failure of documentationLinkFailures(path.join(root, file), read(path.join(root, file)), existsSync, read)) failures.push(`${file}: ${failure}`);
 }

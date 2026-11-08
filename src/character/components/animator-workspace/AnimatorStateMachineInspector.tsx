@@ -130,7 +130,7 @@ function TransitionList({
       className="animator-edge-row"
       onClick={() => onSelect(transition.id)}
     >
-      <span>→ {destinationName(layer, transition)}</span>
+      <span><EditorIcon name="transition" size="compact" /> {destinationName(layer, transition)}</span>
       <small>{transition.conditions.length} conditions</small>
     </button>)}
     {transitions.length === 0 && <p className="animator-inspector-empty">{empty}</p>}

@@ -282,7 +282,7 @@
   right: 0;
   left: 0;
   height: 9px;
-  border-radius: calc(var(--r-lg) - 1px) calc(var(--r-lg) - 1px) 0 0;
+  border-radius: calc(var(--r-lg) - var(--r-md)) calc(var(--r-lg) - var(--r-md)) 0 0;
   background: color-mix(in srgb, var(--text) 3%, transparent);
   content: "";
   pointer-events: none;
@@ -385,7 +385,7 @@
   bottom: 7px;
   left: 10px;
   height: 3px;
-  border-radius: 2px;
+  border-radius: var(--r-md);
   background: color-mix(in srgb, var(--muted) 45%, transparent);
   pointer-events: none;
 }
@@ -593,3 +593,5 @@
 @container animator-workspace (max-width: 1050px) {
   .animator-workspace__body { grid-template-columns: 190px minmax(320px, 1fr) 5px var(--animator-inspector-width); }
 }
+
+.animator-edge-row > span { display: inline-flex; align-items: center; gap: var(--sp-1); }

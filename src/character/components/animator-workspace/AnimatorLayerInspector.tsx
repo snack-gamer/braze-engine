@@ -70,7 +70,7 @@ export function AnimatorLayerInspector({ controller, layer, masks, onChange, onD
           : "Use for hit, stun, death, or landing. Keep normal flow on state edges."}
         </p>
         {!layer.syncedLayerId && layer.anyStateTransitions.map((transition) => <button type="button" key={transition.id} className="animator-edge-row" onClick={() => onSelectReaction(transition.id)}>
-          <span>→ {destinationName(layer, transition)}</span>
+          <span><EditorIcon name="transition" size="compact" /> {destinationName(layer, transition)}</span>
           <small>{transition.conditions.length} conditions</small>
         </button>)}
       </section>

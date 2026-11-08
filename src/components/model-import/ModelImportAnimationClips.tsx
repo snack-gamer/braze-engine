@@ -2,7 +2,7 @@ import type {
   ModelAnimationClipSource,
   ResolvedModelAnimationClipSettings,
 } from "../../character/application/model-animation-clip-settings";
-import { EditorControlGroup, EditorNumberField, EditorPropertyRow } from "../../ui";
+import { EditorIcon, EditorControlGroup, EditorNumberField, EditorPropertyRow } from "../../ui";
 import { ModelImportToggleRow } from "./ModelImportControlRows";
 import { ModelImportClipRange } from "./ModelImportClipRange";
 
@@ -84,8 +84,8 @@ export function ModelImportAnimationClips({
           {rows.length === 0 && <p>No imported clips. Add one from the source take.</p>}
         </div>
         <div className="model-import-clip-table__actions">
-          <button type="button" aria-label="Add animation clip" title="Add clip" disabled={!canAdd} onClick={onAdd}>+</button>
-          <button type="button" aria-label="Remove selected animation clip" title="Remove clip" disabled={!selectedRow} onClick={onRemove}>−</button>
+          <button type="button" aria-label="Add animation clip" title="Add clip" disabled={!canAdd} onClick={onAdd}><EditorIcon name="add" size="compact" /></button>
+          <button type="button" aria-label="Remove selected animation clip" title="Remove clip" disabled={!selectedRow} onClick={onRemove}><EditorIcon name="remove" size="compact" /></button>
         </div>
       </div>
 

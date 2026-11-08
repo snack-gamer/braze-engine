@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 export const ENGINE_GUIDES = Object.freeze([
-  'AI_GAME_DEVELOPER.md', 'CODING_RULEBOOK.md', 'ENGINE_ARCHITECTURE.md',
+  'AI_GAME_DEVELOPER.md', 'CODING_RULEBOOK.md', 'EDITOR_DESIGN.md', 'ENGINE_ARCHITECTURE.md',
   'GAMEPLAY_RUNTIME.md', 'CHARACTER_SYSTEM.md', 'PHYSICS_ENGINE.md', 'OPERATIONS.md', 'STATUS.md',
 ]);
 

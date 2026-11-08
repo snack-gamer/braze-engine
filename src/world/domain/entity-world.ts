@@ -10,6 +10,7 @@ export type WorldEntity = Readonly<{
   handle: EntityHandle;
   name: string;
   tags: readonly string[];
+  layer?: number;
   authoredId?: string;
   /** Captured saved declarations; runtime instances belong to the behavior host. */
   behaviors?: BehaviorComponent;
@@ -21,7 +22,7 @@ export type WorldEntity = Readonly<{
   transform?: EntityTransform;
 }>;
 export type EntityCommand =
-  | Readonly<{ op: "create"; key: string; name: string; tags?: readonly string[]; behaviors?: BehaviorComponent; components?: readonly string[]; model?: RuntimeModel; primitive?: RuntimePrimitive; character?: RuntimeCharacter; parentKey?: string; transform?: EntityTransform }>
+  | Readonly<{ op: "create"; key: string; name: string; tags?: readonly string[]; layer?: number; behaviors?: BehaviorComponent; components?: readonly string[]; model?: RuntimeModel; primitive?: RuntimePrimitive; character?: RuntimeCharacter; parentKey?: string; transform?: EntityTransform }>
   | Readonly<{ op: "setTags"; handle: EntityHandle; tags: readonly string[] }>
   | Readonly<{ op: "destroy" | "destroySubtree"; handle: EntityHandle }>;
 export type EntityErrorCode = "world-ended" | "stale-handle" | "invalid-command" | "capacity"

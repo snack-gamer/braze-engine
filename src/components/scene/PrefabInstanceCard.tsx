@@ -4,6 +4,7 @@ import { EditorIcon } from "../../ui/EditorIcon";
 const OVERRIDE_LABELS: Record<PrefabOverrideKey, string> = {
   name: "Name",
   tags: "Tags",
+  layer: "Layer",
   color: "Color",
   visibility: "Visibility",
   lock: "Lock",

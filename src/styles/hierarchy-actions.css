@@ -2,6 +2,7 @@
 
 .add-menu {
   position: relative;
+  display: flex;
 }
 
 .add-menu__trigger {
@@ -12,7 +13,7 @@
   padding: 0 8px;
   background: transparent;
   border: 1px solid var(--hairline-strong);
-  border-radius: 5px;
+  border-radius: var(--r-md);
   color: var(--text-2);
   cursor: pointer;
   font-size: var(--fs-xs);
@@ -32,7 +33,7 @@
   min-width: 180px;
   background: var(--surface, #121618);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--r-md);
   box-shadow: var(--shadow-float);
   padding: 4px;
   display: flex;
@@ -51,7 +52,7 @@
   cursor: pointer;
   font-size: var(--fs-sm);
   text-align: left;
-  border-radius: 4px;
+  border-radius: var(--r-md);
 }
 
 .add-menu__popover button:hover {
@@ -77,7 +78,7 @@
   align-items: center;
   gap: 4px;
   padding: 2px 6px;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   font-size: var(--fs-xs);
   color: #fff;
   font-weight: 500;

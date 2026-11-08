@@ -1,3 +1,4 @@
+import type { RenderCamera } from "../camera/adapters/render-camera";
 import type * as THREE from "three";
 import { createThreeDirectionalShadowSession } from "../rendering/adapters/three-webgpu/shadows/three-directional-shadow-session";
 import type { SceneObject } from "../types";
@@ -28,7 +29,7 @@ export type DirectionalShadowRuntime = Readonly<{
   invalidateCasterMaterials: () => void;
   invalidateDynamicCasters: () => void;
   invalidateLight: () => void;
-  prepareFrame: (camera: THREE.PerspectiveCamera) => void;
+  prepareFrame: (camera: RenderCamera) => void;
   afterRender: () => void;
   hasPendingRender: () => boolean;
   dispose: () => void;

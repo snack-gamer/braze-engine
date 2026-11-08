@@ -169,7 +169,7 @@
   width: 196px;
   padding: 5px;
   border: 1px solid var(--hairline-strong);
-  border-radius: 7px;
+  border-radius: var(--r-md);
   background: #2d2d2d;
   box-shadow: var(--shadow-float);
 }
@@ -265,7 +265,7 @@
 .prime-sequencer__kind {
   min-width: 58px;
   padding: 3px 6px;
-  border-radius: 5px;
+  border-radius: var(--r-md);
   background: #303030;
   color: #9fabad;
   font-size: var(--fs-2xs);
@@ -348,7 +348,7 @@
   min-width: 28px;
   padding: 0 8px;
   border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 6px;
+  border-radius: var(--r-md);
   background: rgba(83, 89, 91, 0.96);
   color: #eef2f3;
   cursor: pointer;
@@ -421,7 +421,7 @@
   flex: 1 1 auto;
   height: 100%;
   border: 1px solid var(--hairline);
-  border-radius: 6px;
+  border-radius: var(--r-md);
   min-height: 0;
 }
 
@@ -439,7 +439,7 @@
   width: 26px;
   height: 24px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 4px;
+  border-radius: var(--r-md);
   background: #2c2f2f;
   color: #cbd3d5;
   cursor: pointer;
@@ -495,7 +495,7 @@
   min-height: 34px;
   padding: 5px 7px 5px 10px;
   border: 1px solid rgba(255, 255, 255, 0.42);
-  border-radius: 7px;
+  border-radius: var(--r-md);
   background: var(--surface-2);
   color: #d7e6ff;
   box-shadow: var(--shadow-float);
@@ -540,7 +540,7 @@
   gap: 2px;
   padding: 3px;
   border: 1px solid var(--hairline-strong);
-  border-radius: 8px;
+  border-radius: var(--r-md);
   background: var(--surface-3);
 }
 
@@ -551,7 +551,7 @@
   height: 28px;
   padding: 0 9px;
   border: 0;
-  border-radius: 5px;
+  border-radius: var(--r-md);
   background: transparent;
   color: var(--muted);
   font-size: var(--fs-xs);
@@ -576,7 +576,7 @@
   width: 32px;
   height: 32px;
   border: 1px solid var(--hairline-strong);
-  border-radius: 8px;
+  border-radius: var(--r-md);
   background: var(--surface-3);
   color: var(--muted);
   cursor: pointer;

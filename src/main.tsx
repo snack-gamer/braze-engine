@@ -8,23 +8,10 @@ import {
 import { sharedBrowserRenderSessionOwner } from "./rendering/application/browser-render-session-owner";
 import { RenderSessionProvider } from "./rendering/application/RenderSessionProvider";
 import type { RendererFailureDiagnostic } from "./three/device-lifecycle";
-import "./theme.css";
-import "./styles.css";
-import "./inspector.css";
-import "./editor-theme.css";
-import "./editor-chrome-theme.css";
-import "./hierarchy/hierarchy-tree.css";
-import "./editor-inspector-theme.css";
-import "./viewport-hud.css";
-import "./viewport-navigation-gizmo.css";
-import "./gizmos-menu.css";
-import "./scene-view-toolbar.css";
-import "./game-view.css";
-import "./editor-dock.css";
-import "./ui/controls.css";
-import "./styles/inspector-actions.css";
-import "./editor/playback/scene-playback-feedback.css";
-import "./editor/console/console-window.css";
+import "./editor-design.css";
+import { configureNativeSelectGlyph } from "./ui/native-select-glyph";
+
+configureNativeSelectGlyph();
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 const startup = new AbortController();

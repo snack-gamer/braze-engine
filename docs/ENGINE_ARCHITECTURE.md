@@ -361,19 +361,97 @@ fallback, or private frame clock.
 
 ### Editor visual system
 
-`theme.css` owns the palette, typography, field metrics and semantic accents,
-adapted from `alloy-vistudio/app/studio-theme`. Roboto and Geist Mono are served
+`editor-design.css` is the single editor stylesheet entry imported by `main.tsx`.
+It preserves the ordered cascade of tokens, feature layout, shared presentation
+and interaction states. `theme.css` is the single source for palette, typography,
+density, field metrics, radii and semantic accents, adapted from
+`alloy-vistudio/app/studio-theme`. Change shared design roles there rather than
+adding a second palette or per-component control skin. Feature CSS owns layout
+and consumes the shared roles; game-authored UI remains a separate runtime theme.
+
+Object Inspectors share `SceneObjectHeader`: editable name commits once on
+Enter/blur, Escape cancels, and visibility remains explicitly editor-only. Name
+and Tag rows share identity metrics. Component disclosure is a native button,
+separate from enable and action controls. `InspectorSectionMenu` owns the visible
+options menu, context-menu access, keyboard focus and viewport clamping. Camera
+projection/render controls share one Camera section; Target semantics are retained.
+Game lenses use native Perspective/Orthographic Three cameras through the camera
+adapter. Changing authored projection reconstructs only the view and its render
+graph; the shared gameplay world keeps its lifetime. FOV-axis conversion and
+orthographic aspect updates live in the lens adapter. Camera culling is a view-owned
+cold-change registry; authored bodies, physics batches, runtime reserves and model
+views retain independent membership. Project layers never consume internal shadow
+bits. Camera background replacement is scoped to the display draw, not IBL probes.
+
+Inspector chrome has one owner, `editor-inspector-theme.css`; the old competing
+component-chrome stylesheet is removed. `styles/inspector-properties.css` owns
+property alignment and vector layout. Vectors align label and XYZ on one row,
+then reflow below the label when their Inspector container is at most 340 CSS
+pixels wide. Explicit stacked rows stay stacked. Shared field states remain in
+`ui/controls.css`: vector axes and values form one well, with visible focus,
+hover, scrub and disabled states. Inspector fonts, padding, row/header heights
+and radii are all `--inspector-*` roles in the central token file. Reset actions
+are revealed by keyboard focus as well as hover. Roboto and Geist Mono are served
 locally; their licenses live under `public/licenses/fonts`. Feature styles own
 layout, with `editor-inspector-theme.css` owning card presentation and
 `ui/controls.css` owning shared field and interaction states. Category colors
 are tones: `ui/tones.ts` names them, the component registry maps each category
 to one (`sceneComponentTone`), and `theme.css` alone maps a `.tone-<name>` class
-to a color. Hierarchy glyphs, component indicators, Inspector headers and
-creation menus consume `var(--tone)`; features never pick category colors.
-Hierarchy object glyphs wear their group's tone (geometry mesh, camera and
-water rendering, light lighting, particles effects); only empties and groups are
-neutral. A prefab-instance root or imported model uses the `prefab` tone and is
-drawn solid. Tone glyphs are duotone: `--glyph-wash` tints their closed shapes.
+to a color. Inspector headers and creation menus consume `var(--tone)`; features
+never pick category colors. Hierarchy object glyphs and component indicators
+use neutral `--hierarchy-icon-ink` so structure and selection carry emphasis.
+Prefab-instance names retain their semantic blue, and prefab/model glyphs retain
+their filled shape. Tone glyphs are duotone: `--glyph-wash` tints closed shapes.
+`ui/icons.ts` owns semantic glyph geometry from one pinned Lucide data package.
+`EditorIcon` and `editor-icon-element.ts` render the same nodes for React and
+embedded DOM editors. The particle editor supplies its host adapter through
+`configureEditorIcons`; its standalone fallback is not used inside Braze.
+Disclosures, reorder/close actions, status markers and favorites use this registry,
+with accessible names on their controls. Charts, skeleton maps and viewport
+handles remain functional drawings rather than chrome icons.
+
+The mandatory [editor design guide](./EDITOR_DESIGN.md)
+defines compact selector widths, row/action spacing, alignment and hairline use.
+`InspectorMenuSelect` owns anchored, viewport-clamped portalled choice menus,
+keyboard focus and dismissal; `styles/inspector-menu.css` consumes the same theme
+roles as native fields. Camera layer masks use this shared menu without changing
+their 32-bit domain values. Opening a choice list never changes Inspector flow.
+`styles/inspector-actions.css` owns body action rows; hierarchy CSS must not
+override Inspector spacing. These are shared defaults, not camera-only styling.
+Object identity rows share fixed glyph/toggle/lock columns with the Tag/Layer
+subgrid, so both selectors align within the name field's edges. Applicable
+hierarchy actions remain visible at rest. Each row sizes component/action groups
+to their content; optional camera actions precede the right-aligned common
+Solo/Visibility/Lock cluster, with no hidden placeholder slots.
+`ui/field-layout.css` owns the shared
+native-select arrow inset and numeric optical alignment. At editor startup,
+`configureNativeSelectGlyph` derives the arrow image from the semantic glyph
+registry and palette; native selection and keyboard behavior stay browser-owned.
+
+The vendored particle editor's base CSS is a bundled stylesheet, with its former
+runtime theme entry retained for compatibility. This lets the CSS compiler
+compact it and avoids parsing a large stylesheet literal as JavaScript. Braze's
+particle persistence adapter imports the data-only entry so static players do
+not acquire editor styles. Embedded positioning is explicit in the host CSS.
+
+The common scale is 12px for disclosures, 14px for utilities, 16px for controls
+and 18px for primary tools, with a shared 1.75-unit outline. Filled transport
+and status marks have explicit roles; icon size never determines the hit area.
+Architecture checks reject independent icon-package imports and literal icon
+metrics outside the shared theme. Embedded particle palette aliases also live
+in `theme.css`. Neutral panel surfaces, recessed fields and component headers
+form distinct brightness levels. Selected tabs use `--tab-active-fill`, a lighter
+grey than the dark `--tabbar-fill`, shared by dock and Inspector tab systems.
+
+`ui/toolbar.css` owns the shared `.editor-toolbar` skin and search field. Project
+and Hierarchy use the same `--toolbar-control-h` (24px), spacing and padding
+tokens. Compound view and zoom groups include their border in that outer height;
+their inner buttons fit inside it. Feature styles only arrange their columns.
+The Hierarchy create/search toolbar stays above the collapsible scene row.
+Scene and object rows share density metrics, and scene contents indent one level.
+Starting a search reveals a collapsed scene without hiding the toolbar. Row
+separators are removed in favor of subtle neutral alternation and filled selection.
+
 Icon scale is owned by the `--icon-size-*` roles and row height by
 `--hierarchy-row-h`, which the list reads so windowing always matches paint.
 Hierarchy density (`large`, the maximum, or `compact`) is a per-user preference
@@ -388,6 +466,63 @@ Toggled controls use the neutral `--state-on-*` tokens and list selection uses
 not decorative edges. Tones never alter selection, authored materials or scene
 lighting. Agent acceptance exercises the visible result and matching manual workflow;
 personal control feel and real-GPU measurements are recorded separately.
+
+Scene-view background and camera-helper colors read central theme tokens once at
+construction. Empty Scene backgrounds are scoped to each render and restored even
+on failure, preserving authored environments and Game output. Grid palette, opacity and distance fade read the same theme tokens. Stock grid preferences
+migrate to quieter defaults; customized settings and saved dock layouts are retained.
+New default layouts reserve less width for Hierarchy. Tag and Layer identity fields
+share compact header metrics and open a common project settings manager.
+Project type filters share one toolbar row with Create, view mode and Search, replacing the
+duplicated dropdown and sidebar shortcuts. Shared toolbar tooltips appear without
+delay on hover or keyboard focus; accessible names and pressed states remain.
+The folder sidebar retains its tree. Search stays width-capped on the left;
+the tile-size slider has a wider track and aligns to the right. Their width tokens live in the theme.
+Filter buttons inherit the shared icon-button grid centering; legacy text-filter
+padding and flex rules must not override that geometry.
+Project view toggles use the 16px control glyph role; type filters use the 18px
+toolbar glyph role, inside the existing compact button hit areas.
+Hierarchy Create, Search and density actions share that 18px toolbar role. Shared
+action strips supply a theme-owned gap and vertical hairlines between icons;
+the Project slider retains its width while Search absorbs available space.
+
+Editor corner geometry is owned by `--editor-radius` in theme.css, currently 5px.
+The existing radius roles, Inspector cards and particle editor bridge inherit it;
+editor controls, menus, dialogs, dock surfaces and tabs use those roles. Circular
+geometry and adjoining inner edges remain explicit shape exceptions. Game UI
+retains its independent authored theme.
+
+Border roles distinguish subtle panel dividers from editable field outlines and
+hover edges. Dock frames and toolbar group outlines are transparent by default,
+with resize splitters owning the visible boundary between docked panes. Toolbar
+groups retain their box dimensions without decorative outlines. Focus indicators
+keep the independent focus token; menus retain a softly outlined floating surface.
+Status-bar labels and values share theme-owned font size, line height and spacing.
+Semantic small/strong tags inherit those metrics; color and medium weight identify
+values, and tabular numerals keep live coordinate widths steady.
+
+
+### Mesh Filter ownership
+
+`src/mesh` owns mesh reference capture, catalog eligibility, assignment, picker and
+static Three attachment. Existing `SceneObject.primitive` and `assetRef` remain the
+single geometry source; `meshFilter.empty` explicitly represents None. Assignment
+changes source fields in one history transaction and preserves identity, transforms,
+renderer/material assignments, colliders and children. Removing/clearing the filter
+removes only its render body. It does not deactivate the entity or descendants.
+
+Imported mesh identity is GUID plus mesh local ID. `assetMeshBinding` is a transient
+catalog-derived lookup, excluded from both scene and prefab documents. Resolution
+is cold on asset/catalog changes; missing sources retain identity without displaying
+a replacement model and recover when the source returns. Player package hydration
+resolves the same references from its embedded catalog without an editor API.
+
+Static attachment chooses exact mesh geometry in mesh-local coordinates, ignores
+source-node transforms, deduplicates instances of the same geometry and supports
+all primitives belonging to the selected mesh. Consumers share immutable geometry
+through an asset lease and own their materials. Existing generation guards discard
+stale loads. Skinned meshes and animated object replacement are rejected. Whole-model
+imports remain compatible; they do not silently become single-mesh references.
 
 ## 6. Undo transactions
 
@@ -651,3 +786,18 @@ semantics and operating procedures are in [OPERATIONS.md](./OPERATIONS.md).
 Scene load failures keep the current editor open. The informational error toast
 does not intercept pointer input, so Project scene tiles remain available for
 recovery even when the toast overlaps them.
+
+Tags and Layers project settings is a selection-owned Inspector target, opened by
+object dropdown actions through the feature context. Normal object/asset selection
+restores its Inspector. Compact Tags and Layers foldouts share pane scrolling and
+theme metrics; they do not mount a dialog or portal. Tag usage is derived live from
+open objects and refreshed after successful scene/prefab saves and deletions, asset
+events, window focus and a five-second visible-page fallback. Requests are cancelled
+on replacement/unmount; timers, subscriptions and streams are disposed. Removal
+requires a new complete saved-usage scan and a post-scan check of current document
+assignments. A synchronous operation guard prevents overlapping add/remove/rename
+actions; tag/layer save hooks reject duplicate writes before React rerenders.
+Unused tag definitions support inline rename through the same project-section save
+boundary. Validation rejects duplicate, reserved and invalid names before persistence;
+a fresh usage audit blocks assigned definitions. Shared Inspector section headers,
+input metrics and central list-row spacing control the settings presentation.

@@ -20,43 +20,6 @@
   gap: 6px;
 }
 
-.hierarchy-search {
-  display: grid;
-  grid-template-columns: 16px minmax(0, 1fr);
-  align-items: center;
-  gap: 6px;
-  height: 28px;
-  margin: -2px 0 8px;
-  padding: 0 8px;
-  border: 1px solid var(--hairline-medium);
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.025);
-  color: var(--subtle);
-}
-
-.hierarchy-search:focus-within {
-  border-color: rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--accent);
-}
-
-.hierarchy-search input {
-  min-width: 0;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: var(--text);
-  font-size: var(--fs-xs);
-  line-height: 1;
-}
-
-.hierarchy-search input::placeholder {
-  color: var(--subtle);
-}
-
 .rail-meta {
   color: var(--subtle);
   font-size: var(--fs-xs);
@@ -299,7 +262,7 @@
   height: 18px;
   padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.26);
-  border-radius: 4px;
+  border-radius: var(--r-md);
   background: rgba(255, 255, 255, 0.1);
   color: var(--accent);
   line-height: 1;
@@ -325,7 +288,7 @@
   width: 252px;
   padding: 10px;
   border: 1px solid rgba(116, 139, 146, 0.2);
-  border-radius: 8px;
+  border-radius: var(--r-md);
   background: var(--surface-2);
   box-shadow: var(--shadow-float);
   color: var(--text);
@@ -344,7 +307,7 @@
   align-items: start;
   padding: 7px 8px;
   border: 1px solid rgba(224, 166, 79, 0.24);
-  border-radius: 4px;
+  border-radius: var(--r-md);
   background: rgba(224, 166, 79, 0.07);
   color: #c9aa7a;
   font-size: var(--fs-xs);
@@ -406,7 +369,7 @@
   margin-bottom: 3px;
   padding: 9px;
   border: 1px solid rgba(116, 139, 146, 0.1);
-  border-radius: 6px;
+  border-radius: var(--r-md);
   background: rgba(255, 255, 255, 0.018);
   color: var(--text);
   text-align: left;
@@ -417,18 +380,18 @@
 .modifier-option > svg {
   box-sizing: border-box;
   padding: var(--icon-inset-badge);
-  border-radius: 6px;
+  border-radius: var(--r-md);
   background: var(--hairline-soft);
 }
 
 .modifier-option--component > svg {
-  color: #9be1ff;
-  background: rgba(77, 177, 235, 0.14);
+  color: var(--component-mesh);
+  background: color-mix(in srgb, var(--component-mesh) 14%, transparent);
 }
 
 .modifier-option--modifier > svg {
-  color: #f3c15f;
-  background: rgba(243, 193, 95, 0.14);
+  color: var(--component-modifiers);
+  background: color-mix(in srgb, var(--component-modifiers) 14%, transparent);
 }
 
 .modifier-option:hover {
@@ -436,7 +399,7 @@
 }
 
 .modifier-option--component:hover {
-  border-color: rgba(125, 216, 255, 0.45);
+  border-color: var(--component-mesh);
 }
 
 .modifier-option--modifier:hover {
@@ -534,7 +497,7 @@
 .swatch {
   width: 9px;
   height: 9px;
-  border-radius: 2px;
+  border-radius: var(--r-md);
 }
 
 .object-name {
@@ -548,7 +511,7 @@
   min-width: 72px;
   padding: 0 6px;
   border: 1px solid rgba(255, 255, 255, 0.55);
-  border-radius: 4px;
+  border-radius: var(--r-md);
   outline: 0;
   background: rgba(5, 7, 8, 0.92);
   color: var(--text);
@@ -568,7 +531,7 @@
   place-items: center;
   width: 18px;
   height: 18px;
-  border-radius: 4px;
+  border-radius: var(--r-md);
   color: var(--muted);
 }
 
@@ -591,32 +554,12 @@
   color: #ffd56e;
 }
 
-/* Invisible slot used to reserve the camera-only "look-through" position
-   on non-camera rows. Keeps the action column the same width on every row
-   so the name|icons divider stays put. */
-.row-icon--placeholder {
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.camera-action-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin-top: 4px;
-}
-
-.rail-right .camera-action-row {
-  gap: 6px;
-  margin-top: 2px;
-}
-
 .active-pill {
+  gap: var(--sp-1);
   display: inline-flex;
   align-items: center;
   padding: 4px 8px;
-  border-radius: 12px;
+  border-radius: var(--r-md);
   background: var(--accent-soft);
   color: var(--text);
   border: 1px solid rgba(255, 255, 255, 0.4);

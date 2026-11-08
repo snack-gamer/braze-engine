@@ -120,10 +120,11 @@ export function AssetBrowser(props: AssetBrowserProps) {
   }, [assetFilter, folderView.setPath, folders, path, selection.focusOne, setAssetFilter]);
   const revealModelSubAsset = useCallback((filename: string, localId: string) => {
     setSearch("");
-    setAssetFilter("animation");
+    folderView.setPath(folders.folderOf("model", filename));
+    setAssetFilter("models");
     modelExpansion.expand(filename);
-    selection.focusOne(modelSubAssetKey(filename, localId));
-  }, [modelExpansion.expand, selection.focusOne, setAssetFilter, setSearch]);
+    selection.focusOne(localId === "main" ? `model:${filename}` : modelSubAssetKey(filename, localId));
+  }, [folders, folderView.setPath, modelExpansion.expand, selection.focusOne, setAssetFilter, setSearch]);
   useAssetFocusBridge({
     editorFocus: selection.editorFocus,
     models: props.models,
@@ -300,10 +301,6 @@ export function AssetBrowser(props: AssetBrowserProps) {
           nonEmptyFolders: folderView.nonEmptyFolders,
           folderChildren: folderView.folderChildren,
           basenameOf: folders.basenameOf,
-          onSelectFilter: (filter) => {
-            setSearch("");
-            setAssetFilter(filter);
-          },
           onBrowseFolder: browseFolder,
           onToggleFolder: folderView.toggleFolderExpanded,
           onFolderContext: (event, folderPath) => handleItemContext(event, {

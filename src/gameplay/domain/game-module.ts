@@ -1,3 +1,4 @@
+import type { CameraSettings } from "../../scene/domain/camera";
 import type { BehaviorRegistration } from "../../behaviors/domain/behavior-registration";
 import type { GameInput, InputActionMap } from "../../input/domain/action-map";
 import type { EntityWorld } from "../../world/domain/entity-world";
@@ -11,13 +12,16 @@ import type { GameCharacters } from "../../character-controller/domain/game-char
 export type { GameCharacterResult } from "../../character-controller/domain/game-character-commands";
 
 export type GameVec3 = readonly [number, number, number];
-export type GameCameraPose = Readonly<{ position: GameVec3; target: GameVec3; fov: number }>;
+export type GameCameraPose = Readonly<{ position: GameVec3; target: GameVec3; fov: number;
+  /** Optional runtime overrides. Projection kind remains the authored camera mode. */
+  lens?: Readonly<Partial<Omit<CameraSettings, "target" | "fov" | "projection">>>;
+}>;
 export type GameEntity = Readonly<{
   id: string;
   name: string;
   parentId?: string | null;
   /** Authored tags captured at Play; world.inspect/queryTag observe runtime edits. */
-  tags?: readonly string[];
+  tags?: readonly string[]; layer?: number;
   kind: string;
   /** Authored local position at session capture; never a live dynamic pose. */
   authoredPosition: GameVec3;

@@ -95,7 +95,7 @@ export const DEFAULT_DOCK_DOCUMENT: DockLayoutDocument = {
         kind: "split",
         id: "upper-horizontal",
         axis: "horizontal",
-        ratio: 0.235,
+        ratio: 0.19,
         first: { kind: "tabs", id: "hierarchy-group", panes: ["hierarchy"], active: "hierarchy" },
         second: { kind: "tabs", id: "scene-group", panes: ["scene", "game"], active: "scene" },
       },

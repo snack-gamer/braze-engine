@@ -1,3 +1,4 @@
+import { assignCameraCullingBody, forgetCameraCulling } from "../../../camera/adapters/camera-culling";
 import * as THREE from "three";
 import { assignThreeShadowCasterLayer } from "../../../rendering/adapters/three-webgpu/shadows/three-shadow-caster-layers";
 import { markSceneDirty, type Runtime } from "../../../three/runtime";
@@ -8,7 +9,7 @@ import type { RuntimeModelAnimation } from "./runtime-model-animation";
 
 export type RuntimeModelRecord = { entity: WorldEntity; object: THREE.Object3D; reservation?: symbol; animationId?: string };
 export type RuntimeModelPoseBinder = (node: THREE.Object3D, entity: WorldEntity) => () => void;
-type Attachment = { node: THREE.Group; restore?: () => void; detachAnimation?: () => void };
+type Attachment = { node: THREE.Group; restore?: () => void; detachAnimation?: () => void; releaseCulling?: () => void };
 
 /** Cold attachment/removal only. Dynamic meshes read the world's GPU pose buffers directly. */
 export function createRuntimeModelViews(bindPose: RuntimeModelPoseBinder, retire: () => Promise<void>, animation?: RuntimeModelAnimation) {
@@ -22,7 +23,7 @@ export function createRuntimeModelViews(bindPose: RuntimeModelPoseBinder, retire
   };
   const cleanup = (attachment: Attachment, errors: unknown[]) => {
     const restore = attachment.restore; attachment.restore = undefined;
-    attempt([() => detachAnimation(attachment), () => restore?.(), () => disposeObject(attachment.node)], errors);
+    attempt([() => detachAnimation(attachment), () => attachment.releaseCulling?.(), () => restore?.(), () => disposeObject(attachment.node)], errors);
   };
   const create = (record: RuntimeModelRecord, runtime: Runtime): Attachment => {
     const node = new THREE.Group(), { entity, object } = record;
@@ -38,8 +39,9 @@ export function createRuntimeModelViews(bindPose: RuntimeModelPoseBinder, retire
     let restore: (() => void) | undefined;
     try {
       restore = entity.primitive || entity.character ? bindPose(node, entity) : undefined;
-      return { node, restore, detachAnimation: animation?.attach(record, runtime, node, body) };
-    } catch (error) { const errors = [error]; attempt([() => restore?.(), () => disposeObject(node)], errors); report(errors); throw error; }
+      assignCameraCullingBody(runtime, node, entity.layer ?? 0);
+      return { node, restore, releaseCulling: () => forgetCameraCulling(runtime, node), detachAnimation: animation?.attach(record, runtime, node, body) };
+    } catch (error) { const errors = [error]; attempt([() => forgetCameraCulling(runtime, node), () => restore?.(), () => disposeObject(node)], errors); report(errors); throw error; }
   };
   return {
     attach(runtime: Runtime, records: Iterable<RuntimeModelRecord>) {

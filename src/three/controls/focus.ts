@@ -1,3 +1,4 @@
+import type { RenderCamera } from "../../camera/adapters/render-camera";
 import type { MutableRefObject } from "react";
 import * as THREE from "three";
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -7,7 +8,7 @@ import type { CameraEmitter } from "./camera-emitter";
 import { clearOrbitMotion } from "./orbit-motion";
 
 type FocusArgs = {
-  camera: THREE.PerspectiveCamera;
+  camera: RenderCamera;
   controls: OrbitControls;
   emitter: CameraEmitter;
   runtimeRef: MutableRefObject<Runtime | null>;
@@ -56,7 +57,7 @@ export function createFocus(args: FocusArgs): FocusController {
     // with tiny icons, empties, hidden geometry) fall back to a small default
     // radius around the node's world origin so F still does something sensible.
     focusBox.setFromObject(node, true);
-    if (focusBox.isEmpty()) {
+    if (focusBox.isEmpty() || node.children.some((child) => child.userData.cameraEditorBody)) {
       node.getWorldPosition(focusSphere.center);
       focusSphere.radius = 0.5;
     } else {

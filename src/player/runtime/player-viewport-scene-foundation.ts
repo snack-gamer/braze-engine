@@ -1,3 +1,4 @@
+import { createRenderCamera } from "../../camera/adapters/render-camera";
 import * as THREE from "three";
 import {
   DirectionalLight as WebGpuDirectionalLight,
@@ -43,7 +44,7 @@ export function createViewportSceneFoundation(args: FoundationArgs) {
   const lifetime = createViewportConstructionLifetime();
   try {
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(52, 1, 0.01, 150);
+    const camera = createRenderCamera(args.initial.cameraProjection);
     camera.position.set(5.6, 4.2, 6.4);
     const surface = attachViewportRenderSurface({
       host: args.host,

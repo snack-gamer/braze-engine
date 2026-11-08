@@ -1,3 +1,7 @@
+import { captureCameraSettings, DEFAULT_CAMERA_SETTINGS } from "../../camera/domain/camera-settings";
+import { assignMeshPatch } from "../../mesh/application/mesh-assignment";
+import { removeComponentPatch } from "../../lib/components";
+import type { ObjectPatch } from "../domain/commands";
 import { decodeJoint } from "../../physics/serialization/joint-codec";
 import { createCharacterControllerPatch } from "../../character-controller/application/character-controller-authoring";
 import { normalizeCharacterMovement } from "../../character-controller/domain/character-movement";
@@ -10,9 +14,17 @@ import type { SceneObject } from "../../types";
 import { parseBehaviorComponent } from "../../behaviors/serialization/behavior-component-codec";
 import { parseUiCanvas } from "../../game-ui/serialization/ui-canvas-codec";
 import { animatorComponentFromCommand } from "../../character/application/animator-command-authoring";
-import type { AnimatorImportedAssetCatalog } from "../../scene/authoring/animator-component-eligibility";
+import type { MeshCatalogAsset } from "../../mesh/application/mesh-assignment";
 
-export type ObjectCommandOptions = { requireCamera?: boolean; animatorCatalog?: AnimatorImportedAssetCatalog };
+
+function objectPatch(values: ObjectPatch, existing: Pick<SceneObject, "primitive" | "camera">): Partial<SceneObject> {
+  const { camera, ...rest } = values;
+  if (camera === undefined) return rest;
+  if (existing.primitive !== "camera") throw new Error("Camera settings require a Camera object.");
+  return { ...rest, camera: captureCameraSettings({ ...(existing.camera ?? DEFAULT_CAMERA_SETTINGS), ...camera }) };
+}
+
+export type ObjectCommandOptions = { requireCamera?: boolean; assetCatalog?: Readonly<{ ready: boolean; importedAssets: readonly MeshCatalogAsset[] }> };
 
 export function validateHierarchy(objects: SceneObject[]) {
   const byId = new Map(objects.map((object) => [object.id, object]));
@@ -28,28 +40,31 @@ export function validateHierarchy(objects: SceneObject[]) {
 }
 
 /** Shared feature operations for saved scene and prefab command batches. */
-export function executeObjectCommands(input: SceneObject[], commands: unknown, { requireCamera = true, animatorCatalog }: ObjectCommandOptions = {}) {
+export function executeObjectCommands(input: SceneObject[], commands: unknown, { requireCamera = true, assetCatalog }: ObjectCommandOptions = {}) {
   let objects = input;
   const changed = new Set<string>();
   for (const command of parseSceneCommands(commands)) {
     const existing = objects.find((object) => object.id === command.id);
     if (command.op === "object.create") {
       if (existing) throw new Error(`Object ${command.id} already exists.`);
-      objects = [...objects, makeObject(command.primitive, objects.length, { id: command.id, ...command.values, ...(command.assetRef ? { assetRef: command.assetRef } : {}) })];
+      objects = [...objects, makeObject(command.primitive, objects.length, { id: command.id, ...objectPatch(command.values ?? {}, { primitive: command.primitive }), ...(command.assetRef ? { assetRef: command.assetRef } : {}) })];
     } else {
       if (!existing) throw new Error(`Unknown object ${command.id}.`);
       if (existing.prefabLink) throw new Error(`Prefab instance ${command.id} requires the editor override workflow; automation support is pending.`);
       if (existing.locked) throw new Error(`Object ${command.id} is locked.`);
       switch (command.op) {
-        case "object.update": objects = updateAuthoredSceneObject(objects, command.id, command.values); break;
+        case "object.update": objects = updateAuthoredSceneObject(objects, command.id, objectPatch(command.values, existing)); break;
         case "object.delete": {
           const next = deleteObjectSubtrees(objects, [command.id], { requireCamera: requireCamera && objects.some((object) => object.primitive === "camera"), protectedIds: new Set(objects.filter((object) => object.locked).map((object) => object.id)) });
           if (next.some((object) => object.id === command.id)) throw new Error("Deletion would remove the last object or camera.");
           objects = next; break;
         }
         case "component.set": {
+          if (command.component === "meshFilter") {
+            objects = updateAuthoredSceneObject(objects, command.id, assignMeshPatch(existing, command.values.mesh, assetCatalog?.importedAssets)); break;
+          }
           if (command.component === "animator") {
-            objects = updateAuthoredSceneObject(objects, command.id, { animator: animatorComponentFromCommand(existing, command.values, animatorCatalog) }); break;
+            objects = updateAuthoredSceneObject(objects, command.id, { animator: animatorComponentFromCommand(existing, command.values, assetCatalog) }); break;
           }
           if (command.component === "uiCanvas") {
             if (existing.primitive === "camera") throw new Error("Attach UI Canvas to a Transform or ordinary scene object.");
@@ -78,7 +93,7 @@ export function executeObjectCommands(input: SceneObject[], commands: unknown, {
             })();
           objects = updateAuthoredSceneObject(objects, command.id, patch); break;
         }
-        case "component.remove": objects = updateAuthoredSceneObject(objects, command.id, command.component === "animator" ? { animator: undefined } : command.component === "uiCanvas" ? { uiCanvas: undefined } : command.component === "behaviors"
+        case "component.remove": objects = updateAuthoredSceneObject(objects, command.id, command.component === "meshFilter" ? removeComponentPatch(existing, "meshFilter") : command.component === "animator" ? { animator: undefined } : command.component === "uiCanvas" ? { uiCanvas: undefined } : command.component === "behaviors"
           ? { behaviors: undefined } : command.component === "rigidbody"
           ? { rigidbody: undefined } : command.component === "joint" ? { joint: undefined } : command.component === "characterController" ? { characterController: undefined } : { colliders: command.colliderId ? existing.colliders?.filter((item) => item.id !== command.colliderId) : undefined }); break;
       }

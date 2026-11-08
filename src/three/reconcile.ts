@@ -1,6 +1,8 @@
+import { assignCameraCullingBody } from "../camera/adapters/camera-culling";
 import * as THREE from "three";
 import type { Material, SceneObject } from "../types";
-import { BOT_ASSET_PREP_VERSION, isAvatarBotObject } from "../lib/bots";
+import { expectedBody } from "./reconciliation/expected-body";
+import { cloneStaticMeshAsset } from "../mesh/adapters/three-mesh-asset";
 import { motionClipSourceId } from "../animation/motion";
 import type { AnimationDocument } from "../animation/types";
 import {
@@ -20,7 +22,7 @@ import { applyTransform, markIds } from "./transform";
 import { PLACEHOLDER, type BodyKind, type NodeUserData, type Runtime } from "./runtime";
 import { emitSceneRenderStatus, markSceneDirty } from "./runtime";
 import { syncMotionClipAnimation } from "./animation";
-import { buildWaterBody, syncWaterBody, waterBodyKey } from "./water/water-body";
+import { buildWaterBody, syncWaterBody } from "./water/water-body";
 import { cloneImportedAsset, disposeStaleImportedClone } from "./resources/imported-asset-lifetime";
 import { emitRuntimeBodyLifecycle } from "./reconciliation/body-lifecycle";
 
@@ -58,27 +60,6 @@ function resyncLoadedBody(runtime: Runtime, node: THREE.Group): NodeSyncContext 
   return context;
 }
 
-function expectedBody(object: SceneObject): { kind: BodyKind; key: string } {
-  // Cameras carry a small body + lens visual that doubles as the raycast pick
-  // target — without it the SceneNode is an empty Group, so viewport clicks
-  // fall through and the user can't select cameras from the 3D view.
-  if (object.primitive === "cloner") return { kind: "none", key: "cloner:none" };
-  if (object.primitive === "effector") return { kind: "none", key: "effector:none" };
-  if (object.primitive === "camera") return { kind: "camera-body", key: "camera-body" };
-  if (object.primitive === "directionalLight") {
-    return { kind: "directional-light-body", key: "directional-light-body" };
-  }
-  if (object.water || object.primitive === "water") return { kind: "water", key: waterBodyKey(object) };
-  if (object.primitive === "transform") return { kind: "none", key: "transform:none" };
-  if (object.primitive === "particle") return { kind: "particle", key: "particle:emitter-marker" };
-  if (object.primitive === "image") return { kind: "image", key: `image:${object.assetUrl ?? ""}` };
-  if (object.primitive === "fbx" || object.primitive === "usdz" || object.primitive === "usd" || object.primitive === "gltf") {
-    if (!object.assetUrl) return { kind: "placeholder", key: PLACEHOLDER };
-    const prepVersion = isAvatarBotObject(object) ? `:${BOT_ASSET_PREP_VERSION}` : "";
-    return { kind: "asset", key: `${object.primitive}:${object.assetUrl}${prepVersion}` };
-  }
-  return { kind: "primitive", key: `primitive:${object.primitive}` };
-}
 
 export function findBody(node: THREE.Group): THREE.Object3D | null {
   // Modifier handles (e.g. buoyancy pin gizmos) live as siblings of the body
@@ -87,7 +68,7 @@ export function findBody(node: THREE.Group): THREE.Object3D | null {
   // safe. Authored hierarchy children are siblings too, and must never be
   // removed or disposed as if they were the parent's render body.
   for (const child of node.children) {
-    if (!child.userData.modifierHandle && child.userData.sceneObjectNode !== true) return child;
+    if (!child.userData.modifierHandle && !child.userData.colliderGizmo && child.userData.sceneObjectNode !== true) return child;
   }
   return null;
 }
@@ -122,6 +103,7 @@ function setBody(
     disposeObject(existing);
   }
   node.add(body);
+  if (kind !== "camera-body" && kind !== "directional-light-body") assignCameraCullingBody(runtime, body, object.layer ?? 0);
   markIds(body, object.id);
   if (kind === "camera-body" || kind === "directional-light-body") body.userData.editorChrome = true;
   const data = node.userData as NodeUserData;
@@ -325,11 +307,12 @@ export function syncNode(
             assetLease.release();
             return;
           }
-          const clone = cloneImportedAsset(assetLease, loaded);
+          const clone = object.assetMeshBinding
+            ? cloneStaticMeshAsset(assetLease, loaded, object.assetMeshBinding) : cloneImportedAsset(assetLease, loaded);
           assetClone = clone;
           const latestObject = data.latestSyncContext?.object ?? object;
-          const clipInfos = describeAnimationClips(loaded.animations, promiseUrl, object.primitive);
-          clone.userData.animationClips = loaded.animations;
+          const animations = object.assetMeshBinding ? [] : loaded.animations;
+          const clipInfos = describeAnimationClips(animations, promiseUrl, object.primitive); clone.userData.animationClips = animations;
           clone.userData.animationClipInfos = clipInfos;
           clone.userData.characterImportDiagnostics = loaded.characterDiagnostics ?? [];
           clone.userData.animationClipSourceIds = clipInfos.map((info) => motionClipSourceId(latestObject.id, info.id));
@@ -378,6 +361,7 @@ export function syncNode(
 
   const wantMatKey = materialSignature(object, material, materialLibrary);
   const body = findBody(node);
+  if (body && !body.userData.editorChrome) assignCameraCullingBody(runtime, body, object.layer ?? 0);
   if (body && (object.water || object.primitive === "water")) syncWaterBody(body, object);
   if (body && syncMeshRendererFlags(body, object)) markSceneDirty(runtime);
   if (data.materialKey !== wantMatKey) {

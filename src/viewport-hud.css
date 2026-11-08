@@ -25,7 +25,7 @@
   min-height: 24px;
   padding: 0 7px;
   border-bottom: 1px solid var(--hairline);
-  border-radius: calc(var(--r-sm) - 1px) calc(var(--r-sm) - 1px) 0 0;
+  border-radius: calc(var(--r-sm) - var(--r-md)) calc(var(--r-sm) - var(--r-md)) 0 0;
   background: var(--layer-window-chrome);
   cursor: pointer;
   pointer-events: auto;
@@ -81,7 +81,7 @@
 
 .viewport-hud.is-collapsed .viewport-hud__head {
   border-bottom-color: transparent;
-  border-radius: calc(var(--r-sm) - 1px);
+  border-radius: calc(var(--r-sm) - var(--r-md));
 }
 
 .viewport-hud.is-collapsed .viewport-hud__body-inner {

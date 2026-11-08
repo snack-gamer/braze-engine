@@ -1,3 +1,4 @@
+import { notifyAuthoredDocumentSaved } from "../project/persistence/authored-document-events";
 import type { ModelImportSettings } from "./model-import-settings";
 import { bundledModelImportDocument } from "../assets/application/model-import-document-provider";
 
@@ -138,6 +139,7 @@ export async function savePrefabAsset(name: string, prefab: object): Promise<Upl
     "/api/assets/prefab",
     { name, prefab },
   );
+  notifyAuthoredDocumentSaved();
   return { ...data.asset, contentRevision: data.revision };
 }
 
@@ -186,6 +188,7 @@ export async function updatePrefabAsset(
   ) {
     throw new Error(data.message || "Prefab update failed");
   }
+  notifyAuthoredDocumentSaved();
   return {
     asset: { ...data.asset, contentRevision: data.revision },
     revision: data.revision,
@@ -201,6 +204,7 @@ export async function deleteAsset(filename: string): Promise<void> {
   const response = await fetch(`/api/assets?filename=${encodeURIComponent(filename)}`, { method: "DELETE" });
   const data = await response.json() as { status: string; message?: string };
   if (!response.ok || data.status !== "ok") throw new Error(data.message || "Asset delete failed");
+  notifyAuthoredDocumentSaved();
 }
 
 export async function duplicateAsset(filename: string): Promise<LibraryAsset> {

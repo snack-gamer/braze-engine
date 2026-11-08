@@ -59,6 +59,9 @@ export function syncCameraGizmoForObject(
     position: pose.position,
     target: pose.target,
     fov: object.camera.fov,
+    projection: object.camera.projection,
+    fovAxis: object.camera.fovAxis,
+    orthographicSize: object.camera.orthographicSize,
     near: object.camera.near,
     far: object.camera.far,
     aspect: resolveCameraPreviewAspect(cameraPreviewAspect, runtime.camera.aspect),
@@ -70,6 +73,18 @@ export function syncCameraGizmoForObject(
 export function refreshCameraGizmoAspect(runtime: Runtime, cameraPreviewAspect: number | null): void {
   const aspect = resolveCameraPreviewAspect(cameraPreviewAspect, runtime.camera.aspect);
   for (const gizmo of runtime.cameraGizmoMap.values()) gizmo.refreshAspect(aspect);
+}
+
+/** Only camera chrome is visited, and only after a Scene/camera edit. */
+export function refreshCameraGizmoView(runtime: Runtime): void {
+  for (const [id, gizmo] of runtime.cameraGizmoMap) {
+    const node = runtime.objectMap.get(id);
+    let ancestorsVisible = Boolean(node?.visible);
+    for (let ancestor = node?.parent; ancestor; ancestor = ancestor.parent) ancestorsVisible &&= ancestor.visible;
+    const visible = gizmo.updateView(runtime.camera, ancestorsVisible);
+    const body = node?.children.find((child) => child.userData.cameraEditorBody);
+    if (body) body.visible = runtime.cameraGizmoRoot.visible && visible;
+  }
 }
 
 /** Refreshes only camera helpers inside an authored transform subtree. The

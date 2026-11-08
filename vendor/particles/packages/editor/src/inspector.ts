@@ -38,7 +38,7 @@ import { CurveEditor } from './curve-editor';
 import { makeGradientPreview, openGradientEditor } from './gradient-editor';
 import {
   iconPause, iconPlay, iconRestart, iconStop,
-  moduleIcon,
+  moduleIcon, iconClose,
 } from './icons';
 import { loadState, saveState } from './persist';
 import { ShapeGizmo } from './shape-gizmo';
@@ -1289,7 +1289,7 @@ function makeMeshSetEditor(mod: RendererModule, onChange: () => void): HTMLEleme
     const del = el('button', 'pi-image-clear') as HTMLButtonElement;
     del.type = 'button';
     del.title = 'Remove mesh variant';
-    del.textContent = '×';
+    del.appendChild(iconClose());
     del.onclick = () => {
       mod.config.meshSlots.splice(index, 1);
       onChange();
@@ -1313,7 +1313,7 @@ function makeMeshUpload(opts: MeshUploadOpts): HTMLElement {
       const clear = el('button', 'pi-image-clear') as HTMLButtonElement;
       clear.type = 'button';
       clear.title = 'Remove custom mesh';
-      clear.textContent = '×';
+      clear.appendChild(iconClose());
       clear.onclick = () => {
         currentName = undefined;
         opts.onChange(undefined, undefined);
@@ -1659,7 +1659,7 @@ function populateEmissionPanel(
       const del = document.createElement('button');
       del.type = 'button';
       del.className = 'pi-btn-mini pi-btn-del';
-      del.textContent = '×';
+      del.appendChild(iconClose());
       del.title = 'Remove burst';
       del.onclick = () => {
         mod.config.bursts.splice(i, 1);

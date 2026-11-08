@@ -1,3 +1,4 @@
+import { captureEntityLayer } from "../domain/entity-layers";
 import { captureRuntimeModel, RUNTIME_MODEL_COMPONENTS } from "../domain/runtime-model";
 import { captureBehaviorComponent } from "../../behaviors/domain/behavior-component";
 import { EntityWorldError, type EntityCommand, type WorldEntity } from "../domain/entity-world";
@@ -64,13 +65,14 @@ export function copyEntityCommands(commands: readonly EntityCommand[]): readonly
     }
     if (command?.op === "create" && shortText(command.key) && shortText(command.name)) {
       if (command.parentKey !== undefined && !shortText(command.parentKey)) throw new EntityWorldError("invalid-command", "Invalid parent creation key.");
+      const layer = captureEntityLayer(command.layer);
       const transform = command.transform === undefined ? undefined : captureEntityTransform(command.transform);
       let primitive, behaviors, model, character;
       try {
         validateRuntimeModelAnimator(command.model?.animator);
         model = command.model === undefined ? undefined : captureRuntimeModel(command.model);
-        primitive = command.primitive === undefined ? undefined : captureRuntimePrimitive(command.primitive);
-        character = command.character === undefined ? undefined : captureRuntimeCharacter(command.character);
+        primitive = command.primitive === undefined ? undefined : captureRuntimePrimitive({ ...command.primitive, physics: { ...command.primitive.physics, collisionLayer: command.primitive.physics?.collisionLayer ?? layer } });
+        character = command.character === undefined ? undefined : captureRuntimeCharacter({ ...command.character, physics: { ...command.character.physics, collisionLayer: command.character.physics?.collisionLayer ?? layer } });
         behaviors = command.behaviors === undefined ? undefined : captureBehaviorComponent(command.behaviors);
       }
       catch (error) { throw new EntityWorldError("invalid-command", String(error)); }
@@ -91,7 +93,7 @@ export function copyEntityCommands(commands: readonly EntityCommand[]): readonly
         if (character && RUNTIME_CHARACTER_COMPONENTS.some((id) => !components.includes(id))) throw new EntityWorldError("missing-dependency", "A runtime character requires transform, mesh, collider, rigidbody and characterController components.");
         if (!character && components.includes("characterController")) throw new EntityWorldError("missing-dependency", "A runtime Character Controller requires its captured character descriptor.");
         if (transform && !components.includes("transform")) throw new EntityWorldError("missing-dependency", "A local transform requires the transform capability.");
-        return Object.freeze({ op: "create" as const, key: command.key, name: command.name, tags: captureEntityTags(command.tags), behaviors, components: Object.freeze([...components]), primitive, model, character, parentKey: command.parentKey, transform });
+        return Object.freeze({ op: "create" as const, key: command.key, name: command.name, layer, tags: captureEntityTags(command.tags), behaviors, components: Object.freeze([...components]), primitive, model, character, parentKey: command.parentKey, transform });
       }
     }
     throw new EntityWorldError("invalid-command", "Malformed entity command (text limit 256; component limit 32).");
@@ -139,7 +141,7 @@ export function stageEntityChange(slots: EntitySlots, commands: readonly EntityC
       const token = bindings.get(key);
       if (token !== undefined && (!authorized.has(token) || used.has(token))) throw new EntityWorldError("invalid-command", "Repeated or foreign pool reservation.");
       if (token !== undefined) used.add(token);
-      const entity = slots.reserve(command.name, components, undefined, { model: command.model, primitive: command.primitive, character: command.character, parent, transform: command.transform, tags: command.tags, behaviors: command.behaviors }, token);
+      const entity = slots.reserve(command.name, components, undefined, { model: command.model, primitive: command.primitive, character: command.character, parent, transform: command.transform, tags: command.tags, layer: command.layer, behaviors: command.behaviors }, token);
       if (token !== undefined) reservations.set(entity.handle, token);
       created.push(Object.freeze({ key, entity })); resolved.set(key, entity); visiting.delete(key); return entity;
     };

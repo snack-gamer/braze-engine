@@ -48,6 +48,7 @@ export function TransformSection({ object, animatedChannels, updateObject }: Tra
       className="tone-transform"
       id="object.transform"
       title="Transform"
+      icon={<EditorIcon name="transformMove" size="control" />}
       defaultOpen
       actions={(
         <button

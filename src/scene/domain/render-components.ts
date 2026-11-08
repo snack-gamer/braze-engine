@@ -5,6 +5,8 @@ export type WireframeComponent = {
 
 export type MeshFilterComponent = {
   enabled?: boolean;
+  /** Explicit None; legacy sources remain assigned when absent. */
+  empty?: boolean;
 };
 
 /** Authoring counterpart to `Renderer.enabled` and shadow participation. */

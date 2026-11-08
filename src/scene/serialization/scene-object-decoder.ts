@@ -1,3 +1,5 @@
+import { decodeCameraSettings } from "../../camera/serialization/camera-settings-codec";
+import { captureEntityLayer } from "../../world/domain/entity-layers";
 import { decodeJoint } from "../../physics/serialization/joint-codec";
 import {
   defaultCameraSettings,
@@ -12,7 +14,7 @@ import {
   normalizeParticleEffectSettings,
 } from "../../particles/settings";
 import { parsePhysicsComponents } from "../../physics/serialization/codec";
-import type { CameraSettings, DepthOfFieldComponent } from "../domain/camera";
+import type { DepthOfFieldComponent } from "../domain/camera";
 import type { DirectionalLightSettings } from "../domain/directional-light";
 import type { SceneObject } from "../domain/scene-object";
 import { captureEntityTags } from "../../world/domain/entity-tags";
@@ -75,17 +77,6 @@ function parseAssetRef(raw: unknown): SceneObject["assetRef"] | undefined {
   };
 }
 
-function parseCameraSettings(raw: unknown): CameraSettings | undefined {
-  const value = record(raw);
-  if (!value) return undefined;
-  return {
-    target: vec3(value.target, defaultCameraSettings.target),
-    fov: finiteNumber(value.fov_degrees, defaultCameraSettings.fov),
-    near: finiteNumber(value.near, defaultCameraSettings.near),
-    far: finiteNumber(value.far, defaultCameraSettings.far),
-  };
-}
-
 function optionalFiniteNumber(value: unknown): number | undefined {
   return typeof value === "number" && Number.isFinite(value) ? value : undefined;
 }
@@ -135,7 +126,7 @@ function parseImportedMaterialBindings(
 
 function parseMeshFilter(raw: unknown): SceneObject["meshFilter"] | undefined {
   const value = record(raw);
-  return value ? { enabled: value.enabled !== false } : undefined;
+  return value ? { enabled: value.enabled !== false, ...(value.empty === true ? { empty: true } : {}) } : undefined;
 }
 
 function parseMeshRenderer(raw: unknown): SceneObject["meshRenderer"] | undefined {
@@ -173,12 +164,13 @@ export function parseSceneObjects(rawObjects: unknown[]): SceneObject[] {
     const water = parseWaterSettings(item.water_settings)
       ?? (source === "water" ? defaultWaterSettings : undefined);
     const asset = record(item.asset);
-    const camera = parseCameraSettings(item.camera);
+    const camera = decodeCameraSettings(item.camera);
     const directionalLight = parseDirectionalLight(item.directional_light);
     return {
       id,
       name: typeof item.name === "string" && item.name ? item.name : `Object ${index + 1}`,
       tags: item.tags === undefined ? undefined : captureEntityTags(item.tags),
+      layer: item.layer === undefined ? undefined : captureEntityLayer(item.layer),
       primitive,
       dimension: parseDimension(item.dimension),
       parentId: typeof item.parent_id === "string" ? item.parent_id : undefined,

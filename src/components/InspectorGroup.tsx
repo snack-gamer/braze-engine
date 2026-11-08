@@ -32,7 +32,7 @@ export function InspectorGroup({ id, title, meta, note, defaultOpen = true, chil
       >
         <EditorIcon
           name="disclosureClosed"
-          size="compact"
+          size="disclosure"
           className="inspector-group__chevron"
         />
         <span className="inspector-group__title">{title}</span>

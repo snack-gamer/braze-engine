@@ -321,14 +321,14 @@ describe("editor dock layout v3", () => {
 
     expect(frames.groups).toHaveLength(4);
     expect(frames.splitters).toHaveLength(3);
-    expectGroupRect("hierarchy-group", { x: 10, y: 20, width: 188, height: 584 });
-    expectGroupRect("scene-group", { x: 198, y: 20, width: 612, height: 584 });
+    expectGroupRect("hierarchy-group", { x: 10, y: 20, width: 152, height: 584 });
+    expectGroupRect("scene-group", { x: 162, y: 20, width: 648, height: 584 });
     expectGroupRect("project-group", { x: 10, y: 604, width: 800, height: 216 });
     expectGroupRect("inspector-group", { x: 810, y: 20, width: 200, height: 800 });
     expect(frames.splitters.map(({ path, position }) => ({ path, position }))).toEqual([
       { path: [], position: 810 },
       { path: ["first"], position: 604 },
-      { path: ["first", "first"], position: 198 },
+      { path: ["first", "first"], position: 162 },
     ]);
 
     const groupArea = frames.groups.reduce(

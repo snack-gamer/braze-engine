@@ -1,8 +1,9 @@
+import { captureEntityLayer } from "../domain/entity-layers";
 import { EntityWorldError, type WorldEntity } from "../domain/entity-world";
 import { captureEntityTags } from "../domain/entity-tags";
 import type { EntitySlots } from "./entity-slots";
 
-export type AuthoredEntity = Readonly<{ id: string; name: string; parentId?: string | null; tags?: readonly string[] }>;
+export type AuthoredEntity = Readonly<{ id: string; name: string; parentId?: string | null; tags?: readonly string[]; layer?: number }>;
 
 /** Capture identity and hierarchy once, retaining input slot order even when children precede parents. */
 export function captureAuthoredEntities(slots: EntitySlots, source: readonly AuthoredEntity[], validateTags: (tags: readonly string[]) => void) {
@@ -12,7 +13,7 @@ export function captureAuthoredEntities(slots: EntitySlots, source: readonly Aut
       throw new EntityWorldError("invalid-command", "Authored entities require unique IDs and string names.");
     }
     const tags = captureEntityTags(entity.tags); validateTags(tags);
-    records.set(entity.id, slots.reserve(entity.name, Object.freeze([]), entity.id, { tags }));
+    records.set(entity.id, slots.reserve(entity.name, Object.freeze([]), entity.id, { tags, layer: captureEntityLayer(entity.layer) }));
     if (entity.parentId) parents.set(entity.id, entity.parentId);
   }
   const checked = new Set<string>();

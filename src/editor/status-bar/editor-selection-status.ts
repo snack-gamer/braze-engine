@@ -25,6 +25,7 @@ function readableKind(kind: string): string {
 
 /** Resolves the one user-facing selection context shared by all editor panes. */
 export function resolveEditorSelectionStatus(input: EditorSelectionStatusInput): EditorSelectionStatus {
+  if (input.inspectorTarget === "tags" || input.inspectorTarget === "layers") return { label: "Tags and Layers", detail: "Project settings" };
   if (input.inspectorTarget === "physics") return { label: "Physics Settings", detail: "Project settings" };
   if (input.inspectorTarget === "environment") return { label: "Render Settings", detail: "Scene environment" };
   if (input.selectedMaterial) return { label: input.selectedMaterial.name, detail: "Material" };

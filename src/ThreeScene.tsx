@@ -1,3 +1,4 @@
+import type { CameraSettings } from "./scene/domain/camera";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type {
   CameraState,
@@ -33,7 +34,16 @@ export type { ObjectTransformPatch } from "./three/runtime";
 
 const noopPreviewTransform = () => undefined;
 
-export function ThreeScene({
+export function ThreeScene(props: ThreeSceneProps) {
+  const settings = useMemo(() => props.viewportMode === "game"
+    ? props.objects.find((object) => object.id === props.activeCameraId)?.camera : undefined,
+  [props.viewportMode, props.objects, props.activeCameraId]);
+  // A projection change constructs a real camera and its dependent render graph.
+  // Play state is owned above this view and survives the presentation remount.
+  return <ThreeSceneViewport key={settings?.projection ?? "perspective"} {...props} cameraSettings={settings} />;
+}
+
+function ThreeSceneViewport({
   viewportMode = "scene",
   showStats = false,
   viewportHudHostRef,
@@ -67,6 +77,7 @@ export function ThreeScene({
   cameraNear,
   cameraFar,
   cameraDepthOfField,
+  cameraSettings,
   gridOpacity,
   gridColor,
   gridHorizon,
@@ -88,7 +99,7 @@ export function ThreeScene({
   onAnimatorPlaybackBindingChange,
   subscribeImportedClipPreview,
   onAnimatorDiagnostics,
-}: ThreeSceneProps) {
+}: ThreeSceneProps & { cameraSettings?: CameraSettings }) {
   const renderSession = useRenderSession();
   const objects = usePlaySceneObjects(renderSession, authoredObjects, scenePlaybackMode);
   const physicsObjectsRef = useRef(authoredObjects);
@@ -187,6 +198,7 @@ export function ThreeScene({
         viewportHudHost: viewportHudHostRef?.current ?? undefined,
         initial: {
           viewportMode,
+          cameraProjection: cameraSettings?.projection,
           renderSize,
           lowResolution,
           transformMode,
@@ -255,6 +267,7 @@ export function ThreeScene({
     cameraNear,
     cameraFar,
     cameraDepthOfField,
+    cameraSettings,
     lastEmittedRef: lastEmittedCameraRef,
   });
 

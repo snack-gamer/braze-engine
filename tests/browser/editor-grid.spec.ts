@@ -41,11 +41,14 @@ test("Scene grid stays neutral and its manual controls survive reload", async ({
       context.drawImage(bitmap, 0, 0); bitmap.close();
       const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
       let grid = 0, coloredAxes = 0;
+      const backgroundIndex = (80 * canvas.width + Math.floor(canvas.width / 2)) * 4;
+      const background = [pixels[backgroundIndex], pixels[backgroundIndex + 1], pixels[backgroundIndex + 2]];
       // Ignore the orientation widget, toolbar and viewport border.
       for (let y = 180; y < canvas.height - 2; y++) for (let x = 2; x < canvas.width - 2; x++) {
         const i = (y * canvas.width + x) * 4;
         const [r, g, b] = [pixels[i], pixels[i + 1], pixels[i + 2]];
-        if (r > 12 && b >= r && b - r < 45 && g >= r) grid++;
+        if (Math.abs(r - background[0]) + Math.abs(g - background[1]) + Math.abs(b - background[2]) > 5
+          && b >= r && b - r < 45 && g >= r) grid++;
         if ((r > 65 && r > g * 1.5 && r > b * 1.5) || (b > 65 && b > r * 1.5 && b > g * 1.2)) coloredAxes++;
       }
       return { grid, coloredAxes };

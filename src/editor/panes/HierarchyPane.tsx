@@ -33,7 +33,8 @@ export function HierarchyPane({
 }: HierarchyPaneProps) {
   const prefabModeActive = Boolean(prefab.state);
   return (
-    <SceneHierarchyRoot prefab={prefabModeActive}><HierarchyPanel
+    <HierarchyPanel
+      renderTree={(tree, filtering) => <SceneHierarchyRoot prefab={prefabModeActive} filtering={filtering}>{tree}</SceneHierarchyRoot>}
       objects={prefabModeActive ? prefab.objects : sceneObjects}
       activeObjectId={prefabModeActive ? prefab.activeObjectId : sceneActiveObjectId}
       activeCameraId={cameras.editorActiveCameraId}
@@ -58,6 +59,6 @@ export function HierarchyPane({
         : assets.addAssetToScene(asset, undefined, null, "prepend")}
       requireCamera={!prefabModeActive}
       lockedRootId={prefab.masterRootId}
-    /></SceneHierarchyRoot>
+    />
   );
 }

@@ -8,7 +8,7 @@ import { createAnimatorState } from '../domain/animator-controller';
 import { encodeAnimatorComponent } from '../serialization/animator-component-codec';
 
 const guid = 'ab120000000000000000000000000001';
-const options = { animatorCatalog: { ready: true, importedAssets: [{ guid, filename: 'Skin.gltf', kind: 'model', status: 'ready' }] } };
+const options = { assetCatalog: { ready: true, importedAssets: [{ guid, filename: 'Skin.gltf', kind: 'model', status: 'ready' }] } };
 const empty = { version: 'braze-engine/scene-v1', objects: [] };
 const create = { op: 'object.create', id: 'skin', primitive: 'gltf', assetRef: { guid, localId: 'main' } };
 const values = () => {
@@ -53,9 +53,9 @@ describe('Animator command authoring', () => {
 
   it('checks model eligibility, allows removal without source recovery, and never partly applies', () => {
     expect(() => executeSceneCommands(empty, [create, set(values())])).toThrow('catalog');
-    for (const catalog of [{ ...options.animatorCatalog, ready: false }, { ready: true, importedAssets: [] },
-      { ready: true, importedAssets: [{ ...options.animatorCatalog.importedAssets[0], status: 'error' }] }]) {
-      expect(() => executeSceneCommands(empty, [create, set(values())], { animatorCatalog: catalog })).toThrow();
+    for (const catalog of [{ ...options.assetCatalog, ready: false }, { ready: true, importedAssets: [] },
+      { ready: true, importedAssets: [{ ...options.assetCatalog.importedAssets[0], status: 'error' }] }]) {
+      expect(() => executeSceneCommands(empty, [create, set(values())], { assetCatalog: catalog })).toThrow();
     }
     expect(() => executeSceneCommands(empty, [{ ...create, primitive: 'cube' }, set(values())], options)).toThrow('imported');
     expect(() => executeSceneCommands(empty, [{ ...create, assetRef: { guid, localId: 'clip:Sway' } }, set(values())], options)).toThrow('main');

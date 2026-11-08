@@ -1,3 +1,4 @@
+import type { RenderCamera } from "../../../camera/adapters/render-camera";
 import type * as THREE from "three";
 import { RenderPipeline } from "three/webgpu";
 import { ao } from "three/addons/tsl/display/GTAONode.js";
@@ -43,7 +44,7 @@ export type ThreeViewportPostGraph = Readonly<{
 export function createThreeViewportPostGraph(
   renderer: ViewportRenderer,
   scene: THREE.Scene,
-  camera: THREE.PerspectiveCamera,
+  camera: RenderCamera,
   light: THREE.DirectionalLight,
   effects: ActiveViewportPostEffects,
   executionPlan: ThreeViewportExecutionPlan,

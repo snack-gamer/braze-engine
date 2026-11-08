@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { EditorIcon } from "../../ui/EditorIcon";
 
 type MeshRendererFoldoutProps = {
   id: string;
@@ -21,6 +22,7 @@ export function MeshRendererFoldout({
       <summary
         className="mesh-renderer-foldout__head"
       >
+        <EditorIcon name="disclosureClosed" size="disclosure" className="mesh-renderer-foldout__chevron" />
         <span className="mesh-renderer-foldout__title">{title}</span>
         {meta && <span className="mesh-renderer-foldout__meta">{meta}</span>}
       </summary>

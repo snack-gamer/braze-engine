@@ -3,6 +3,7 @@ import {
   moveClonerEffector,
 } from "../../../scene/authoring/cloner-editor-operations";
 import type { ClonerSettings, SceneObject } from "../../../types";
+import { EditorIcon } from "../../../ui/EditorIcon";
 import { InspectorGroup } from "../../InspectorGroup";
 import { InspectorRow } from "../../InspectorRow";
 
@@ -31,23 +32,27 @@ export function ClonerEffectorStack({ cloner, objects, patchCloner }: Props) {
             </span>
             <button
               type="button"
+              className="icon-button compact"
+              aria-label="Move effector up"
               title="Move up"
               disabled={index === 0}
               onClick={() => {
                 const next = moveClonerEffector(stack, index, -1);
                 if (next) setStack(next);
               }}
-            >↑</button>
+            ><EditorIcon name="moveUp" size="compact" /></button>
             <button
               type="button"
+              className="icon-button compact"
+              aria-label="Move effector down"
               title="Move down"
               disabled={index === stack.length - 1}
               onClick={() => {
                 const next = moveClonerEffector(stack, index, 1);
                 if (next) setStack(next);
               }}
-            >↓</button>
-            <button type="button" title="Remove" onClick={() => setStack(stack.filter((other) => other !== id))}>✕</button>
+            ><EditorIcon name="moveDown" size="compact" /></button>
+            <button type="button" className="icon-button compact" aria-label="Remove effector" title="Remove" onClick={() => setStack(stack.filter((other) => other !== id))}><EditorIcon name="close" size="compact" /></button>
           </div>
         );
       })}

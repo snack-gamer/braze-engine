@@ -1,3 +1,4 @@
+import { assignCameraCullingBody, forgetCameraCulling } from "../../camera/adapters/camera-culling";
 import type { SceneObject } from "../../types";
 import { disposeObject } from "../dispose";
 import type { Runtime } from "../runtime";
@@ -7,6 +8,7 @@ import { clonerSignature, directSourcesFor } from "./source-planning";
 function removeOutput(runtime: Runtime, clonerId: string): void {
   const output = runtime.clonerOutputs.get(clonerId);
   if (!output) return;
+  forgetCameraCulling(runtime, output);
   output.removeFromParent();
   disposeObject(output);
   runtime.clonerOutputs.delete(clonerId);
@@ -40,6 +42,7 @@ export function syncClonerOutputs(
 
     removeOutput(runtime, object.id);
     const output = buildClonerOutput(runtime, object, sources, objects);
+    assignCameraCullingBody(runtime, output, object.layer ?? 0);
     clonerNode.add(output);
     runtime.clonerOutputs.set(object.id, output);
     runtime.clonerSignatures.set(object.id, signature);

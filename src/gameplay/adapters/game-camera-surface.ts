@@ -1,3 +1,5 @@
+import { captureCameraPatch, captureCameraSettings } from "../../camera/domain/camera-settings";
+import { applyCameraPresentation, cameraPresentation } from "../../camera/adapters/camera-presentation";
 import { markSceneDirty, type Runtime } from "../../three/runtime";
 import type { GameCameraPose } from "../domain/game-module";
 
@@ -9,9 +11,10 @@ export function createGameCameraSurface() {
   let restore: (() => void) | null = null;
   const present = () => {
     if (!runtime || runtime.disposed || !pose) return;
+    const settings = captureCameraSettings({ ...cameraPresentation(runtime), ...pose.lens, fov: pose.fov });
     runtime.camera.position.set(...pose.position);
     runtime.controls.target.set(...pose.target);
-    runtime.camera.fov = pose.fov;
+    applyCameraPresentation(runtime, settings);
     runtime.camera.lookAt(...pose.target);
     runtime.camera.updateProjectionMatrix();
     markSceneDirty(runtime);
@@ -25,19 +28,22 @@ export function createGameCameraSurface() {
       }
       if (!Number.isFinite(next.fov) || next.fov < 1 || next.fov > 179) throw new Error("Gameplay camera FOV must be between 1 and 179 degrees.");
       if (next.position.every((value, index) => value === next.target[index])) throw new Error("Gameplay camera position and target must differ.");
+      const lens = next.lens === undefined ? pose?.lens : { ...pose?.lens, ...captureCameraPatch(next.lens) };
+      if (lens && ["projection", "target", "fov"].some((key) => key in lens)) throw new Error("Runtime lens overrides cannot change projection kind, target, or the top-level FOV.");
+      if (runtime) captureCameraSettings({ ...cameraPresentation(runtime), ...lens, fov: next.fov });
       pose = Object.freeze({ position: Object.freeze([...next.position]) as GameCameraPose["position"],
-        target: Object.freeze([...next.target]) as GameCameraPose["target"], fov: next.fov });
+        target: Object.freeze([...next.target]) as GameCameraPose["target"], fov: next.fov, ...(lens ? { lens: Object.freeze(lens) } : {}) });
       present();
     },
     attach(next: Runtime) {
       detach?.();
       runtime = next;
       const position = next.camera.position.clone(), orientation = next.camera.quaternion.clone();
-      const target = next.controls.target.clone(), fov = next.camera.fov;
+      const target = next.controls.target.clone(), baseline = cameraPresentation(next);
       const restorePose = () => {
         if (next.disposed) return;
         next.camera.position.copy(position); next.camera.quaternion.copy(orientation);
-        next.controls.target.copy(target); next.camera.fov = fov;
+        next.controls.target.copy(target); applyCameraPresentation(next, baseline);
         next.camera.updateProjectionMatrix(); next.camera.updateMatrixWorld();
         markSceneDirty(next);
       };

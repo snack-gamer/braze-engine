@@ -1,6 +1,17 @@
 /* Labeled Inspector actions are controls, not toolbar hints. Give them a
  * flat resting surface and visible edge while keeping icon-only header
  * actions intentionally quiet. */
+.inspector-actions,
+.rail-right :is(.inspector-section__body, .inspector-group__body) > .rail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--inspector-action-gap);
+  margin-top: var(--inspector-action-spacing);
+  padding-top: var(--inspector-action-spacing);
+  border-top: 1px solid var(--hairline-soft);
+}
+
 .rail-right .ghost-button {
   height: var(--h-input);
   border-color: var(--border-strong);

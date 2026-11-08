@@ -1,3 +1,5 @@
+import { applyCameraPresentation } from "../../camera/adapters/camera-presentation";
+import type { CameraSettings } from "../../scene/domain/camera";
 import { useEffect, type MutableRefObject } from "react";
 import type { CameraState, DepthOfFieldComponent } from "../../types";
 import { markSceneDirty, type Runtime } from "../runtime";
@@ -5,6 +7,7 @@ import { markSceneDirty, type Runtime } from "../runtime";
 type Args = {
   runtimeRef: MutableRefObject<Runtime | null>;
   cameraTransform: CameraState;
+  cameraSettings?: CameraSettings;
   cameraNear: number;
   cameraFar: number;
   cameraDepthOfField: DepthOfFieldComponent | null;
@@ -24,6 +27,7 @@ let warnedDepthOfField = false;
 export function useCameraSync({
   runtimeRef,
   cameraTransform,
+  cameraSettings,
   cameraNear,
   cameraFar,
   cameraDepthOfField,
@@ -38,13 +42,10 @@ export function useCameraSync({
     const [tx, ty, tz] = cameraTransform.target;
     camera.position.set(px, py, pz);
     controls.target.set(tx, ty, tz);
-    camera.fov = cameraTransform.fov;
-    camera.near = cameraNear;
-    camera.far = cameraFar;
-    camera.updateProjectionMatrix();
+    applyCameraPresentation(runtime, { ...cameraSettings, target: cameraTransform.target, fov: cameraTransform.fov, near: cameraNear, far: cameraFar });
     controls.update();
     markSceneDirty(runtime);
-  }, [runtimeRef, lastEmittedRef, cameraTransform, cameraNear, cameraFar]);
+  }, [runtimeRef, lastEmittedRef, cameraTransform, cameraNear, cameraFar, cameraSettings]);
 
   useEffect(() => {
     if (!cameraDepthOfField || cameraDepthOfField.enabled === false || warnedDepthOfField) return;

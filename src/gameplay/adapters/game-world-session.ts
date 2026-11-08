@@ -1,3 +1,4 @@
+import { captureEntityLayer } from "../../world/domain/entity-layers";
 import { captureBehaviorComponent } from "../../behaviors/domain/behavior-component";
 import { resolveGameplayInput } from "../../input/adapters/resolve-gameplay-input";
 import type { BrowserThreeWebGpuRenderSession } from "../../rendering/adapters/browser-three-webgpu-session";
@@ -53,6 +54,7 @@ export function createGameWorldSession(options: Options) {
     id: object.id, name: object.name, kind: object.primitive,
     parentId: object.parentId,
     tags: captureEntityTags(object.tags),
+    layer: captureEntityLayer(object.layer),
     authoredPosition: Object.freeze([...object.position]) as GameVec3,
     character: object.characterController?.enabled === true,
   })));

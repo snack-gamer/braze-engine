@@ -3,6 +3,7 @@ import type { AssetRef } from "../../assets/domain/asset-reference";
 export type PrefabOverrideKey =
   | "name"
   | "tags"
+  | "layer"
   | "color"
   | "visibility"
   | "lock"

@@ -72,7 +72,7 @@ export function createRuntimeEntityBodies(state: Pick<PhysicsPlaybackState, "run
             for (const body of created) {
               if (body.reservation !== undefined) reserved.set(body.reservation, { index: body.index, state: "active" });
               records.set(body.entity.handle.slot, body); state.bodyBindings[body.index] = body.descriptor.binding;
-              views.change(body.index, body.entity.model ? null : runtimeBodyRenderPrimitive(body.entity) ?? null, body.descriptor.binding);
+              views.change(body.index, body.entity.model ? null : runtimeBodyRenderPrimitive(body.entity) ?? null, body.descriptor.binding, body.entity.layer ?? 0);
             }
             for (const body of removed) {
               if (body.reservation !== undefined) reserved.set(body.reservation, { index: body.index, state: "retiring" });
@@ -93,7 +93,7 @@ export function createRuntimeEntityBodies(state: Pick<PhysicsPlaybackState, "run
               }
               for (const body of removed) {
                 if (body.reservation !== undefined) reserved.set(body.reservation, { index: body.index, state: "active" });
-                records.set(body.entity.handle.slot, body); views.change(body.index, body.entity.model ? null : runtimeBodyRenderPrimitive(body.entity) ?? null, body.descriptor.binding);
+                records.set(body.entity.handle.slot, body); views.change(body.index, body.entity.model ? null : runtimeBodyRenderPrimitive(body.entity) ?? null, body.descriptor.binding, body.entity.layer ?? 0);
               }
             }
             if (!disposed) for (const body of created) if (!body.reused) free.push(body.index);

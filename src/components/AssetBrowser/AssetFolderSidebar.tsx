@@ -1,7 +1,5 @@
 import { useMemo, type CSSProperties, type DragEvent, type MouseEvent, type ReactNode } from "react";
 import type { FolderPath } from "../../hooks/useAssetFolders";
-import { EditorIcon } from "../../ui/EditorIcon";
-import { assetIconNames } from "../../ui/icons";
 import { AssetFolderTreeRow } from "./AssetFolderTreeRow";
 import {
   flattenVisibleFolderRows,
@@ -18,7 +16,6 @@ type AssetFolderSidebarProps = Readonly<{
   nonEmptyFolders: ReadonlySet<FolderPath>;
   folderChildren: ReadonlyMap<FolderPath, FolderPath[]>;
   basenameOf: (path: FolderPath) => string;
-  onSelectFilter: (filter: AssetFilter) => void;
   onBrowseFolder: (path: FolderPath) => void;
   onToggleFolder: (path: FolderPath) => void;
   onFolderContext: (event: MouseEvent, path: FolderPath) => void;
@@ -76,32 +73,6 @@ export function AssetFolderSidebar(props: AssetFolderSidebarProps) {
       aria-label="Project folders"
       onScroll={virtualTree.virtualized ? virtualTree.onScroll : undefined}
     >
-      <div className="assets__sidebar-section">
-        <div className="assets__sidebar-heading">
-          <EditorIcon name="disclosureOpen" size="disclosure" />
-          <EditorIcon name="favorite" size="row-action" />
-          <span>Favorites</span>
-        </div>
-        {([
-          ["scenes", "sceneDocument", "All Scenes"],
-          ["materials", "material", "All Materials"],
-          ["models", assetIconNames.model, "All Models"],
-          ["prefabs", assetIconNames.prefab, "All Prefabs"],
-          ["animation", "animationPlayer", "All Animation"],
-          ["input", assetIconNames.inputActionMap, "All Input"],
-        ] as const).map(([filter, icon, label]) => (
-          <button
-            key={filter}
-            type="button"
-            className={`assets__smart-row ${props.assetFilter === filter ? "selected" : ""}`}
-            onClick={() => props.onSelectFilter(filter)}
-          >
-            <EditorIcon name={icon} size="tree" />
-            <span>{label}</span>
-          </button>
-        ))}
-      </div>
-
       <div
         ref={virtualTree.treeRef}
         className={`assets__folder-tree ${virtualTree.virtualized ? "assets__folder-tree--virtualized" : ""}`}

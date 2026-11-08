@@ -73,3 +73,17 @@ it("constrains a static camera boom with clearance and handles initial overlap",
   expect(() => h.camera.constrain([NaN, 0, 0], [0, 1, 5], 0.2)).toThrow();
   expect(() => h.camera.constrain([0, 1, 0], [0, 1, 5], -1)).toThrow(); h.surface.dispose();
 });
+
+it("retains lens overrides across views and restores authored settings on release", () => {
+  const h = harness(), lease = h.camera.acquire("Zoom");
+  lease.setPose({ ...pose, lens: { near: .5, far: 900, cullingMask: 0x80000000, background: "solid", backgroundColor: "#102030" } });
+  expect(h.runtime.camera.near).toBe(.5); expect(h.runtime.camera.far).toBe(900);
+  lease.setPose({ ...pose, position: [1, 2, 5] });
+  expect(lease.snapshot()?.lens?.cullingMask).toBe(0x80000000);
+  const second = { camera: new PerspectiveCamera(40, 1, .2, 500), controls: { target: new Vector3() }, requestFrame: vi.fn(), disposed: false } as unknown as Runtime;
+  h.surface.attach(second); expect(second.camera.near).toBe(.5); expect(second.camera.far).toBe(900);
+  expect(() => lease.setPose({ ...pose, lens: { near: 1000 } })).toThrow(/far clipping/);
+  expect(second.camera.near).toBe(.5);
+  lease.release(); expect(second.camera.near).toBe(.2); expect(second.camera.far).toBe(500);
+  h.surface.dispose();
+});

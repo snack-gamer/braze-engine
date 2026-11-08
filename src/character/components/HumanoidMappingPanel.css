@@ -41,12 +41,7 @@
   white-space: nowrap;
 }
 
-.avatar-configurator__mapping-help i {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent-2);
-}
+.avatar-configurator__mapping-help .editor-icon { color: var(--accent-light); }
 
 .avatar-configurator__mapping-columns {
   display: grid;

@@ -1,3 +1,4 @@
+import type { RenderCamera } from "../../../../camera/adapters/render-camera";
 import * as THREE from "three";
 import {
   dynamicCasterGeneration,
@@ -17,7 +18,7 @@ export type ThreeShadowFrameTracker = Readonly<{
   hasChanges: () => boolean;
   invalidate: (kind: Invalidation) => void;
   markPlanned: () => void;
-  observe: (camera: THREE.PerspectiveCamera) => void;
+  observe: (camera: RenderCamera) => void;
 }>;
 
 type MutableInput = {
@@ -63,6 +64,7 @@ export function createThreeShadowFrameTracker(
   const worldQuaternion = new THREE.Quaternion();
   const worldScale = new THREE.Vector3();
   let changed = true;
+  const previousProjection = new THREE.Matrix4();
 
   return Object.freeze({
     currentInput: () => input,
@@ -77,7 +79,7 @@ export function createThreeShadowFrameTracker(
       camera.updateWorldMatrix(true, false);
       camera.matrixWorld.decompose(worldPosition, worldQuaternion, worldScale);
       if (previous.initialized) {
-        if (projectionChanged(camera, previous)) {
+        if (projectionChanged(camera, previous) || !previousProjection.equals(camera.projectionMatrix)) {
           input.generations.camera = shadowCameraGeneration(
             nextGeneration(input.generations.camera),
           );
@@ -98,6 +100,7 @@ export function createThreeShadowFrameTracker(
       input.cameraPosition.x = worldPosition.x;
       input.cameraPosition.y = worldPosition.y;
       input.cameraPosition.z = worldPosition.z;
+      previousProjection.copy(camera.projectionMatrix);
       rememberCamera(camera, worldPosition, worldQuaternion, previous);
     },
   });
@@ -127,7 +130,7 @@ function advanceGeneration(
 }
 
 function projectionChanged(
-  camera: THREE.PerspectiveCamera,
+  camera: RenderCamera,
   previous: Readonly<{
     near: number;
     far: number;
@@ -144,7 +147,7 @@ function projectionChanged(
 }
 
 function rememberCamera(
-  camera: THREE.PerspectiveCamera,
+  camera: RenderCamera,
   worldPosition: THREE.Vector3,
   worldQuaternion: THREE.Quaternion,
   previous: {

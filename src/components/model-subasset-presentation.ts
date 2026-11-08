@@ -30,7 +30,7 @@ function presentation(
 }
 
 const PRESENTATION_BY_KIND = {
-  mesh: presentation("Mesh", "assetModel", MODEL_FILTERS),
+  mesh: presentation("Mesh", "meshFilter", MODEL_FILTERS),
   material: presentation("Material", "material", MODEL_FILTERS),
   clip: presentation("Animation Clip", "animationPlayer", ANIMATION_FILTERS),
   avatar: presentation("Avatar", "avatar", ANIMATION_FILTERS),

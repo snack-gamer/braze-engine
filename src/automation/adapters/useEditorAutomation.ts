@@ -74,7 +74,7 @@ export function useEditorAutomation(input: Input) {
       if (current.playback.mode !== "edit") throw new Error("Stop Play Mode before editing authored objects.");
       if (request.baseRevision !== revision.current.value) throw new Error("Editor revision changed; inspect and preview again.");
       if (request.apply !== undefined && typeof request.apply !== "boolean") throw new Error("apply must be boolean.");
-      const result = executeSceneCommands(document(), request.commands, { animatorCatalog: commandAssets && { ready: true, importedAssets: commandAssets } });
+      const result = executeSceneCommands(document(), request.commands, { assetCatalog: commandAssets && { ready: true, importedAssets: commandAssets } });
       if (request.apply) {
         if (!result.valid) throw new Error(result.diagnostics.join("\n"));
         const next = parseSceneObjects(result.scene.objects);

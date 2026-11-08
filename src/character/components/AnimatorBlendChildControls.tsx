@@ -40,16 +40,18 @@ export function AnimatorBlendChildControls({
           type="button"
           className="icon-button compact"
           disabled={index === 0}
+          aria-label="Move child up"
           title="Move child up"
           onClick={() => onChange(moveAnimatorBlendChild(rootMotion, treePath, child.id, -1))}
-        >↑</button>
+        ><EditorIcon name="moveUp" size="row-action" /></button>
         <button
           type="button"
           className="icon-button compact"
           disabled={index === childCount - 1}
+          aria-label="Move child down"
           title="Move child down"
           onClick={() => onChange(moveAnimatorBlendChild(rootMotion, treePath, child.id, 1))}
-        >↓</button>
+        ><EditorIcon name="moveDown" size="row-action" /></button>
         <button
           type="button"
           className="icon-button compact danger"

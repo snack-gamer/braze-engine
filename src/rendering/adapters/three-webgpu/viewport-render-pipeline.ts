@@ -1,3 +1,4 @@
+import type { RenderCamera } from "../../../camera/adapters/render-camera";
 import type * as THREE from "three";
 import type {
   AmbientOcclusionSettings,
@@ -22,6 +23,7 @@ import {
 } from "./viewport-post-graph";
 
 export type ViewportRenderPipeline = Readonly<{
+  setCameraBackground: (environmentVisible: boolean) => void;
   setImageResponse: (toneMapping: THREE.ToneMapping, exposure: number) => void;
   setSkyEffects: (settings: SkySettings, enabled: boolean) => void;
   setAmbientOcclusion: (settings: AmbientOcclusionSettings) => void;
@@ -46,7 +48,7 @@ export type ViewportRenderPipeline = Readonly<{
 export function createViewportRenderPipeline(
   renderer: ViewportRenderer,
   scene: THREE.Scene,
-  camera: THREE.PerspectiveCamera,
+  camera: RenderCamera,
   light: THREE.DirectionalLight,
 ): ViewportRenderPipeline {
   let state = EMPTY_VIEWPORT_POST_EFFECT_STATE;
@@ -97,6 +99,9 @@ export function createViewportRenderPipeline(
   };
 
   return {
+    setCameraBackground: (environmentBackground) => {
+      if ((state.environmentBackground !== false) !== environmentBackground) mutate({ environmentBackground });
+    },
     setImageResponse: (nextToneMapping, nextExposure) => {
       if (disposed) return;
       toneMapping = nextToneMapping;

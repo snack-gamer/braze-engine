@@ -1,3 +1,4 @@
+import type { RenderCamera } from "../../camera/adapters/render-camera";
 import type { MutableRefObject } from "react";
 import type * as THREE from "three";
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -22,7 +23,7 @@ type Callbacks = {
 
 type InputArgs = {
   canvas: HTMLCanvasElement;
-  camera: THREE.PerspectiveCamera;
+  camera: RenderCamera;
   controls: OrbitControls;
   transformControls: TransformControls;
   objectRoot: THREE.Group;

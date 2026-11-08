@@ -1,3 +1,4 @@
+import { DEFAULT_CAMERA_SETTINGS } from "./camera/domain/camera-settings";
 import {
   type CameraSettings,
   type CameraState,
@@ -18,12 +19,7 @@ export const defaultCamera: CameraState = {
   fov: 52,
 };
 
-export const defaultCameraSettings: CameraSettings = {
-  target: [0, 0.5, 0],
-  fov: 52,
-  near: 0.1,
-  far: 200,
-};
+export const defaultCameraSettings: CameraSettings = DEFAULT_CAMERA_SETTINGS;
 
 export const defaultDepthOfFieldComponent: DepthOfFieldComponent = {
   enabled: true,

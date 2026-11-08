@@ -1,3 +1,4 @@
+import type { RenderCamera } from "../../../../camera/adapters/render-camera";
 import * as THREE from "three";
 import {
   HalfFloatType,
@@ -52,7 +53,7 @@ export class QuarterResolutionCloudNode extends TempNode {
   private fogSunY = Number.NaN;
 
   constructor(
-    camera: THREE.PerspectiveCamera,
+    camera: RenderCamera,
     private readonly light: THREE.DirectionalLight,
   ) {
     super("vec4");

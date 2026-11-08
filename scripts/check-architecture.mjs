@@ -164,7 +164,7 @@ if (browserAdapterRequests !== 1 || browserDeviceRequests !== 1) {
 }
 
 for (const relative of [
-  "vendor/particles/packages/editor/src/theme.ts",
+  "vendor/particles/packages/editor/src/theme.css",
   "vendor/particles/packages/editor/src/widgets.ts",
 ]) {
   const source = await readFile(path.resolve(relative), "utf8");

@@ -41,7 +41,7 @@ export default defineConfig(async ({ command }) => {
       replacement: resolve("src/player/runtime/disabled-cloner-runtime.ts"),
     }]),
     ...(features?.water ? [] : [{
-      find: /^\.\/water\/water-body$/,
+      find: /^\.{1,2}\/water\/water-body$/,
       replacement: resolve("src/player/runtime/disabled-water-body.ts"),
     }]),
     {

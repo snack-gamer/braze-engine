@@ -1,4 +1,5 @@
 import type { AssetRef } from "../../assets/domain/asset-reference";
+import type { MeshAssetBinding } from "../../mesh/domain/mesh-reference";
 import type { BehaviorComponent } from "../../behaviors/domain/behavior-component";
 import type { UiCanvasComponent } from "../../game-ui/domain/ui-document";
 import type { AnimatorComponent } from "../../character/domain/animator-component";
@@ -38,6 +39,8 @@ export type SceneObject = {
   name: string;
   /** Case-sensitive entity labels; absent means untagged. */
   tags?: readonly string[];
+  /** Stable project layer slot, absent means Default (0). */
+  layer?: number;
   primitive: PrimitiveKind;
   /** Undefined is treated as `3d` for backward compatibility. */
   dimension?: "2d" | "3d";
@@ -58,6 +61,8 @@ export type SceneObject = {
   assetUrl?: string;
   assetNote?: string;
   assetMissing?: boolean;
+  /** Resolved from the asset catalog, omitted by the scene/prefab codec. */
+  assetMeshBinding?: MeshAssetBinding;
   botProfileId?: string;
   /** Undefined denotes a hierarchy root; transforms inherit from this parent. */
   parentId?: string;

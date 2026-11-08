@@ -1,3 +1,4 @@
+import type { RenderCamera } from "../camera/adapters/render-camera";
 import * as THREE from "three";
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { CameraEmitter } from "./controls/camera-emitter";
@@ -65,7 +66,7 @@ export type ViewportNavigationGizmo = {
 
 type NavigationArgs = {
   host: HTMLElement;
-  camera: THREE.PerspectiveCamera;
+  camera: RenderCamera;
   controls: OrbitControls;
   emitter: CameraEmitter;
   cancelFocus: () => void;

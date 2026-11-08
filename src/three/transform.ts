@@ -30,15 +30,11 @@ export function applyTransform(target: THREE.Object3D, object: SceneObject) {
     );
   }
   target.scale.set(object.scale[0], object.scale[1], object.scale[2]);
-  // Object stays visible only when the GameObject is active AND its mesh
-  // components are present and enabled — removing or disabling the Mesh Filter
-  // (no geometry) or Mesh Renderer (nothing drawn) hides it, as in Unity.
+  // Mesh Filter absence removes its body during reconciliation, not child objects.
   const removed = object.removedComponents;
   target.visible =
     object.visible &&
-    !removed?.includes("meshFilter") &&
     !removed?.includes("meshRenderer") &&
-    object.meshFilter?.enabled !== false &&
     object.meshRenderer?.enabled !== false;
 }
 

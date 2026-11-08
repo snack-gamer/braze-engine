@@ -1,6 +1,6 @@
 import { DocumentConflictError } from "../json-document-store.mjs";
 import { normalizeSceneId, SCENE_DOCUMENT_VERSION } from "../scene-document-store.mjs";
-import { animatorCommandOptions } from "./animator-command-options.mjs";
+import { importedAssetCommandOptions } from "./imported-asset-command-options.mjs";
 
 function page(items, offset = 0, limit = 100) {
   if (!Number.isInteger(offset) || offset < 0 || !Number.isInteger(limit) || limit < 1 || limit > 200) throw new Error("offset must be nonnegative; limit must be 1–200.");
@@ -49,7 +49,7 @@ export function createAutomationService(dependencies) {
       }
     }
     const initial = current?.value ?? { version: SCENE_DOCUMENT_VERSION, objects: [] };
-    const result = authoring.executeSceneCommands(initial, request.commands, await animatorCommandOptions(request.commands, refreshAssetDatabase));
+    const result = authoring.executeSceneCommands(initial, request.commands, await importedAssetCommandOptions(request.commands, refreshAssetDatabase));
     const response = { sceneId: id, baseRevision: current?.revision ?? null, revision: current?.revision ?? null,
       applied: false, changedIds: result.changedIds, valid: result.valid, diagnostics: result.diagnostics, objectCount: result.objectCount };
     if (!request.apply) return response;

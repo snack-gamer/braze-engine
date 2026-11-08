@@ -1,7 +1,8 @@
 import type { RefObject } from "react";
 import { EditorIcon } from "../../ui/EditorIcon";
 import { EditorRange } from "../../ui/controls";
-import { ASSET_FILTERS, TILE_MAX, TILE_MIN, ZOOM_STEP } from "./model";
+import { TILE_MAX, TILE_MIN, ZOOM_STEP } from "./model";
+import { AssetFilterBar } from "./AssetFilterBar";
 import type { AssetBrowserMenu, AssetFilter, ViewMode } from "./types";
 
 type AssetBrowserHeaderProps = {
@@ -42,7 +43,7 @@ export function AssetBrowserHeader({
   return (
     <div className="assets__head">
       <div className="assets__dock-tab" role="heading" aria-level={2}>Project</div>
-      <div className="assets__head-actions">
+      <div className="assets__head-actions editor-toolbar" role="toolbar" aria-label="Project tools">
         <button
           type="button"
           className="ghost-button compact assets__create"
@@ -56,28 +57,7 @@ export function AssetBrowserHeader({
           <EditorIcon name="add" size="control" />
           <EditorIcon name="disclosureOpen" size="micro" />
         </button>
-        <div className="assets__search">
-          <EditorIcon name="search" size="row-action" />
-          <input
-            type="text"
-            placeholder="Search"
-            value={search}
-            onChange={(event) => onSearchChange(event.target.value)}
-            aria-label="Search assets"
-          />
-        </div>
-        <select
-          className="editor-select assets__filter-select"
-          value={assetFilter}
-          onChange={(event) => onAssetFilterChange(event.target.value as AssetFilter)}
-          aria-label="Asset type filter"
-          title="Asset type filter"
-        >
-          {ASSET_FILTERS.map((filter) => (
-            <option key={filter.id} value={filter.id}>{filter.label}</option>
-          ))}
-        </select>
-        <div className="editor-segmented editor-segmented--icons assets__view-toggle" role="group" aria-label="View mode">
+        <div className="editor-segmented editor-segmented--icons editor-action-strip assets__view-toggle" role="group" aria-label="View mode">
           <button
             type="button"
             className={viewMode === "grid" ? "icon-button active" : "icon-button"}
@@ -86,7 +66,7 @@ export function AssetBrowserHeader({
             aria-label="Icon view"
             aria-pressed={viewMode === "grid"}
           >
-            <EditorIcon name="gridView" size="row-action" />
+            <EditorIcon name="gridView" size="control" />
           </button>
           <button
             type="button"
@@ -96,9 +76,20 @@ export function AssetBrowserHeader({
             aria-label="List view"
             aria-pressed={viewMode === "list"}
           >
-            <EditorIcon name="listView" size="row-action" />
+            <EditorIcon name="listView" size="control" />
           </button>
         </div>
+        <div className="assets__search editor-toolbar__search">
+          <EditorIcon name="search" size="compact" />
+          <input
+            type="text"
+            placeholder="Search"
+            value={search}
+            onChange={(event) => onSearchChange(event.target.value)}
+            aria-label="Search assets"
+          />
+        </div>
+        <AssetFilterBar value={assetFilter} onChange={onAssetFilterChange} />
         <div className="editor-control-group assets__zoom" title="Tile size">
           <button
             type="button"

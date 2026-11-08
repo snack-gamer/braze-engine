@@ -1,9 +1,10 @@
+import { LineBasicNodeMaterial } from "three/webgpu";
 import * as THREE from "three";
 import { describe, expect, it, vi } from "vitest";
 import { DEFAULT_EDITOR_GRID_STYLE } from "../editor/domain/editor-grid-style";
 import { createEditorGrid, type EditorGrid } from "./editor-grid";
 
-const linesOf = (grid: EditorGrid) => grid.object.children as THREE.LineSegments<THREE.BufferGeometry, THREE.LineBasicMaterial>[];
+const linesOf = (grid: EditorGrid) => grid.object.children as THREE.LineSegments<THREE.BufferGeometry, LineBasicNodeMaterial>[];
 const positionsOf = (line: THREE.LineSegments) => Array.from(line.geometry.getAttribute("position").array);
 
 describe("editor grid", () => {
@@ -12,7 +13,7 @@ describe("editor grid", () => {
     const [minor, major] = linesOf(grid);
     expect(grid.object).toBeInstanceOf(THREE.Group);
     expect(grid.object.children).toHaveLength(2);
-    expect(minor.material.opacity).toBeCloseTo(0.56 * 0.52);
+    expect(minor.material.opacity).toBeCloseTo(0.56 * DEFAULT_EDITOR_GRID_STYLE.minorLineOpacity);
     expect(major.material.opacity).toBe(0.56);
     expect(major.material.color.getHexString()).toBe("59616d");
     expect(positionsOf(major).slice(12, 24)).toEqual([-12, 0, 0, 12, 0, 0, 0, 0, -12, 0, 0, 12]);
@@ -21,6 +22,7 @@ describe("editor grid", () => {
     for (const line of linesOf(grid)) {
       expect(line).toBeInstanceOf(THREE.LineSegments);
       expect(line.material.depthTest).toBe(true);
+      expect(line.material.opacityNode).not.toBeNull();
       expect(line.material.depthWrite).toBe(false);
       expect(line.material.toneMapped).toBe(false);
       expect(line.renderOrder).toBeLessThan(0);

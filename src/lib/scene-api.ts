@@ -1,3 +1,4 @@
+import { notifyAuthoredDocumentSaved } from "../project/persistence/authored-document-events";
 import { createSceneDocumentPatch } from "../scene/serialization/scene-delta";
 import type { SceneDocumentV1 } from "../scene/serialization/scene-document";
 
@@ -94,6 +95,7 @@ export async function saveScene(
   if (!response.ok || data.status !== "ok" || typeof data.revision !== "string") {
     throw new Error(data.message || "Scene save failed");
   }
+  notifyAuthoredDocumentSaved();
   return {
     revision: data.revision,
     savedAt: typeof data.savedAt === "string" ? data.savedAt : null,
@@ -129,6 +131,7 @@ export async function saveSceneIncrementally(
   if (!response.ok || data.status !== "ok" || typeof data.revision !== "string") {
     throw new Error(data.message || "Incremental scene save failed");
   }
+  notifyAuthoredDocumentSaved();
   return {
     revision: data.revision,
     savedAt: typeof data.savedAt === "string" ? data.savedAt : null,
@@ -183,5 +186,6 @@ export async function deleteSavedScene(id: string, baseRevision: string): Promis
   const data = await response.json() as SceneApiResponse & { trashId?: string };
   if (response.status === 409) throw new SceneSaveConflictError(data.message || "Scene changed before deletion", data.actualRevision ?? null);
   if (!response.ok || data.status !== "ok" || typeof data.trashId !== "string") throw new Error(data.message || "Scene deletion failed");
+  notifyAuthoredDocumentSaved();
   return { trashId: data.trashId };
 }

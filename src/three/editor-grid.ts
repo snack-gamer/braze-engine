@@ -1,10 +1,13 @@
+import { readEditorNumberToken } from "../ui/theme-tokens";
+import { LineBasicNodeMaterial } from "three/webgpu";
+import { cameraPosition, distance, float, reference, positionWorld, smoothstep } from "./tsl";
 import * as THREE from "three";
 import { DEFAULT_EDITOR_GRID_STYLE } from "../editor/domain/editor-grid-style";
 
 const MAJOR_LINE_INTERVAL = 10;
 const DEFAULT_CELL_SIZE = 1;
 const MAX_STEPS_PER_SIDE = 1_000;
-type GridLines = THREE.LineSegments<THREE.BufferGeometry, THREE.LineBasicMaterial>;
+type GridLines = THREE.LineSegments<THREE.BufferGeometry, LineBasicNodeMaterial>;
 
 export type EditorGrid = Readonly<{
   object: THREE.Group;
@@ -27,6 +30,7 @@ export type EditorGridOptions = Readonly<{
 
 /** ViStudio's thin line grid, shared by Scene and asset-preview canvases. */
 export function createEditorGrid(options: EditorGridOptions): EditorGrid {
+  const minorOpacity = readEditorNumberToken("--scene-grid-minor-opacity", DEFAULT_EDITOR_GRID_STYLE.minorLineOpacity);
   const object = new THREE.Group();
   object.name = "Braze Editor Grid";
   object.userData.editorChrome = true;
@@ -45,7 +49,7 @@ export function createEditorGrid(options: EditorGridOptions): EditorGrid {
     object.visible = requestedVisible && requestedOpacity > 0;
   };
   const syncOpacity = () => {
-    minor.material.opacity = requestedOpacity * DEFAULT_EDITOR_GRID_STYLE.minorLineOpacity;
+    minor.material.opacity = requestedOpacity * minorOpacity;
     major.material.opacity = requestedOpacity;
     syncVisibility();
   };
@@ -107,9 +111,12 @@ export function createEditorGrid(options: EditorGridOptions): EditorGrid {
 }
 
 function createLines(name: string, color: string, renderOrder: number): GridLines {
-  const material = new THREE.LineBasicMaterial({
+  const material = new LineBasicNodeMaterial({
     color, transparent: true, depthTest: true, depthWrite: false, toneMapped: false,
   });
+  const fadeStart = readEditorNumberToken("--scene-grid-fade-start", 12);
+  const fadeEnd = readEditorNumberToken("--scene-grid-fade-end", 45);
+  material.opacityNode = reference("opacity", "float", material).mul(float(1).sub(smoothstep(fadeStart, fadeEnd, distance(positionWorld, cameraPosition))));
   const line = new THREE.LineSegments(new THREE.BufferGeometry(), material);
   line.name = `Braze Grid ${name}`;
   line.userData.editorChrome = true;

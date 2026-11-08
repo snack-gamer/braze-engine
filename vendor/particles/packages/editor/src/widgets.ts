@@ -2,11 +2,11 @@
  * Custom widget primitives — replaces Tweakpane so the inspector reads as one
  * cohesive design language. All widgets are imperative and return raw HTMLElements.
  *
- * Style: see theme.ts. Every widget uses `pi-*` class names; no inline styles
+ * Style: see theme.css. Every widget uses `pi-*` class names; no inline styles
  * except for transient state (e.g. swatch fill color).
  */
 
-import { iconCheck } from './icons';
+import { iconCheck, iconChev, iconClose } from './icons';
 
 // ---------- panel ----------
 
@@ -33,7 +33,7 @@ export function makePanel(opts: PanelOpts): Panel {
   const body = el('div', 'pi-panel-body');
   root.append(header, body);
 
-  const chev = el('div', 'pi-chev');
+  const chev = el('div', 'pi-chev'); chev.appendChild(iconChev());
   header.appendChild(chev);
 
   if (opts.icon) {
@@ -698,7 +698,7 @@ export function makeImageUpload(opts: ImageUploadOpts): HTMLElement {
       const clear = el('button', 'pi-image-clear') as HTMLButtonElement;
       clear.type = 'button';
       clear.title = 'Remove custom image';
-      clear.textContent = '×';
+      clear.appendChild(iconClose());
       clear.onclick = () => {
         current = undefined;
         opts.onChange(undefined);

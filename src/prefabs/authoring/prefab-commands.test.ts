@@ -7,6 +7,16 @@ const body = [
   { op: "component.set", id: "cargo", component: "collider", values: { id: "cargo-box", shape: "box" } },
 ];
 describe("saved prefab authoring", () => {
+  it("saves mesh identity without importer caches and reports the runtime spawning boundary", () => {
+    const guid = "a".repeat(32), reference = { guid, localId: "mesh:Body" };
+    const created = createPrefab("Static mesh", [body[0], { op: "component.set", id: "cargo", component: "meshFilter", values: { mesh: { kind: "asset", asset: reference } } }],
+      { assetCatalog: { ready: true, importedAssets: [{ guid, kind: "model", filename: "Body.glb", subAssets: [{ localId: "mesh:Body", kind: "mesh", name: "Body", sourceIndex: 0 }] }] } });
+    expect(created.valid).toBe(true); expect(created.document.objects[1].assetRef).toEqual(reference);
+    expect(JSON.stringify(created.document)).not.toContain("assetMeshBinding");
+    expect(created.runtimeSubset.supported).toBe(false); expect(created.runtimeSubset.diagnostics.join()).toContain("whole model");
+    const inspected = inspectPrefab({ ...created.document, objects: created.document.objects.map((object) => ({ ...object, assetMeshBinding: { sourceIndex: 99 } })) });
+    expect(JSON.stringify(inspected.document)).not.toContain("assetMeshBinding");
+  });
   it("builds a runtime-supported master root and retains local IDs across edits", () => {
     const created = createPrefab("Cargo", body);
     expect(created).toMatchObject({ valid: true, runtimeSubset: { supported: true, dependenciesVerified: false } });

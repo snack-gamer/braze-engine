@@ -1,3 +1,4 @@
+import type { RenderCamera } from "../../../../camera/adapters/render-camera";
 import * as THREE from "three";
 import {
   createThreeDirectionalCsmController,
@@ -16,7 +17,7 @@ export type ThreeDirectionalShadowSession = Readonly<{
   invalidateExtent: () => void;
   invalidateLight: () => void;
   invalidateStaticCasters: () => void;
-  prepareFrame: (camera: THREE.PerspectiveCamera) => void;
+  prepareFrame: (camera: RenderCamera) => void;
   afterRender: () => void;
   hasPendingRender: () => boolean;
   dispose: () => void;

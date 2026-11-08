@@ -1,5 +1,6 @@
 import type { ParticleEffect } from "@particles/core";
-import { loadEffectState, saveEffectState } from "@particles/editor";
+// Data-only entry: the static player must not load the editor's stylesheet.
+import { loadEffectState, saveEffectState } from "../../vendor/particles/packages/editor/src/persist";
 
 export type SerializedParticleEffectState = Record<string, unknown>;
 

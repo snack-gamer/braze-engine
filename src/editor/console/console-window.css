@@ -231,7 +231,7 @@
   padding-inline: 4px;
   place-items: center;
   border: 1px solid var(--border-strong);
-  border-radius: 8px;
+  border-radius: var(--r-md);
   background: var(--layer-raised);
   color: var(--text);
   font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-ui);

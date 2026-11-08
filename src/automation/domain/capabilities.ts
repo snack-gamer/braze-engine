@@ -48,7 +48,7 @@ export const automationCapabilities = {
   jointKinds: ["distance", "ball", "fixed", "hinge"],
   colliderShapes: ["box", "sphere", "capsule", "mesh"],
   colliderFields: ["geometry", "isTrigger", "restitution", "collisionLayer", "collisionMask"],
-  objectFields: ["name", "tags", "color", "visible", "parentId", "position", "rotation", "scale"],
+  objectFields: ["camera", "name", "tags", "layer", "color", "visible", "parentId", "position", "rotation", "scale"],
   entityTags: { maxPerEntity: 1, maxLength: 48, caseSensitive: true, inherited: false, projectSection: "entityTags" },
   persistence: { previewByDefault: true, revisionRequired: true, atomicBatch: true, backups: true, editorUndo: false },
   scenes: { oneActivePerTab: true, instanceIdentity: true, loadModes: ["single"], workspacePersistence: "tab-session-storage", templates: ["basic", "empty"], saveBeforeSwitch: true, recoverableDeletion: true, runtimeLoading: false, additiveLoading: false },

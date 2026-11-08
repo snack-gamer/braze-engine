@@ -5,6 +5,14 @@ export type CameraSettings = {
   fov: number;
   near: number;
   far: number;
+  projection?: "perspective" | "orthographic";
+  fovAxis?: "vertical" | "horizontal";
+  /** Half of the vertical view size in world metres. */
+  orthographicSize?: number;
+  /** Unsigned 32-bit project object-layer mask, independent of renderer layers. */
+  cullingMask?: number;
+  background?: "environment" | "solid";
+  backgroundColor?: string;
 };
 
 export type DepthOfFieldComponent = {

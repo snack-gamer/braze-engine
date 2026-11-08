@@ -1,3 +1,5 @@
+import { assignCameraCullingBody, forgetCameraCulling, renderBodyLayer } from "../../camera/adapters/camera-culling";
+import type { Runtime } from "../runtime";
 import * as THREE from "three";
 import { MeshPhysicalNodeMaterial } from "three/webgpu";
 import { assignThreeShadowCasterLayer } from "../../rendering/adapters/three-webgpu/shadows/three-shadow-caster-layers";
@@ -98,6 +100,7 @@ function groupSignature(mesh: THREE.Mesh, material: THREE.Material): string | nu
   if (!geometry.parameters) return null;
   const materialLike = material as THREE.MeshStandardMaterial;
   return [
+    renderBodyLayer(mesh),
     geometry.type,
     JSON.stringify(geometry.parameters),
     material.type,
@@ -204,6 +207,7 @@ export function buildInstancedBodyGroups(
   candidates: InstancedBodyCandidate[],
   buffers: PhysicsPoseBuffers,
   parent: THREE.Object3D,
+  runtime?: Runtime,
 ): InstancedBodyGroups {
   const groups = new Map<string, Candidate[]>();
   for (const candidate of candidates) {
@@ -223,6 +227,7 @@ export function buildInstancedBodyGroups(
 
   for (const members of groups.values()) {
     const groupMesh = buildGroupMesh(members, buffers);
+    if (runtime) assignCameraCullingBody(runtime, groupMesh, renderBodyLayer(members[0].mesh));
     parent.add(groupMesh);
     meshes.push(groupMesh);
     for (const member of members) {
@@ -237,6 +242,7 @@ export function buildInstancedBodyGroups(
     meshes,
     restore() {
       for (const mesh of meshes) {
+        if (runtime) forgetCameraCulling(runtime, mesh);
         mesh.removeFromParent();
         (mesh.material as THREE.Material).dispose();
         // Attributes are wrapper-owned clones, so this cannot invalidate the

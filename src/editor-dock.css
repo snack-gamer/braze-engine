@@ -18,7 +18,8 @@
   min-height: 0;
   overflow: hidden;
   padding-top: var(--dock-tab-height);
-  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  border: 1px solid var(--panel-outline);
   background: var(--panel-body);
 }
 
@@ -118,13 +119,14 @@
 }
 
 .editor-dock-group__tabbar {
+  border-radius: var(--r-md) var(--r-md) 0 0;
   display: flex;
   width: 100%;
   height: var(--dock-tab-height);
   min-width: 0;
   overflow: visible;
-  border-bottom: 1px solid var(--border);
-  background: var(--panel-chrome);
+  border-bottom: 1px solid var(--toolbar-outline);
+  background: var(--tabbar-fill);
   color: var(--text-1);
   pointer-events: auto;
   user-select: none;
@@ -174,12 +176,13 @@
   pointer-events: none;
 }
 
-.editor-dock-tab-shell:hover { background: var(--bg-hover); }
+.editor-dock-tab-shell:hover { background: var(--tab-hover-fill); }
 
-/* The active tab shares the pane surface; no accent stroke. */
+/* A lighter neutral surface keeps the selected pane unmistakable. */
 .editor-dock-tab-shell.is-active {
-  background: var(--panel-body);
-  color: var(--text);
+  border-radius: var(--tab-radius) var(--tab-radius) 0 0;
+  background: var(--tab-active-fill);
+  color: var(--tab-active-ink);
 }
 
 .editor-dock-tab-shell.is-active .editor-icon { color: var(--text-1); }
@@ -316,7 +319,6 @@
 }
 
 .editor-dock-group__toolbar .editor-icon {
-  flex: 0 0 var(--icon-size-control);
   align-self: center;
 }
 
@@ -559,7 +561,7 @@
 .editor-dock-splitter::before {
   content: "";
   position: absolute;
-  background: var(--border);
+  background: var(--panel-divider);
   transition: background-color var(--t-fast) var(--ease);
 }
 

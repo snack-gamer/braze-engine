@@ -26,7 +26,7 @@ export function createEntitySlots(capacity: number) {
   };
   return {
     active,
-    reserve(name: string, components: readonly string[], authoredId?: string, data: Partial<Pick<WorldEntity, "model" | "primitive" | "character" | "parent" | "transform" | "tags" | "behaviors">> = {}, reservation?: symbol): WorldEntity {
+    reserve(name: string, components: readonly string[], authoredId?: string, data: Partial<Pick<WorldEntity, "model" | "primitive" | "character" | "parent" | "transform" | "layer" | "tags" | "behaviors">> = {}, reservation?: symbol): WorldEntity {
       active();
       if (authoredId !== undefined && authored.has(authoredId)) throw new EntityWorldError("invalid-command", `Duplicate authored ID: ${authoredId}.`);
       const reserved = reservation === undefined ? undefined : reservationSlots.get(reservation);
@@ -37,7 +37,7 @@ export function createEntitySlots(capacity: number) {
       if (reserved !== undefined) { dormant--; reused.add(slot); }
       if (reservation !== undefined) { reservationSlots.set(reservation, slot); owners.set(slot, reservation); }
       generations[slot]++; states[slot] = 1;
-      return Object.freeze({ handle: Object.freeze({ world, slot, generation: generations[slot] }), name, components, authoredId, ...data, tags: data.tags ?? EMPTY_ENTITY_TAGS });
+      return Object.freeze({ handle: Object.freeze({ world, slot, generation: generations[slot] }), name, components, authoredId, ...data, layer: data.layer ?? 0, tags: data.tags ?? EMPTY_ENTITY_TAGS });
     },
     publish(entity: WorldEntity) {
       reused.delete(entity.handle.slot);

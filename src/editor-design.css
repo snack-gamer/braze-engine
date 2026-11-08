@@ -1,0 +1,24 @@
+/* Canonical editor design entry. Keep this order: tokens, feature layout,
+ * shared presentation, then interaction states. Game UI has its own theme. */
+
+@import "./theme.css";
+@import "./styles.css";
+@import "./inspector.css";
+@import "./styles/inspector-menu.css";
+@import "./editor-theme.css";
+@import "./editor-chrome-theme.css";
+@import "./hierarchy/hierarchy-tree.css";
+@import "./editor-inspector-theme.css";
+@import "./viewport-hud.css";
+@import "./viewport-navigation-gizmo.css";
+@import "./gizmos-menu.css";
+@import "./scene-view-toolbar.css";
+@import "./game-view.css";
+@import "./editor-dock.css";
+@import "./ui/controls.css";
+@import "./ui/toolbar.css";
+@import "./particles/editor-theme.css";
+@import "./styles/inspector-actions.css";
+@import "./ui/field-layout.css";
+@import "./editor/playback/scene-playback-feedback.css";
+@import "./editor/console/console-window.css";

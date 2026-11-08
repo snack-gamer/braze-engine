@@ -1,0 +1,20 @@
+/* Shared field geometry. controls.css still owns wells, colors and states. */
+:root select:not([multiple]):not([size]),
+:root select:not([multiple])[size="1"] {
+  appearance: none;
+  padding-inline-end: calc(2 * var(--control-select-arrow-inset) + var(--icon-size-disclosure));
+  background-image: var(--editor-select-arrow-image);
+  background-position: right var(--control-select-arrow-inset) center;
+  background-repeat: no-repeat;
+  background-size: var(--icon-size-disclosure) var(--icon-size-disclosure);
+}
+:root .inspector-menu-select {
+  padding-inline-end: var(--control-select-arrow-inset);
+}
+/* Geist Mono's digit ink sits low inside the native input line box. Preserve
+ * the full input hit area and center the ink with one shared optical inset. */
+:root .inspector-number > .inspector-number__input {
+  padding-block: 0 var(--control-number-optical-pad);
+}
+
+.object-field__name-button { flex: 1; min-width: 0; padding: 0; color: inherit; background: transparent; border: 0; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

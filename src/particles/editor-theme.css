@@ -1,0 +1,23 @@
+/* Adapter layout only. Glyph metrics and the embedded palette live in theme.css. */
+.particle-inspector-host :is(.ef-root, .pi-root) svg.editor-icon,
+.pi-modal svg.editor-icon,
+.pi-menu .pi-menu-icon > svg.editor-icon {
+  width: var(--editor-icon-size);
+  height: var(--editor-icon-size);
+  fill: none;
+  stroke: currentColor;
+}
+.particle-inspector-host .pi-panel-header :is(.pi-chev, .pi-icon) {
+  display: grid;
+  place-items: center;
+  width: var(--icon-size-compact);
+  height: var(--icon-size-compact);
+  background: transparent;
+  clip-path: none;
+}
+.particle-inspector-host :is(.pi-image-clear, .pi-btn-del),
+.pi-modal .pi-modal-close {
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+}

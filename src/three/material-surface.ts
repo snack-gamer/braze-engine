@@ -39,6 +39,7 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 export function isModelSurface(object: SceneObject): boolean {
+  if (object.assetMeshBinding) return false;
   return object.primitive === "fbx"
     || object.primitive === "usdz"
     || object.primitive === "usd"

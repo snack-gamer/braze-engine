@@ -1,3 +1,4 @@
+import type { RenderCamera } from "../camera/adapters/render-camera";
 import * as THREE from "three";
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
@@ -63,6 +64,7 @@ export type LabelEntry = {
 };
 
 export type SkyRuntime = {
+  setBackgroundVisible?: (visible: boolean) => void;
   applySettings: (settings: SkySettings) => void;
   setSunDirectionOverride: (direction: Vec3 | null) => void;
   dispose: () => void;
@@ -76,7 +78,7 @@ export type Runtime = {
   rendererBackend: ViewportRendererBackend;
   labelRenderer: CSS2DRenderer;
   scene: THREE.Scene;
-  camera: THREE.PerspectiveCamera;
+  camera: RenderCamera;
   controls: OrbitControls;
   focusSelection: () => void;
   transformControls: TransformControls;

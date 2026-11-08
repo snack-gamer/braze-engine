@@ -1,4 +1,4 @@
-import type * as THREE from "three";
+import type { RenderCamera } from "../camera/adapters/render-camera";
 import type { CSS2DRenderer } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 import { resolveCameraPreviewAspect } from "../camera/domain/camera-preview-aspect";
 import { viewportPixelRatio } from "./viewport-performance";
@@ -10,7 +10,7 @@ export type ViewportOutputSurface = Readonly<{
 }>;
 
 type ViewportResizeArgs = {
-  camera: THREE.PerspectiveCamera;
+  camera: RenderCamera;
   cameraPreviewAspect: { current: number | null };
   cameraGizmos: () => Iterable<AspectConsumer>;
   host: HTMLElement;

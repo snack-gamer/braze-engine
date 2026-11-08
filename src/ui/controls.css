@@ -135,7 +135,7 @@ input[type="checkbox"]:not(:is(.editor-checkbox, .ui-checkbox)) {
 
 .playback-cluster {
   gap: 0;
-  padding: 1px;
+  padding: 0;
   overflow: visible;
   border: 1px solid var(--layer-outline);
   border-radius: var(--r-md);
@@ -145,7 +145,7 @@ input[type="checkbox"]:not(:is(.editor-checkbox, .ui-checkbox)) {
 .playback-cluster .playback-button {
   width: var(--h-control);
   min-width: var(--h-control);
-  height: var(--h-input);
+  height: var(--control-transport-button-size);
   margin: 0;
   border: 0;
   border-radius: 0;
@@ -316,8 +316,8 @@ input[type="checkbox"]:not(:is(.editor-checkbox, .ui-checkbox)) {
   .rail-right textarea,
   .object-field
 ) {
-  border: 1px solid var(--well-border);
-  border-radius: var(--r-xs);
+  border: 1px solid var(--inspector-field-border);
+  border-radius: var(--inspector-field-radius);
   background: var(--inspector-input);
   color: var(--text);
   transition:
@@ -339,7 +339,7 @@ input[type="checkbox"]:not(:is(.editor-checkbox, .ui-checkbox)) {
   .rail-right textarea,
   .object-field
 ):hover {
-  border-color: var(--well-border-hover);
+  border-color: var(--inspector-field-hover-border);
   background: var(--bg-input-2);
   color: var(--text);
 }
@@ -419,8 +419,8 @@ input[type="checkbox"]:not(:is(.editor-checkbox, .ui-checkbox)) {
 .rail-right .inspector-number {
   height: var(--inspector-input-h);
   padding: 0 var(--control-number-inline-pad);
-  border-color: var(--well-border);
-  border-radius: var(--r-xs);
+  border-color: var(--inspector-field-border);
+  border-radius: var(--inspector-field-radius);
   background: var(--inspector-input);
   color: var(--text);
   font-family: var(--font-mono);
@@ -430,7 +430,7 @@ input[type="checkbox"]:not(:is(.editor-checkbox, .ui-checkbox)) {
 
 .inspector-number:hover,
 .rail-right .inspector-number:hover {
-  border-color: var(--well-border-hover);
+  border-color: var(--inspector-field-hover-border);
   background: var(--bg-input-2);
   color: var(--text);
 }
@@ -473,6 +473,36 @@ input[type="checkbox"]:not(:is(.editor-checkbox, .ui-checkbox)) {
   font-size: var(--fs-2xs);
   font-weight: var(--fw-medium);
 }
+
+/* A vector axis and its value share one well. The number wrapper remains
+ * transparent so hover/focus has exactly one owner and one visible outline. */
+.inspector-vec__cell {
+  height: var(--inspector-input-h);
+  border: 1px solid var(--inspector-field-border);
+  border-radius: var(--inspector-field-radius);
+  background: var(--inspector-input);
+  transition: border-color var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease);
+}
+.inspector-vec__cell:hover { border-color: var(--inspector-field-hover-border); background: var(--bg-input-2); }
+.inspector-vec__cell:focus-within { border-color: var(--focus); background: var(--bg-input-2); }
+.inspector-vec__cell:has(.is-scrubbing) { border-color: var(--accent); background: var(--accent-softer); }
+.inspector-vec__cell .inspector-number,
+.rail-right .inspector-vec__cell .inspector-number {
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.inspector-vec__cell .inspector-number > .inspector-number__input {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: 0 var(--control-number-inline-pad) 0 0;
+  text-align: right;
+}
+.inspector-vec__cell.is-disabled { opacity: var(--control-disabled-field-opacity); }
+.inspector-vec__cell.is-disabled :is(.inspector-number, .inspector-number__input, .inspector-vec__letter) { opacity: 1; }
 
 /* Range sliders ---------------------------------------------------------- */
 

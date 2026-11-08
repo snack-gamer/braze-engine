@@ -1,3 +1,5 @@
+import { cameraSettingsSchema } from "../../camera/domain/camera-schema";
+import { meshFilterSchema } from "../../mesh/domain/mesh-schema";
 import { AUTOMATION_PRIMITIVES } from "./commands";
 import { uiDocumentSchema } from "../../game-ui/domain/ui-schema";
 import { BEHAVIOR_DOCUMENT_LIMITS } from "../../behaviors/domain/behavior-limits";
@@ -22,6 +24,7 @@ const reference = object({ entityId: identifier }, ["entityId"]);
 const behaviorValue = { anyOf: [number, boolean, { type: "string", maxLength: BEHAVIOR_DOCUMENT_LIMITS.stringLength }, reference, { type: "null" }] };
 
 export const componentValueSchemas: Record<string, JsonSchema> = {
+  meshFilter: meshFilterSchema,
   animator: animatorComponentSchema,
   uiCanvas: uiDocumentSchema,
   rigidbody: object({ enabled: boolean, bodyType: enumeration("dynamic", "kinematic"), massMode: enumeration("manual", "automatic"),
@@ -47,7 +50,8 @@ export const componentValueSchemas: Record<string, JsonSchema> = {
   }, ["version", "entries"], true),
 };
 
-const patch = object({ name: identifier, color: identifier, visible: boolean, parentId: identifier,
+const patch = object({ camera: cameraSettingsSchema, name: identifier, color: identifier, visible: boolean, parentId: identifier,
+  layer: { type: "integer", minimum: 0, maximum: 31 },
   tags: { type: "array", maxItems: 1, items: { type: "string", minLength: 1, maxLength: 48 } },
   position: { ...vector, description: "Parent-local metres." }, rotation: { ...vector, description: "Parent-local XYZ Euler degrees." },
   scale: { ...vector, items: positive } });

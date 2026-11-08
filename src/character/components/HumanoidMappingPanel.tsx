@@ -1,4 +1,5 @@
 import { memo, useMemo } from "react";
+import { EditorIcon } from "../../ui/EditorIcon";
 import { REQUIRED_HUMANOID_BONES, type HumanBoneMapping, type HumanoidBoneName } from "../domain/humanoid-avatar";
 import type { BoneId } from "../domain/skeleton";
 import { HUMANOID_BONE_GROUPS } from "../application/humanoid-bone-groups";
@@ -73,7 +74,7 @@ export const HumanoidMappingPanel = memo(function HumanoidMappingPanel({
       {!disabled && (
         <div className="avatar-configurator__mapping-help" id="humanoid-mapping-help">
           <p>Drag bones from Skeleton into these roles. Select a Skeleton bone and click an empty slot for keyboard assignment.</p>
-          <span><i aria-hidden="true" /> Required for a valid Avatar</span>
+          <span><EditorIcon name="status" size="status" filled /> Required for a valid Avatar</span>
         </div>
       )}
       <div className="avatar-configurator__mapping-columns" aria-hidden="true">
@@ -113,7 +114,7 @@ export const HumanoidMappingPanel = memo(function HumanoidMappingPanel({
                         onClick={() => onSelectHumanBone?.(slot)}
                       >
                         {humanBoneLabel(slot)}
-                        {REQUIRED.has(slot) && <i title="Required for a valid Avatar">●</i>}
+                        {REQUIRED.has(slot) && <EditorIcon name="status" size="status" filled aria-label="Required for a valid Avatar" />}
                       </button>
                       <HumanoidBoneDropSlot
                         role={slot}

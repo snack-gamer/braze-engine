@@ -2,7 +2,8 @@
 
 Read [the AI game development contract](docs/AI_GAME_DEVELOPER.md)
 and [the coding rulebook](docs/CODING_RULEBOOK.md) before changes.
-[README](README.md) routes to the eight authoritative guides. Update the owning
+For editor UI changes, also read and follow [the editor design guide](docs/EDITOR_DESIGN.md).
+[README](README.md) routes to the authoritative guides. Update the owning
 guide in the same change; do not create step reports or parallel roadmaps.
 
 - Braze serves agent-led game development and expert manual authoring. A feature

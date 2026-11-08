@@ -79,6 +79,7 @@ See the [MCP setup](docs/OPERATIONS.md#mcp-connection) and
 | --- | --- |
 | [AI game development contract](docs/AI_GAME_DEVELOPER.md) | Agent tools and acceptance requirements. |
 | [Coding rulebook](docs/CODING_RULEBOOK.md) | Architecture, component authoring and GPU residency. |
+| [Editor design guide](docs/EDITOR_DESIGN.md) | Mandatory UI layout, spacing, fields, icons and interaction rules. |
 | [Engine architecture](docs/ENGINE_ARCHITECTURE.md) | Editor, persistence, assets and rendering. |
 | [Gameplay and JavaScript](docs/GAMEPLAY_RUNTIME.md) | Projects, behaviors, input, entities, prefabs and UI. |
 | [Character system](docs/CHARACTER_SYSTEM.md) | Rigs, Avatars, Animator, retargeting and root motion. |

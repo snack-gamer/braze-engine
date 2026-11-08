@@ -8,6 +8,7 @@ export function ensureLabel(): never {
 }
 export function disposeLabel(): void {}
 export function refreshCameraGizmoAspect(): void {}
+export function refreshCameraGizmoView(): void {}
 export function refreshCameraGizmoWorldPosesForSubtree(): void {}
 export function removeCameraGizmo(): void {}
 export function syncCameraGizmoForObject(): void {}

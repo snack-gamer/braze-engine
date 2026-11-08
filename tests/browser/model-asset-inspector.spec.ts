@@ -157,7 +157,7 @@ test.describe("model asset Inspector", () => {
     const showGrid = gridSettings.getByRole("checkbox", { name: "Show grid", exact: true });
     const gridOpacity = gridSettings.getByLabel("Grid opacity", { exact: true });
     await expect(showGrid).toBeChecked();
-    await expect(gridOpacity).toHaveValue("0.56");
+    await expect(gridOpacity).toHaveValue("0.4");
     await showGrid.uncheck();
     await expect(gridOpacity).toBeDisabled();
     await showGrid.check();
@@ -281,7 +281,7 @@ test.describe("model asset Inspector", () => {
     expect(listIconBounds).not.toBeNull();
     expect(listDisclosureBounds!.x).toBeLessThan(listIconBounds!.x);
     expect(listFontSize).toBe(gridFontSize);
-    expect(new Set(listIconWidths)).toEqual(new Set([17]));
+    expect(new Set(listIconWidths)).toEqual(new Set([16]));
     await listCollapse.click();
     await expect(clip).toHaveCount(0);
   });

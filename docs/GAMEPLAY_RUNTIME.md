@@ -538,13 +538,106 @@ requires no active/pending/retiring leases, then releases reserves. Stop owns fi
 cleanup. No prewarming, automatic growth, active reset-in-place or cross-world
 sharing. Project state outside the pool remains the project's reset responsibility.
 
+## Authored Mesh Filter
+
+Mesh Filter selects Cube, Sphere, Plane, None, or an indexed static mesh subasset.
+The Inspector offers a searchable reference picker, Project mesh drag/drop, reveal,
+clear, Reset and Remove. Source changes preserve transforms, material/renderer
+settings and collider configuration; fitting a collider remains an explicit action.
+Imported mesh coordinates come from geometry, not the original model node placement.
+Missing sources remain recognizable and recover through their GUID/local ID.
+
+Scene, live editor and saved prefab commands share `component.set` with
+`component: "meshFilter"` and `values: { mesh: null }`,
+`values: { mesh: { kind: "builtin", primitive: "sphere" } }`, or
+`values: { mesh: { kind: "asset", asset: { guid, localId } } }`.
+Discover mesh IDs from `assets.list`; main models, materials and skinned meshes are
+not valid single-mesh assignments. Existing mesh objects support editing/restoring
+this component; adding a standalone filter to an empty Transform is not supported.
+
+Saved authored scene objects, authored prefab instances, Play and static exports
+use the same geometry resolution. Runtime-spawned/pool prefab models still require
+whole-model references; diagnostics reject mesh subassets and empty filters in that
+subset. Public JavaScript does not yet expose procedural geometry or live mesh
+replacement. Use authored mesh references, or existing whole-model runtime spawning.
+
+## Object layers
+
+Objects have one numeric `layer` (0 to 31), defaulting to 0 in older documents.
+The project `entityLayers` catalog stores 32 fixed names, with slot 0 named Default.
+The Inspector Layer menu opens shared Tags and Layers Inspector settings; naming or clearing
+slots never renumbers assignments. Scene history owns assignments, while project
+settings save names separately. Scene and prefab persistence, instance overrides,
+runtime entity inspection, create commands and pooled prefab capture retain layer IDs.
+Runtime primitive/character physics inherits the entity layer when no explicit
+collision layer is supplied. There is no runtime setLayer operation or descendant
+cascade. Camera culling masks use all 32 project layer slots, independently of
+Three.js shadow membership bits. Each camera filters render bodies without
+hiding child entities on other layers or changing physics, behavior or animation.
+Authored GPU batches separate layer memberships; spawned primitive reserves update
+visibility attributes only on creation, reuse or mask edits. Runtime models and
+particle effects also respect the mask. Cloner output uses the cloner object's layer.
+Culled geometry does not cast shadows in that view; hidden particles still simulate.
+
+## Authored camera and runtime lens
+
+Camera objects support Perspective and Orthographic Game output. Perspective FOV
+is 1 to 179 degrees, on a selected vertical or horizontal axis; resize preserves
+that axis. Orthographic Size is half the vertical view height in metres. Near must
+be positive (minimum 0.001 m), and Far must exceed Near. The defaults preserve
+older cameras: vertical 52 degree perspective, Near 0.1 m and Far 200 m.
+
+Camera Inspector owns projection, clipping, Culling Mask and Environment/Solid
+Color background. Environment uses the scene's sky or HDRI. Solid Color replaces
+only the display background, including sky clouds/rays; environment lighting and
+reflection probes retain their source. Existing scene post processing remains
+scene-owned. The independent Scene navigation camera is unchanged by Game lens
+edits. Look through snaps the Scene camera pose, not its navigation projection.
+Scene cameras use a selectable, fixed-size billboard glyph and wire frustum.
+Their own glyph and frustum hide at the viewed camera's position and return
+after navigation; the Camera guides toggle controls both. Game and exported
+players exclude this editor chrome. Look through uses a viewfinder icon, while
+the eye remains the hierarchy visibility control.
+
+Saved scenes, prefabs, undo, duplication and exports preserve these settings.
+Automation object.create/update values.camera accepts a validated partial patch
+on Camera objects only. Discover its schema for limits and camelCase field names.
+
+Public context.camera.setPose and acquired camera leases accept optional lens
+overrides alongside position, target and fov, for example:
+
+```js
+cameraLease.setPose({
+  position: [0, 8, 12], target: [0, 0, 0], fov: 60,
+  lens: { orthographicSize: 6, near: 0.1, far: 500,
+    cullingMask: 0xffffffff, background: "solid", backgroundColor: "#20242b" }
+});
+```
+
+Lens patches retain omitted values across later commands and view reattachments;
+release/Stop restores the authored lens. Projection kind remains the authored
+camera mode, so configure the orthographic camera before Play. Runtime lens
+patches cannot change target, projection or the top-level FOV field. Masks use
+unsigned integers; `((1 << 31) >>> 0)` includes only slot 31, and zero includes none.
+
+Multi-camera compositing, normalized output rectangles, render textures, runtime
+camera switching/blending, physical lens simulation, occlusion culling and rendered
+depth of field remain separate work. Existing DOF authored data does not establish
+WebGPU DOF support.
+
 ## Tags
 
 One case-sensitive project tag per object, or Untagged; no inheritance. Project
 Tags explicitly saves its catalog in project.entityTags. Object assignments use
 scene/prefab history. Usage audits distinguish open unsaved data from saved files;
 other tabs' unsaved changes are not included. Missing definitions remain visible.
-Remove only after complete unused-reference checks; rename/bulk reassignment is open.
+Remove only after complete unused-reference checks. Unused definitions can be renamed
+inline in the Inspector with Enter or blur; Escape restores the name. Duplicate,
+reserved and invalid names show inline errors. Rename requires a fresh complete
+saved-usage scan and no open-document assignments. Assigned-tag migration and bulk
+reassignment remain unsupported. Tags use names as identity; script string references
+are not audited or rewritten. Catalog editing currently has a manual Inspector
+workflow, without a dedicated automation command or public runtime catalog API.
 
 Names: letter then letters/digits/_/./-, 1–48 characters, ≤256 definitions; Untagged
 is reserved. Runtime queryTag(name, limit) requires 1–256 results and returns

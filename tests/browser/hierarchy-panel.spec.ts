@@ -9,6 +9,33 @@ const measureRow = (row: Element) => ({
   typeIconSize: row.querySelector(".object-row__type-icon")!.getBoundingClientRect().width,
 });
 
+test("hierarchy keeps create and search above the collapsible scene", async ({ page }) => {
+  await installHierarchyFixture(page);
+  await page.goto("/");
+  const root = page.locator(".scene-hierarchy__root");
+  const toolbar = page.getByRole("toolbar", { name: "Hierarchy tools" });
+  const tree = page.getByRole("tree", { name: "Scene objects" });
+  await expect(root).toBeVisible();
+  const [rootBox, toolbarBox] = await Promise.all([root.boundingBox(), toolbar.boundingBox()]);
+  expect(rootBox!.y).toBeGreaterThanOrEqual(toolbarBox!.y + toolbarBox!.height);
+  expect(rootBox!.height).toBe(22);
+  await root.click();
+  await expect(tree).toBeHidden();
+  await expect(toolbar).toBeVisible();
+  await toolbar.getByRole("button", { name: "Create object" }).click();
+  await expect(page.getByRole("menuitem", { name: "Cube", exact: true })).toBeVisible();
+  await toolbar.getByRole("button", { name: "Create object" }).click();
+  await page.getByRole("textbox", { name: "Search hierarchy" }).fill("Hero");
+  await expect(tree).toBeVisible();
+  await expect(root).toHaveAttribute("aria-expanded", "true");
+  await expect(page.locator('[data-hierarchy-object-id="child"]')).toBeVisible();
+  await expect(page.locator('[data-hierarchy-object-id="light"]')).toHaveCount(0);
+  await page.getByRole("textbox", { name: "Search hierarchy" }).fill("");
+  await expect(page.locator('[data-hierarchy-object-id="light"]')).toBeVisible();
+  await page.getByRole("button", { name: "Compact rows" }).click();
+  expect((await root.boundingBox())!.height).toBe(18);
+});
+
 test("hierarchy density toggle switches between large and compact rows and persists", async ({ page }) => {
   await installHierarchyFixture(page);
   await page.goto("/");
@@ -16,11 +43,13 @@ test("hierarchy density toggle switches between large and compact rows and persi
   const child = page.locator('[data-hierarchy-object-id="child"]');
   const toggle = page.getByRole("button", { name: "Compact rows" });
   await expect(toggle).toHaveAttribute("aria-pressed", "false");
-  expect(await child.evaluate(measureRow)).toEqual({ rowHeight: 24, fontSize: "14px", typeIconSize: 22 });
+  expect(await child.evaluate(measureRow)).toEqual({ rowHeight: 22, fontSize: "13px", typeIconSize: 16 });
+  await expectPackedActions(page);
 
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-pressed", "true");
   expect(await child.evaluate(measureRow)).toEqual({ rowHeight: 18, fontSize: "12.5px", typeIconSize: 16 });
+  await expectPackedActions(page);
 
   await page.reload();
   await expect(page.getByRole("button", { name: "Compact rows" })).toHaveAttribute("aria-pressed", "true");
@@ -29,7 +58,7 @@ test("hierarchy density toggle switches between large and compact rows and persi
 
   await page.getByRole("button", { name: "Compact rows" }).click();
   expect(await page.locator('[data-hierarchy-object-id="child"]').evaluate(measureRow))
-    .toEqual({ rowHeight: 24, fontSize: "14px", typeIconSize: 22 });
+    .toEqual({ rowHeight: 22, fontSize: "13px", typeIconSize: 16 });
 });
 
 test("hierarchy presents structure and accepts a full trailing root drop", async ({ page }) => {
@@ -48,7 +77,7 @@ test("hierarchy presents structure and accepts a full trailing root drop", async
   const child = page.locator('[data-hierarchy-object-id="child"]');
   await expect(child.locator(".hierarchy-tree-guide--branch")).toHaveCount(1);
   await expect(child).toHaveAttribute("aria-level", "2");
-  expect(await child.evaluate(measureRow)).toEqual({ rowHeight: 24, fontSize: "14px", typeIconSize: 22 });
+  expect(await child.evaluate(measureRow)).toEqual({ rowHeight: 22, fontSize: "13px", typeIconSize: 16 });
 
   const mesh = page.locator('[data-hierarchy-object-id="mesh"]');
   await expect(mesh.locator('[data-hierarchy-component-id="meshFilter"]')).toBeVisible();
@@ -63,6 +92,41 @@ test("hierarchy presents structure and accepts a full trailing root drop", async
     rows.map((row) => row.getAttribute("data-hierarchy-object-id"))
   ))).toEqual(["camera", "group", "child", "mesh", "light"]);
 });
+
+async function expectPackedActions(page: Page) {
+  const componentGaps = await page.locator(".object-row:has(.modifier-tag)").evaluateAll((rows) => rows.map((row) => {
+    const lastComponent = row.querySelector(".modifier-tag:last-child")!.getBoundingClientRect();
+    const firstAction = row.querySelector(".object-actions > :first-child")!.getBoundingClientRect();
+    return firstAction.left - lastComponent.right;
+  }));
+  for (const gap of componentGaps) expect(gap).toBeCloseTo(0, 1);
+  const pitches = await page.locator(".object-row:has(.modifier-tag)").evaluateAll((rows) => rows.map((row) => {
+    const boxes = [...row.querySelectorAll(".modifier-tag svg, .object-actions svg")].map((icon) => icon.getBoundingClientRect());
+    return boxes.slice(1).map((box, index) => box.x + box.width / 2 - boxes[index].x - boxes[index].width / 2);
+  }));
+  for (const row of pitches) for (const pitch of row) expect(pitch).toBeCloseTo(row[0], 1);
+  const rows = await page.locator(".object-actions").evaluateAll((groups) => groups.map((group) =>
+    Array.from(group.children, (action) => {
+      const bounds = action.getBoundingClientRect(), style = getComputedStyle(action);
+      return { title: action.getAttribute("title"), left: bounds.left, right: bounds.right,
+        opacity: style.opacity, visibility: style.visibility, glyphs: action.querySelectorAll("svg").length };
+    })));
+  const camera = rows.find((actions) => actions.some((action) => action.title === "Look through this camera"))!;
+  expect(camera).toHaveLength(4);
+  expect(camera[0].title).toBe("Look through this camera");
+  for (const actions of rows) {
+    expect(actions.length).toBe(actions === camera ? 4 : 3);
+    for (const [index, action] of actions.entries()) {
+      expect(action.visibility).toBe("visible"); expect(action.opacity).toBe("1"); expect(action.glyphs).toBe(1);
+      if (index > 0) expect(action.left - actions[index - 1].right).toBeCloseTo(0, 1);
+    }
+    const common = actions.slice(-3);
+    expect(common.map((action) => action.title)).toEqual([
+      "Solo — hide everything else", "Hide in editor", "Lock (prevent select + transform)",
+    ]);
+    common.forEach((action, index) => expect(action.left).toBeCloseTo(camera[index + 1].left, 1));
+  }
+}
 
 async function installHierarchyFixture(page: Page) {
   const objects = [

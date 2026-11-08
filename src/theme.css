@@ -4,56 +4,80 @@
  * typography, field and interaction system. Features own layout and consume
  * these roles; scene/world colors are separate authored data. */
 :root {
+  --scene-editor-background: #535557;
+  --scene-camera-selected: #afb4ba;
+  --scene-camera-inactive: #72777d;
+  --scene-grid-color: #92989f;
+  --scene-grid-opacity: 0.4;
+  --scene-grid-minor-opacity: 0.5;
+  --scene-grid-fade-start: 12;
+  --scene-grid-fade-end: 45;
+  --dialog-backdrop: rgba(0, 0, 0, 0.55);
   color-scheme: dark;
-  --focus: #92969d;
+  --focus: var(--accent-light);
   --property-text: #d6d3cc;
   --menu-surface: #2e3035;
-  --menu-border: rgb(255 255 255 / 28%);
+  --menu-border: var(--border-strong);
   --menu-hover: rgb(255 255 255 / 9%);
   --overlay-scrim: rgb(0 0 0 / 56%);
   --scrollbar-thumb: rgb(255 255 255 / 22%);
   --scrollbar-hover: rgb(255 255 255 / 32%);
-  --inspector-card-gap: 8px;
-  --inspector-card-padding: 12px;
+  --inspector-card-gap: 0px;
+  --inspector-pane-padding: 0px;
+  --inspector-card-padding: 6px;
   --control-height-toolbar: 30px;
+  --toolbar-control-h: 24px;
+  --project-search-width: 320px;
+  --project-zoom-width: 180px;
+  --toolbar-gap: 4px;
+  --toolbar-icon-gap: 6px;
+  --toolbar-icon-divider: var(--panel-divider);
+  --toolbar-padding-block: 3px;
+  --toolbar-padding-inline: 6px;
 
-  --bg-base: #141517;
-  --bg-panel: #1b1c1f;
-  --bg-panel-header: #1f2124;
-  --bg-input: #0e0f11;
-  --bg-input-2: #15171a;
-  --bg-hover: #2b2e33;
-  --bg-active: #35383e;
+  --bg-base: #191a1c;
+  --bg-panel: #303134;
+  --bg-panel-header: #232427;
+  --bg-input: #202124;
+  --bg-input-2: #28292c;
+  --bg-hover: #424449;
+  --bg-active: #4b4e54;
 
   --bg-deepest: var(--bg-base);
   --bg: var(--bg-base);
   --surface-dim: var(--bg-panel-header);
   --surface: var(--bg-panel);
-  --surface-1: #232529;
-  --surface-closed: #232529;
-  --surface-2: #232529;
-  --surface-3: #2b2e33;
-  --surface-4: #35383e;
+  --surface-1: var(--layer-contained);
+  --surface-closed: var(--layer-contained);
+  --surface-2: var(--layer-contained);
+  --surface-3: var(--layer-raised);
+  --surface-4: var(--bg-active);
 
   --layer-canvas: var(--bg-base);
   --layer-well: var(--bg-input);
   --layer-window-chrome: var(--bg-panel-header);
   --layer-window: var(--bg-panel);
-  --layer-contained: #202226;
-  --layer-component: #202226;
-  --layer-component-head: #2b2e33;
-  --layer-raised: #303339;
-  --layer-hover: #383c42;
+  --layer-contained: #343539;
+  --layer-component: var(--layer-contained);
+  --layer-component-head: #3d3f43;
+  --layer-raised: #45474c;
+  --layer-hover: #494c52;
   --layer-outline: var(--hairline-strong);
   --layer-highlight: transparent;
 
   --well: var(--bg-input);
   --well-deep: var(--bg-input);
-  --well-border: #3d4046;
-  --well-border-hover: #51555c;
+  /* Separate panel boundaries, editable fields and borderless toolbar groups. */
+  --panel-divider: rgb(255 255 255 / 6%);
+  --panel-outline: transparent;
+  --toolbar-outline: transparent;
+  --field-border: rgb(255 255 255 / 10%);
+  --field-border-hover: rgb(255 255 255 / 18%);
+  --well-border: var(--field-border);
+  --well-border-hover: var(--field-border-hover);
 
-  --border: rgb(255 255 255 / 10.5%);
-  --border-strong: rgb(255 255 255 / 18%);
+  --border: rgb(255 255 255 / 8%);
+  --border-strong: rgb(255 255 255 / 14%);
   --hairline-soft: rgb(255 255 255 / 4.5%);
   --hairline: rgb(255 255 255 / 7%);
   --hairline-medium: rgb(255 255 255 / 8%);
@@ -70,30 +94,29 @@
   --text-secondary: var(--text-2);
   --text-disabled: rgb(255 255 255 / 38%);
 
-  --accent: #4da3ff;
-  --accent-light: #73b7ff;
-  --accent-2: #73b7ff;
-  --accent-soft: rgb(77 163 255 / 20%);
-  --accent-softer: rgb(77 163 255 / 13%);
-  --accent-glow: rgb(77 163 255 / 32%);
+  --accent: #7899c4;
+  --accent-light: #a3b9d7;
+  --accent-2: #a3b9d7;
+  --accent-soft: rgb(120 153 196 / 20%);
+  --accent-softer: rgb(120 153 196 / 13%);
+  --accent-glow: rgb(120 153 196 / 32%);
   --on-accent: #07131f;
 
   /* Engine category tones: one distinct hue per system. Glyphs, Inspector
    * headers, Hierarchy indicators and creation menus select a tone through a
    * `.tone-<category>` class (below); features never pick category colors. */
-  /* Saturated but not neon: 60-80% saturation at 58-70% lightness, spaced
-   * around the wheel so neighbours stay distinguishable. Neutral is the
-   * default for object glyphs; prefab is the Unity-style instance/model blue. */
+  /* Muted category cues. Camera/rendering and physics use slate; subdued
+   * warm and cool tones distinguish the other systems without neon badges. */
   --component-transform: #b2bbcb;
-  --component-mesh: #62a3f2;
-  --component-rendering: #3fcdb6;
-  --component-lighting: #f0bd45;
-  --component-physics: #6fca57;
-  --component-animation: #ac7ff0;
-  --component-effects: #f4855a;
-  --component-modifiers: #ec78ad;
-  --component-neutral: #d3d7de;
-  --component-prefab: #4f9bff;
+  --component-mesh: #91a6c2;
+  --component-rendering: #a1adbd;
+  --component-lighting: #b8ac92;
+  --component-physics: #a5adba;
+  --component-animation: #aca1bd;
+  --component-effects: #b7a191;
+  --component-modifiers: #b5a1ae;
+  --component-neutral: #b9bec8;
+  --component-prefab: #92a9c8;
   --component-water: var(--component-rendering);
 
   /* Interaction states. Toggled/pressed controls lift on a neutral surface;
@@ -117,9 +140,9 @@
   --green: var(--success);
   --green-soft: var(--success-soft);
 
-  --axis-x: #f07878;
-  --axis-y: #70bf83;
-  --axis-z: #72a1e8;
+  --axis-x: #c58c90;
+  --axis-y: #92ad9a;
+  --axis-z: #91a6c7;
 
   --panel-chrome: var(--bg-panel-header);
   --panel-body: var(--bg-panel);
@@ -134,16 +157,17 @@
   --component-head-hover: var(--layer-raised);
 
   --group-card: var(--layer-component);
-  --group-head-hover: #35383e;
+  --group-head-hover: var(--layer-hover);
   --inspector-chrome: var(--bg-panel-header);
   --inspector-body: var(--bg-panel);
   --inspector-input: var(--bg-input);
   --inspector-card: var(--layer-component);
   --inspector-raised: var(--layer-raised);
+  --inspector-raised-2: var(--layer-hover);
   --inspector-surface: rgba(255, 255, 255, 0.014);
   --inspector-border: var(--hairline-soft);
-  --inspector-label: #b3b0a9;
-  --inspector-muted: #938f88;
+  --inspector-label: var(--text-2);
+  --inspector-muted: var(--text-3);
 
   --font-ui: "Roboto", Arial, Helvetica, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -167,15 +191,17 @@
   --sp-5: 20px;
   --sp-6: 24px;
 
-  --r-xs: 2px;
-  --r-sm: 3px;
-  --r-md: 4px;
-  --r-lg: 6px;
+  /* One editor corner setting. Role aliases retain semantic ownership. */
+  --editor-radius: 5px;
+  --r-xs: var(--editor-radius);
+  --r-sm: var(--editor-radius);
+  --r-md: var(--editor-radius);
+  --r-lg: var(--editor-radius);
 
   --h-control-compact: 26px;
   --h-input: 26px;
   --h-control: 30px;
-  --control-transport-button-size: var(--h-input);
+  --control-transport-button-size: var(--toolbar-control-h);
   --control-transport-play-w: 27px;
   --control-slider-hit-h: 12px;
   --control-range-inline-w: 48px;
@@ -198,22 +224,27 @@
   --control-number-unit-min-w: 68px;
   --control-number-gap: 3px;
   --control-number-inline-pad: 5px;
+  --control-number-optical-pad: 2px;
+  --control-select-arrow-inset: 8px;
   --control-disabled-opacity: 0.42;
   --control-disabled-field-opacity: 0.42;
 
-  --icon-size-micro: 11px;
-  --icon-size-compact: 15px;
-  --icon-size-control: 17px;
-  --icon-size-disclosure: 14px;
-  --icon-size-row-action: 16px;
-  --icon-size-indicator: 20px;
-  --icon-size-tree: 22px;
-  --icon-size-toolbar: 20px;
-  --icon-size-transport: 19px;
+  /* One 24-unit outline family. Controls use 16px, utilities 14px,
+   * disclosures 12px and primary tools 18px. Hit areas are independent. */
+  --icon-size-status: 6px;
+  --icon-size-micro: 12px;
+  --icon-size-compact: 14px;
+  --icon-size-control: 16px;
+  --icon-size-disclosure: var(--icon-size-micro);
+  --icon-size-row-action: var(--icon-size-compact);
+  --icon-size-indicator: var(--icon-size-control);
+  --icon-size-tree: var(--icon-size-control);
+  --icon-size-toolbar: 18px;
+  --icon-size-transport: var(--icon-size-toolbar);
   --icon-size-brand: 22px;
   /* Duotone glyphs: the closed shapes of a tone icon are washed with its own
    * hue. Solid is for markers that should read as filled (prefab). */
-  --glyph-wash: 28%;
+  --glyph-wash: 16%;
   --glyph-wash-solid: 58%;
   --icon-size-hero: 24px;
   --icon-size-preview: 28px;
@@ -222,10 +253,16 @@
   --icon-stroke-regular: 1.75;
   --icon-stroke-strong: 2;
 
-  --dock-tab-height: 34px;
+  --tabbar-fill: var(--bg-base);
+  --tab-hover-fill: var(--bg-hover);
+  --tab-active-fill: #43454a;
+  --tab-active-ink: var(--text);
+  --tab-active-edge: var(--hairline-strong);
+  --tab-radius: var(--r-sm);
+  --dock-tab-height: 28px;
   --dock-splitter-size: 4px;
-  --dock-drop-fill: rgb(77 163 255 / 17%);
-  --dock-drop-border: rgb(77 163 255 / 82%);
+  --dock-drop-fill: rgb(120 153 196 / 17%);
+  --dock-drop-border: rgb(120 153 196 / 82%);
 
   --t-fast: 100ms;
   --t-base: 120ms;
@@ -243,35 +280,41 @@
   --check-bg:
     url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><rect width="16" height="16" fill="%23202226"/><rect width="8" height="8" fill="%232b2d33"/><rect x="8" y="8" width="8" height="8" fill="%232b2d33"/></svg>');
 
-  --header-h: 40px;
+  --header-h: 36px;
   /* Hierarchy rows. These are the `large` density: the maximum size. The
    * compact set below overrides them under `[data-hierarchy-density]`. The list
    * reads --hierarchy-row-h so virtualization always matches paint. */
-  --hierarchy-row-h: 24px;
+  --hierarchy-row-alternate: color-mix(in srgb, var(--text-1) 3%, var(--panel-body));
+  --hierarchy-icon-ink: var(--text-2);
+  --hierarchy-row-h: 22px;
   --hierarchy-inset: 8px;
   --hierarchy-indent: 16px;
   --hierarchy-chevron: 16px;
   --hierarchy-lead-gap: 6px;
-  --hierarchy-name-size: var(--fs-md);
+  --hierarchy-name-size: var(--fs-base);
   --hierarchy-action-size: 22px;
-  --hierarchy-tag-w: 24px;
+  --hierarchy-tag-w: var(--hierarchy-action-size);
   --hierarchy-tag-h: 22px;
   --hierarchy-count-size: 13px;
   --hierarchy-count-font: var(--fs-2xs);
   --statusbar-h: 26px;
+  --statusbar-font-size: var(--fs-xs);
+  --statusbar-line-height: 16px;
+  --statusbar-gap: var(--sp-2);
   --assets-h: 270px;
   --rail-l: 340px;
   --rail-r: 372px;
 
-  --inspector-row-label-w: clamp(96px, 32%, 136px);
-  --inspector-row-gutter-w: 12px;
-  --inspector-row-min-h: 30px;
-  --inspector-row-block-pad: 4px;
-  --inspector-row-divider: var(--hairline);
-  --inspector-gap: 8px;
-  --inspector-input-h: 24px;
-  --inspector-tab-h: 30px;
-  --inspector-group-head-h: 28px;
+  --inspector-row-label-w: clamp(80px, 28%, 120px);
+  --inspector-row-gutter-w: 6px;
+  --inspector-row-min-h: 26px;
+  --inspector-row-block-pad: 2px;
+  --inspector-row-divider: transparent;
+  --inspector-gap: 6px;
+  --inspector-list-row-padding: 2px 4px;
+  --inspector-input-h: 22px;
+  --inspector-tab-h: 26px;
+  --inspector-group-head-h: 24px;
   --inspector-nest-indent: 12px;
 
   --inspector-cell-min: 185px;
@@ -279,11 +322,55 @@
   --inspector-cell-gap: 6px;
   --inspector-col-gap: 14px;
   --inspector-number-max-w: 120px;
-  --inspector-section-head-h: 36px;
+  --inspector-select-max-w: 180px;
+  --inspector-action-gap: 8px;
+  --inspector-action-spacing: 6px;
+  --inspector-popup-max-h: 320px;
+  --inspector-popup-gap: 4px;
+  --inspector-popup-inset: 8px;
+  --inspector-section-head-h: 26px;
+  /* Inspector density and appearance. Shared presenters consume these roles;
+   * feature styles own composition, never a competing control skin. */
+  --inspector-font-size: 12px;
+  --inspector-title-size: var(--fs-base);
+  --inspector-header-h: 34px;
+  --inspector-header-icon-size: 26px;
+  --inspector-identity-label-w: calc(var(--inspector-identity-icon-w) + var(--inspector-identity-toggle-w) + var(--inspector-identity-gap));
+  --inspector-identity-icon-w: var(--inspector-input-h);
+  --inspector-identity-action-w: var(--inspector-input-h);
+  --inspector-identity-toggle-w: 14px;
+  --inspector-identity-gap: 4px;
+  --inspector-component-icon-size: var(--icon-size-control);
+  --inspector-card-radius: var(--editor-radius);
+  --inspector-field-radius: var(--r-sm);
+  --inspector-field-border: var(--field-border);
+  --inspector-field-hover-border: var(--field-border-hover);
+  --inspector-body-padding: 6px;
+  --inspector-vector-label-w: clamp(64px, 24%, 96px);
+  --inspector-vector-axis-w: 18px;
+  --inspector-vector-gap: 4px;
+  --inspector-row-hover: color-mix(in srgb, var(--layer-hover) 24%, transparent);
+  --inspector-section-fill: var(--layer-component-head);
+  --inspector-reset-size: 18px;
+  --inspector-menu-min-w: 168px;
 }
 
-/* Hierarchy compact density: fits more objects per screen. Glyph roles shrink
- * only inside the list, so the toolbar and every other pane keep their scale. */
+/* Specialized property compositions select metrics here, not local skins. */
+.displacer-card {
+  --inspector-row-label-w: 76px;
+  --control-number-rail-min-w: 46px;
+  --control-number-slider-min-w: 58px;
+}
+.displacer-axis-grid .inspector-row { --inspector-row-label-w: 52px; }
+.mesh-renderer-settings .inspector-row { --inspector-row-label-w: 116px; }
+.displacer-group,
+.displacer-group--source { --displacer-accent: var(--component-mesh); }
+.displacer-group--geometry { --displacer-accent: var(--component-modifiers); }
+.displacer-group--surface { --displacer-accent: var(--component-rendering); }
+.displacer-group--camera { --displacer-accent: var(--component-lighting); }
+
+/* Hierarchy indicators and actions share a glyph size in either density. */
+.object-row { --icon-size-indicator: var(--icon-size-row-action); }
 [data-hierarchy-density="compact"] {
   --hierarchy-row-h: 18px;
   --hierarchy-inset: 6px;
@@ -292,14 +379,14 @@
   --hierarchy-lead-gap: 4px;
   --hierarchy-name-size: var(--fs-sm);
   --hierarchy-action-size: 16px;
-  --hierarchy-tag-w: 18px;
+  --hierarchy-tag-w: var(--hierarchy-action-size);
   --hierarchy-tag-h: 16px;
   --hierarchy-count-size: 11px;
   --hierarchy-count-font: 9px;
   --icon-size-tree: 16px;
   --icon-size-indicator: 14px;
   --icon-size-row-action: 12px;
-  --icon-size-disclosure: 11px;
+  --icon-size-disclosure: var(--icon-size-micro);
 }
 
 .editor-icon {
@@ -311,9 +398,12 @@
   min-inline-size: var(--editor-icon-size);
   flex: 0 0 var(--editor-icon-size);
   stroke-width: var(--editor-icon-stroke);
+  vertical-align: middle;
+  overflow: visible;
   pointer-events: none;
 }
 
+.editor-icon--status { --editor-icon-size: var(--icon-size-status); }
 .editor-icon--micro { --editor-icon-size: var(--icon-size-micro); }
 .editor-icon--compact { --editor-icon-size: var(--icon-size-compact); }
 .editor-icon--control { --editor-icon-size: var(--icon-size-control); }
@@ -345,10 +435,51 @@
 .tone-neutral { --tone: var(--component-neutral); }
 .tone-prefab { --tone: var(--component-prefab); }
 .category-glyph { color: var(--tone, currentColor); }
+.object-row__type-icon,
+.modifier-tag .editor-icon { fill: color-mix(in srgb, currentColor var(--glyph-wash), transparent); }
+.object-row__type-icon.tone-prefab { fill: color-mix(in srgb, currentColor var(--glyph-wash-solid), transparent); }
 
 @media (max-width: 1280px) {
   :root {
     --rail-l: 220px;
     --rail-r: 340px;
   }
+}
+
+/* Embedded particle tools consume the host theme. The package's standalone
+ * defaults remain available outside Braze. */
+.particle-inspector-host, .pi-modal, .pi-menu {
+  --bl-bg: var(--bg-panel);
+  --bl-card: var(--layer-component);
+  --bl-card-2: var(--layer-contained);
+  --bl-header: var(--inspector-section-fill);
+  --bl-header-hover: var(--layer-hover);
+  --bl-input: var(--inspector-input);
+  --bl-input-hover: var(--bg-input-2);
+  --bl-input-focus: var(--bg-input-2);
+  --bl-input-fill: var(--accent-soft);
+  --bl-input-fill-h: var(--accent-soft);
+  --bl-text: var(--text-2);
+  --bl-text-strong: var(--text-1);
+  --bl-text-dim: var(--text-3);
+  --bl-text-faint: var(--text-3);
+  --bl-accent: var(--accent);
+  --bl-accent-hi: var(--accent-light);
+  --bl-accent-soft: var(--accent-soft);
+  --bl-good: var(--success);
+  --bl-warn: var(--warning);
+  --bl-bad: var(--danger);
+  --bl-border: var(--inspector-field-border);
+  --bl-sep: var(--hairline);
+  --bl-divider: var(--hairline);
+  --bl-checker: var(--check-bg);
+  --bl-font: var(--font-ui);
+  --bl-mono: var(--font-mono);
+  --bl-fs: var(--inspector-font-size);
+  --bl-fs-sm: var(--fs-xs);
+  --bl-fs-mono: var(--fs-sm);
+  --bl-input-h: var(--inspector-input-h);
+  --bl-row-h: var(--inspector-row-min-h);
+  --bl-radius: var(--inspector-field-radius);
+  --bl-radius-lg: var(--inspector-card-radius);
 }

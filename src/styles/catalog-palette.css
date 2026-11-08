@@ -232,10 +232,6 @@
   color: var(--component-group);
 }
 
-.catalog-palette__item > span:first-child .editor-icon {
-  width: 14px;
-  height: 14px;
-}
 
 .catalog-palette__item > span:last-child {
   min-width: 0;

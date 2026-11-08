@@ -1,3 +1,4 @@
+import { EditorIcon } from "../../ui/EditorIcon";
 import type { Material } from "../../types";
 import { useMaterialThumbnail } from "../../materials/preview/useMaterialThumbnail";
 
@@ -61,6 +62,7 @@ export function AssetTile({
       >
         {preview.url && <img src={preview.url} alt="" className="asset-tile__preview" draggable={false} />}
       </span>
+      {assigned && <EditorIcon name="status" size="status" className="asset-assigned" filled aria-label="Assigned" />}
       <span className="asset-tile__name">{displayName}</span>
     </div>
   );

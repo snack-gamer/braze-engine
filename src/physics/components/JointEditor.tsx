@@ -6,7 +6,6 @@ import { InspectorToggle } from "../../components/InspectorToggle";
 import { VectorField } from "../../components/VectorField";
 import { JOINT_KINDS, type JointComponent } from "../domain/joint";
 import { decodeJoint } from "../serialization/joint-codec";
-import { RemovePhysicsComponentButton } from "../../components/physics/physics-section-controls";
 
 export function JointEditor({ object, objects, updateObject }: {
   object: SceneObject; objects: SceneObject[]; updateObject: (id: string, patch: Partial<SceneObject>) => void;
@@ -15,7 +14,7 @@ export function JointEditor({ object, objects, updateObject }: {
   const patch = (values: Partial<JointComponent>) => updateObject(object.id, { joint: decodeJoint({ ...joint, ...values }) });
   return <SceneComponentSection componentId="joint" id="object.joint" defaultOpen
     enable={{ checked: joint.enabled, onChange: (enabled) => patch({ enabled }), ariaLabel: "Enable Joint" }}
-    actions={<RemovePhysicsComponentButton title="Remove Joint" onClick={() => updateObject(object.id, { joint: undefined })} />}>
+    onRemove={() => updateObject(object.id, { joint: undefined })}>
     <InspectorRow label="Type"><select aria-label="Joint type" value={joint.kind} onChange={(e) => patch({ kind: e.target.value as JointComponent["kind"] })}>
       {JOINT_KINDS.map((kind) => <option key={kind} value={kind}>{kind === "ball" ? "Ball Socket" : kind[0].toUpperCase() + kind.slice(1)}</option>)}
     </select></InspectorRow>

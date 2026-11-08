@@ -40,6 +40,14 @@ function collider(id: string, overrides: Partial<ColliderComponent> = {}): Colli
 const world = normalizePhysicsWorldSettings(DEFAULT_PHYSICS_WORLD_SETTINGS);
 
 describe("compileAuthoredPhysicsScene", () => {
+  it("inherits the collider owner's object layer while preserving explicit collider overrides", () => {
+    const source = object({ id: "layered", layer: 8, colliders: [collider("inherited"), collider("override", { collisionLayer: 0, collisionMask: 17 })] });
+    const result = compileRigidWorld(compileAuthoredPhysicsScene([source], "layers", world));
+    expect(result.bodies.map((body) => body.collisionLayer)).toEqual([8, 0]);
+    expect(result.bodies[1].collisionMask).toBe(17);
+    expect(source.colliders![0].collisionLayer).toBeUndefined();
+  });
+
   it("uses hierarchy poses, inherited scale, and Collider center", () => {
     const parent = object({ id: "parent", position: [10, 0, 0], rotation: [0, 90, 0], scale: [2, 2, 2] });
     const child = object({

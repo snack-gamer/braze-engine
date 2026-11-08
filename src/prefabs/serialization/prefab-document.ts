@@ -1,3 +1,5 @@
+import { captureCameraSettings, captureCameraPatch, DEFAULT_CAMERA_SETTINGS } from "../../camera/domain/camera-settings";
+import { captureEntityLayer } from "../../world/domain/entity-layers";
 import { DEFAULT_OBJECT_COLOR, type PrimitiveKind, type Vec3 } from "../../scene/domain/scene-values";
 import type { SceneObject } from "../../scene/domain/scene-object";
 import { captureEntityTags } from "../../world/domain/entity-tags";
@@ -72,17 +74,19 @@ function parsePrefabObject(value: unknown, index: number, asset: PrefabSourceLab
   const rawCharacter = value.characterController ?? value.character_controller;
   const characterController = rawCharacter === undefined || rawCharacter === null ? undefined : decodeCharacterController(rawCharacter);
   if (rawCharacter !== undefined && rawCharacter !== null && !characterController) throw invalidPrefab(asset, `${id} has an invalid Character Controller`);
-  const { character_controller: _legacyCharacter, ...fields } = value;
+  const { character_controller: _legacyCharacter, assetMeshBinding: _derivedMesh, ...fields } = value;
 
   return {
     ...fields,
     id,
     name: nonEmptyString(value.name) ?? `Object ${index + 1}`,
     tags: value.tags === undefined ? undefined : captureEntityTags(value.tags),
+    layer: value.layer === undefined ? undefined : captureEntityLayer(value.layer),
     behaviors: decodeBehaviorComponent(value.behaviors),
     uiCanvas: decodeUiCanvas(value.uiCanvas),
     animator: value.animator === undefined || value.animator === null ? undefined : decodeAnimatorComponent(value.animator),
     characterController,
+    ...(value.camera ? { camera: captureCameraSettings({ ...DEFAULT_CAMERA_SETTINGS, ...captureCameraPatch(value.camera) }) } : {}),
     primitive,
     color: nonEmptyString(value.color) ?? DEFAULT_OBJECT_COLOR,
     visible: value.visible !== false,
@@ -136,8 +140,9 @@ export function decodePrefabDocument(rawDocument: unknown, asset: PrefabSourceLa
 export function encodePrefabDocument(document: PrefabDocument) {
   return {
     ...document,
-    objects: document.objects.map((object) => ({
+    objects: document.objects.map(({ assetMeshBinding: _derivedMesh, ...object }) => ({
       ...object,
+      ...(object.camera ? { camera: captureCameraSettings(object.camera) } : {}),
       ...(object.behaviors === undefined ? {} : { behaviors: encodeBehaviorComponent(object.behaviors) }),
       ...(object.uiCanvas === undefined ? {} : { uiCanvas: encodeUiCanvas(object.uiCanvas) }),
       ...(object.animator === undefined ? {} : { animator: encodeAnimatorComponent(object.animator) }),

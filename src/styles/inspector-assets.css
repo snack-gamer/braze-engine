@@ -5,7 +5,7 @@
   aspect-ratio: 1.45;
   margin: 2px 0 12px;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--r-md);
   background: #080a0b;
   color: var(--muted);
   overflow: hidden;
@@ -48,7 +48,7 @@
 .asset-inspector__animated-preview {
   margin: 0 0 8px;
   border: 1px solid var(--hairline);
-  border-radius: 7px;
+  border-radius: var(--r-md);
   background: #171a1f;
   overflow: hidden;
 }
@@ -152,7 +152,7 @@
 .rail-right .asset-inspector__preview {
   margin: 0 0 8px;
   border-color: var(--hairline);
-  border-radius: 7px;
+  border-radius: var(--r-md);
   background: var(--inspector-card);
 }
 
@@ -271,7 +271,7 @@
   place-items: center;
   min-height: 118px;
   border: 1px solid var(--hairline);
-  border-radius: 7px;
+  border-radius: var(--r-md);
   background-image: var(--check-bg);
   background-size: 16px 16px;
   overflow: hidden;
@@ -306,7 +306,7 @@
   min-height: 50px;
   padding: 6px;
   border: 1px dashed var(--hairline);
-  border-radius: 6px;
+  border-radius: var(--r-md);
   background: var(--inspector-input);
   color: #989fa2;
   transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
@@ -332,7 +332,7 @@
   overflow: hidden;
   padding: 0;
   border: 1px solid var(--hairline);
-  border-radius: 5px;
+  border-radius: var(--r-md);
   background: #1a1a1a;
   color: #8a9295;
 }
@@ -378,7 +378,7 @@
   margin-left: -4px;
   overflow: hidden;
   border: 0;
-  border-radius: 4px;
+  border-radius: var(--r-md);
   background: transparent;
   color: #d4dbde;
   font-size: var(--fs-xs);
@@ -460,7 +460,7 @@
   padding: 6px;
   gap: 6px;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 7px;
+  border-radius: var(--r-md);
   background: #1a1d20;
   box-shadow: var(--shadow-float);
 }
@@ -472,7 +472,7 @@
   gap: 6px;
   padding: 4px 8px;
   border: 1px solid var(--hairline);
-  border-radius: 5px;
+  border-radius: var(--r-md);
   background: #0f1113;
   color: #8a9295;
 }
@@ -499,7 +499,7 @@
   gap: 8px;
   padding: 4px 6px;
   border: 0;
-  border-radius: 5px;
+  border-radius: var(--r-md);
   background: transparent;
   color: #d4dbde;
   font-size: var(--fs-xs);
@@ -525,7 +525,7 @@
   height: 28px;
   overflow: hidden;
   border: 1px solid var(--hairline);
-  border-radius: 4px;
+  border-radius: var(--r-md);
   background: #0f1113;
   color: #6e7679;
 }

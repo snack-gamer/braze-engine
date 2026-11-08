@@ -1,0 +1,375 @@
+/* Shared property layout. All visual metrics come from theme.css. */
+/* Row layout (label + control) ----------------------------------------- */
+
+.inspector-row {
+  display: grid;
+  gap: var(--inspector-gap);
+  align-items: center;
+  min-height: var(--inspector-row-min-h);
+  padding: var(--inspector-row-block-pad) 0;
+  transition: opacity 100ms ease;
+}
+
+/* Horizontal hairline splitter between adjacent property rows (any combo
+ * of .inspector-row + .inspector-toggle-row). Reads as a DCC property
+ * list. :where() keeps specificity at zero so per-row classes still win. */
+:where(.inspector-row, .inspector-toggle-row) + :where(.inspector-row, .inspector-toggle-row) {
+  border-top: 1px solid var(--inspector-row-divider);
+}
+
+.inspector-row--inline,
+.inspector-row--vec {
+  grid-template-columns: var(--inspector-row-gutter-w) var(--inspector-row-label-w) minmax(0, 1fr);
+}
+
+.inspector-row--stacked {
+  grid-template-columns: var(--inspector-row-gutter-w) minmax(0, 1fr);
+  gap: var(--sp-1) var(--inspector-gap);
+}
+
+.inspector-row--stacked .inspector-row__head {
+  grid-column: 2;
+}
+
+.inspector-row--stacked .inspector-row__control {
+  grid-column: 2;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Property stack — InspectorGrid is the canonical ordered list of properties.
+ * It is intentionally one column at every pane width: automatic two-up
+ * packing hid labels, split related controls, and introduced an arbitrary
+ * center rule. Components create explicit sub-groups when they need hierarchy.
+ * ───────────────────────────────────────────────────────────────────────── */
+.inspector-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 0;
+}
+
+/* Only plain label+control rows share the columns. Everything else — group
+ * dividers, sub-titles, vector triplets, stacked rows, notes — spans the full
+ * width, so a section body can be flipped to grid wholesale (layout="grid")
+ * without auditing every child. They also paint the card's own surface, which
+ * masks the column splitter below where it must not run. */
+.inspector-grid > *:not(.inspector-row--inline),
+.inspector-grid > .inspector-row.is-full {
+  grid-column: 1 / -1;
+  background: var(--card-surface);
+}
+
+/* Grid rows use the same label/control proportions as every plain row. */
+.inspector-grid > .inspector-row--inline {
+  grid-template-columns:
+    var(--inspector-row-gutter-w)
+    minmax(0, var(--inspector-row-label-w))
+    minmax(0, 1fr);
+  gap: var(--inspector-gap);
+}
+
+/* Scalar controls stay close to their labels. Tracks, vectors and asset
+ * references may use the remaining width; short enum selectors do not. */
+.inspector-row__control > .inspector-number {
+  max-width: var(--inspector-number-max-w);
+}
+
+.inspector-row__control :is(select, .inspector-menu-select) {
+  width: 100%;
+  max-width: var(--inspector-select-max-w);
+  min-width: 0;
+  vertical-align: middle;
+}
+
+/* Opt in only when a long asset/object name needs the full value column. */
+.inspector-row--wide-control .inspector-row__control :is(select, .inspector-menu-select) {
+  max-width: none;
+}
+
+/* Two numbers in one control (min/max, width/depth) share the column instead
+ * of stacking or spilling past it. */
+.inspector-row__control:has(> .inspector-number + .inspector-number) {
+  display: flex;
+  gap: var(--inspector-gap);
+  min-width: 0;
+}
+
+.inspector-row__control:has(> .inspector-number + .inspector-number) > .inspector-number {
+  flex: 1 1 0;
+  max-width: none;
+}
+
+/* Key gutter — leftmost column on every row. Empty by default so the rest
+ * of the panel still aligns to a grid; gains a small diamond/dot when the
+ * value is animated or overrides a prefab. Reads as the "list rhythm" anchor
+ * the way C4D's animation diamonds do. */
+.inspector-row__gutter {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  width: var(--inspector-row-gutter-w);
+  pointer-events: none;
+}
+
+.inspector-row__key {
+  display: inline-block;
+  width: var(--inspector-row-gutter-w);
+  height: var(--inspector-row-gutter-w);
+  border-radius: var(--r-md);
+  transform: rotate(45deg);
+}
+
+.inspector-row__key--anim {
+  background: var(--accent);
+  outline: 1px solid var(--hairline-strong);
+}
+
+.inspector-row__key--override {
+  background: var(--warning);
+  outline: 1px solid var(--hairline-strong);
+}
+
+.inspector-row.is-muted {
+  opacity: 0.45;
+}
+
+.inspector-row.is-muted .inspector-row__control,
+.inspector-row.is-muted .inspector-row__head {
+  pointer-events: none;
+}
+
+.inspector-row.is-muted .inspector-row__actions {
+  pointer-events: auto;
+}
+
+.inspector-row__head {
+  display: flex;
+  align-items: center;
+  gap: var(--inspector-gap);
+  min-width: 0;
+}
+
+.inspector-row__enable {
+  flex: 0 0 auto;
+}
+
+.inspector-row--inline .inspector-row__head {
+  min-height: var(--inspector-input-h);
+}
+
+.inspector-row__icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--inspector-muted);
+  flex: 0 0 auto;
+}
+
+.inspector-row__label {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: var(--inspector-font-size);
+  font-weight: var(--fw-regular);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inspector-row__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  flex: 0 0 auto;
+}
+
+.inspector-row__control {
+  min-width: 0;
+}
+
+.inspector-row__control > select,
+.inspector-row__control > .inspector-menu-select,
+.inspector-row__control > .inspector-number {
+  width: 100%;
+  height: var(--inspector-input-h);
+}
+
+.inspector-row__control > select {
+  padding: 0 var(--sp-2);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Object-reference field (InspectorObjectField). The one look for every
+ * asset/object pointer in the engine — icon + friendly name + picker, in the
+ * same boxed control language as selects/inputs. Shows names, never paths.
+ * ───────────────────────────────────────────────────────────────────── */
+.inspector-row__control > .object-field,
+.object-field {
+  display: flex;
+  align-items: center;
+  gap: var(--inspector-gap);
+  width: 100%;
+  height: var(--inspector-input-h);
+  min-width: 0;
+  padding: 0 var(--sp-1) 0 var(--sp-2);
+}
+.object-field.is-disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+.object-field__icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  color: var(--muted-2);
+}
+.object-field__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+}
+.object-field.is-empty .object-field__name {
+  color: var(--muted-2);
+  font-style: italic;
+}
+.object-field__pick {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: var(--inspector-reset-size);
+  height: var(--inspector-reset-size);
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--muted-2);
+  cursor: pointer;
+  transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.object-field__pick:hover {
+  color: var(--text-1);
+  background: var(--layer-hover);
+}
+
+/* Vector field (X/Y/Z triplet) — Unity-style dense single-line layout.
+ * Each cell is `letter | input`. The letter is the scrub handle: drag
+ * horizontally to update the value (useScrub on the letter span). */
+
+.inspector-vec {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--inspector-vector-gap);
+  min-width: 0;
+}
+
+.inspector-vec__cell {
+  display: grid;
+  grid-template-columns: var(--inspector-vector-axis-w) minmax(0, 1fr);
+  align-items: center;
+  gap: 0;
+  min-width: 0;
+}
+
+.inspector-vec__cell.no-letter {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.inspector-vec__cell.is-animated {
+  grid-template-columns: var(--inspector-vector-axis-w) var(--inspector-vector-axis-w) minmax(0, 1fr);
+}
+
+.inspector-vec__cell.no-letter.is-animated {
+  grid-template-columns: var(--inspector-vector-axis-w) minmax(0, 1fr);
+}
+
+/* Axis letter doubles as a scrub handle (Unity convention). Hover invites
+ * the drag (ew-resize cursor + brighter color); .is-scrubbing pins the
+ * cursor while the drag is active. */
+.inspector-vec__letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--inspector-muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 0;
+  cursor: ew-resize;
+  user-select: none;
+  transition: color 80ms ease;
+}
+
+.inspector-vec__letter:hover,
+.inspector-vec__letter.is-scrubbing {
+  color: var(--text);
+}
+
+.inspector-vec__cell[data-axis="x"] .inspector-vec__letter { color: var(--axis-x); }
+.inspector-vec__cell[data-axis="y"] .inspector-vec__letter { color: var(--axis-y); }
+.inspector-vec__cell[data-axis="z"] .inspector-vec__letter { color: var(--axis-z); }
+
+.inspector-vec__cell.is-disabled .inspector-vec__letter {
+  color: var(--text-disabled);
+  cursor: default;
+  opacity: var(--control-disabled-field-opacity);
+}
+
+.inspector-vec__badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: var(--inspector-reset-size);
+  height: var(--inspector-reset-size);
+  color: var(--accent-light);
+  font: var(--fw-medium) var(--fs-2xs)/1 var(--font-mono);
+}
+
+.inspector-vec__cell .inspector-number {
+  width: 100%;
+  min-width: 0;
+  height: var(--inspector-input-h);
+  grid-template-columns: minmax(0, 1fr);
+  font-size: var(--fs-xs);
+}
+
+.inspector-vec__cell .inspector-number__input {
+  height: 100%;
+  padding: 0 var(--control-number-inline-pad);
+}
+
+/* Hide the per-cell unit suffix inside vector fields. The row label
+ * (Rotation / Position / Scale) carries the unit context, and a dim glyph
+ * at the right edge reads as a leftover control hint now that scrub lives
+ * on the axis letter. Standalone .inspector-number (FOV, Bloom Threshold,
+ * etc.) still shows its unit. */
+.inspector-vec__cell .inspector-number__unit {
+  display: none;
+}
+
+/* Vectors reserve more room for values than ordinary scalar properties.
+ * Narrow Inspector panes reflow only vectors; explicitly stacked rows stay so. */
+.inspector-row--vec,
+.inspector-row:not(.inspector-row--stacked):has(> .inspector-row__control > .inspector-vec) {
+  grid-template-columns: var(--inspector-row-gutter-w) var(--inspector-vector-label-w) minmax(0, 1fr);
+}
+
+@container inspector (max-width: 340px) {
+  .inspector-row--vec,
+  .inspector-row:not(.inspector-row--stacked):has(> .inspector-row__control > .inspector-vec) {
+    grid-template-columns: var(--inspector-row-gutter-w) minmax(0, 1fr);
+    row-gap: var(--inspector-row-block-pad);
+  }
+  .inspector-row__head { min-height: 0; }
+  .inspector-row--vec > :is(.inspector-row__head, .inspector-row__control),
+  .inspector-row:not(.inspector-row--stacked):has(> .inspector-row__control > .inspector-vec) > :is(.inspector-row__head, .inspector-row__control) {
+    grid-column: 2;
+  }
+}

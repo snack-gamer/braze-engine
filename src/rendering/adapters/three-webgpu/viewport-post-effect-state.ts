@@ -6,6 +6,7 @@ import type {
 import type { BloomConfig } from "../../../three/gi/bloom";
 
 export type ViewportPostEffectState = Readonly<{
+  environmentBackground?: boolean;
   ambientOcclusion: AmbientOcclusionSettings | null;
   bloom: BloomConfig | null;
   clouds: Readonly<{ enabled: boolean; settings: SkySettings | null }>;
@@ -41,8 +42,8 @@ export function activeViewportPostEffects(
 ): ActiveViewportPostEffects {
   const ambientOcclusion = activeAo(state.ambientOcclusion);
   const bloom = activeBloom(state.bloom);
-  const clouds = activeClouds(state.clouds);
-  const godrays = activeGodrays(state.godrays);
+  const clouds = state.environmentBackground === false ? null : activeClouds(state.clouds);
+  const godrays = state.environmentBackground === false ? null : activeGodrays(state.godrays);
   const screenSpaceReflections = activeSsr(state.screenSpaceReflections);
   const atmosphereTopology = Object.freeze({
     clouds: Boolean(clouds),

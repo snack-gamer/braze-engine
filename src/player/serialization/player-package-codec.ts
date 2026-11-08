@@ -10,6 +10,7 @@ import {
   type HydratedSceneState,
 } from "../../scene/application/scene-runtime-hydration";
 import type { Material } from "../../types";
+import { reconcileSceneAssetReferences } from "../../assets/application/scene-asset-resolution";
 
 export const PLAYER_PACKAGE_VERSION = "braze-player/package-v1";
 
@@ -122,7 +123,7 @@ export function decodePlayerPackage(value: unknown): DecodedPlayerPackage {
   }).state;
   return {
     sceneId: requiredString(input, "sceneId", "player package"),
-    scene,
+    scene: { ...scene, objects: reconcileSceneAssetReferences(scene.objects, [...importedAssets]) },
     materials: normalizeProjectMaterials(input.materials),
     characterAssets: decodeCharacterAssetLibrary(input.characterAssets),
     importedAssets,

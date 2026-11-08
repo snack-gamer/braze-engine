@@ -1,8 +1,6 @@
-import { EditorIcon } from "../../ui/EditorIcon";
-import { InspectorObjectField } from "../InspectorObjectField";
-import { InspectorRow } from "../InspectorRow";
+import { lazy, Suspense } from "react";
+const MeshFilterSection = lazy(() => import("../../mesh/components/MeshFilterSection").then((module) => ({ default: module.MeshFilterSection })));
 import type { Material, PrimitiveKind, SceneObject } from "../../types";
-import { assetDisplayName, primitiveLabel } from "../../lib/format";
 import { isComponentRemoved, removeComponentPatch } from "../../lib/components";
 import { SceneComponentSection } from "./SceneComponentPresentation";
 import {
@@ -46,10 +44,7 @@ function assetFilenameFromUrl(url: string | undefined): string | undefined {
 export function MaterialSection(props: MaterialSectionProps) {
   const { object, materialLibrary, updateObject } = props;
   const assetFilename = assetFilenameFromUrl(object.assetUrl);
-  // Show a friendly mesh name — the imported asset's basename, or the
-  // primitive type ("Cube") — never the internal import path.
-  const meshName = object.assetName ? assetDisplayName(object.assetName) : primitiveLabel(object.primitive);
-  const generatedSlots = assetFilename
+  const generatedSlots = assetFilename && !object.assetMeshBinding
     ? materialLibrary.filter((material) => material.sourceAssetFilename === assetFilename && material.sourceMaterialSlotKey)
     : [];
   const importedSlotMap = new Map<string, { slotKey: string; sourceName?: string; materialId?: string }>();
@@ -110,23 +105,7 @@ export function MaterialSection(props: MaterialSectionProps) {
 
   return (
     <>
-      {showFilter && (
-      <SceneComponentSection
-        componentId="meshFilter"
-        id="object.meshFilter"
-        className="mesh-filter-section"
-        defaultOpen
-        onRemove={() => updateObject(object.id, removeComponentPatch(object, "meshFilter"))}
-      >
-        <InspectorRow label="Mesh">
-          <InspectorObjectField
-            name={meshName}
-            icon={<EditorIcon name="object" size="control" />}
-            title={meshName}
-          />
-        </InspectorRow>
-      </SceneComponentSection>
-      )}
+      {showFilter && <Suspense fallback={null}><MeshFilterSection key={object.id} object={object} updateObject={updateObject} /></Suspense>}
 
       {showRenderer && (
       <SceneComponentSection

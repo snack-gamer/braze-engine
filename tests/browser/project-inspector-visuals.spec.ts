@@ -14,6 +14,75 @@ test.describe("Project and Inspector visual regressions", () => {
     await installProjectFixture(page);
   });
 
+  test("shared glyph metrics survive panel styles and selected tabs stay brighter", async ({ page }) => {
+    await page.goto("/");
+    const sceneTab = page.getByRole("tab", { name: "Scene", exact: true });
+    const gameTab = page.getByRole("tab", { name: "Game", exact: true });
+    await expect(sceneTab).toHaveAttribute("aria-selected", "true");
+    const activeTone = async () => sceneTab.evaluate((tab) => {
+      const shell = tab.closest(".editor-dock-tab-shell")!;
+      const bar = tab.closest(".editor-dock-group__tabbar")!;
+      const brightness = (element: Element) => {
+        const rgb = getComputedStyle(element).backgroundColor.match(/[\d.]+/g)!.map(Number);
+        return (rgb[0] + rgb[1] + rgb[2]) / 3;
+      };
+      return brightness(shell) - brightness(bar);
+    });
+    expect(await activeTone()).toBeGreaterThan(25);
+    await gameTab.click();
+    await expect(gameTab).toHaveAttribute("aria-selected", "true");
+    await expect(sceneTab).toHaveAttribute("aria-selected", "false");
+    await sceneTab.click();
+    expect(await activeTone()).toBeGreaterThan(25);
+    await page.getByRole("button", { name: "Create or import into Assets", exact: true }).click();
+    await expect(page.getByRole("dialog", { name: "Create", exact: true })).toBeVisible();
+    const violations = await page.locator(".editor-icon").evaluateAll((icons) => icons.flatMap((icon) => {
+      const bounds = icon.getBoundingClientRect();
+      if (!bounds.width || !bounds.height) return [];
+      const style = getComputedStyle(icon);
+      const size = Number.parseFloat(style.getPropertyValue("--editor-icon-size"));
+      const stroke = Number.parseFloat(style.getPropertyValue("--editor-icon-stroke"));
+      return Math.abs(bounds.width - size) > 0.5 || Math.abs(bounds.height - size) > 0.5
+        || Number.parseFloat(style.strokeWidth) !== stroke
+        ? [{ name: icon.getAttribute("data-icon"), size, width: bounds.width, height: bounds.height }]
+        : [];
+    }));
+    expect(violations).toEqual([]);
+  });
+
+  test("pane toolbars align single controls and compound groups to the same height", async ({ page }) => {
+    await page.goto("/");
+    const toolbars = page.locator(".editor-toolbar");
+    await expect(toolbars).toHaveCount(2);
+    const measurements = await toolbars.evaluateAll((bars) => bars.map((bar) => {
+      const controls = bar.querySelectorAll(":scope > button, :scope > select, :scope > .editor-segmented, :scope > .editor-control-group, .editor-toolbar__search, .editor-toolbar__button, .assets__filters > button");
+      return [...controls].map((control) => {
+        const bounds = control.getBoundingClientRect();
+        return { height: bounds.height, center: bounds.y + bounds.height / 2 };
+      });
+    }));
+    expect(measurements.map((controls) => controls.length)).toEqual([3, 17]);
+    for (const controls of measurements) {
+      for (const control of controls) {
+        expect(control.height).toBe(24);
+        expect(Math.abs(control.center - controls[0].center)).toBeLessThan(0.5);
+      }
+    }
+    const search = await page.locator(".assets__search").boundingBox();
+    const slider = await page.locator(".assets__zoom .editor-range-control").boundingBox();
+    expect(search!.width).toBeLessThanOrEqual(320);
+    expect(slider!.width).toBeGreaterThan(100);
+    const models = page.getByRole("button", { name: "All Models", exact: true });
+    await models.hover();
+    const tooltip = await models.evaluate((button) => {
+      const style = getComputedStyle(button, "::after");
+      return { display: style.display, content: style.content, delay: style.transitionDelay };
+    });
+    expect(tooltip).toEqual({ display: "block", content: '"Models"', delay: "0s" });
+    await models.click();
+    await expect(models).toHaveAttribute("aria-pressed", "true");
+  });
+
   test("nonempty folders are filled and Project sidebar labels remain readable", async ({ page }) => {
     await page.goto("/");
 
@@ -46,9 +115,9 @@ test.describe("Project and Inspector visual regressions", () => {
     expect(iconPaint.fill).toBe(iconPaint.color);
 
     const labelFontSizes = await projectFolders
-      .locator(".assets__sidebar-heading > span, .assets__smart-row > span, .assets__tree-label > span")
+      .locator(".assets__tree-label > span")
       .evaluateAll((labels) => labels.map((label) => Number.parseFloat(getComputedStyle(label).fontSize)));
-    expect(labelFontSizes.length).toBeGreaterThanOrEqual(7);
+    expect(labelFontSizes.length).toBeGreaterThanOrEqual(3);
     expect(Math.min(...labelFontSizes)).toBeGreaterThanOrEqual(12);
   });
 
@@ -107,7 +176,7 @@ test.describe("Project and Inspector visual regressions", () => {
       width: 680,
       itemHeight: 34,
       tileSize: 22,
-      background: "rgb(27, 28, 31)",
+      background: "rgb(48, 49, 52)",
     });
     await menu.getByRole("searchbox", { name: "Search palette", exact: true }).fill("avatar");
     await expect(menu.getByRole("button", { name: "Avatar Mask", exact: true })).toBeVisible();

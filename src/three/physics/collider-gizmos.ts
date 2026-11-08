@@ -186,6 +186,7 @@ function buildColliderGizmoRoot(runtime: Runtime, object: SceneObject): THREE.Gr
   const root = new THREE.Group();
   root.name = "Collider gizmos";
   root.userData.colliderSignature = colliderSignature(object);
+  root.userData.colliderGizmo = true;
   (object.colliders ?? []).forEach((value, index) => {
     registerColliderHandles(runtime, root, object, normalizeCollider(value, object, `${object.id}-collider-${index + 1}`));
   });

@@ -1,3 +1,4 @@
+import type { RenderCamera } from "../camera/adapters/render-camera";
 import * as THREE from "three";
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
@@ -18,13 +19,13 @@ export type ViewportProjectionMorph = {
 };
 
 type ProjectionMorphArgs = {
-  camera: THREE.PerspectiveCamera;
+  camera: RenderCamera;
   controls: OrbitControls;
   onChange: (state: ProjectionMorphState) => void;
 };
 
 export function matchingOrthographicProjection(
-  camera: THREE.PerspectiveCamera,
+  camera: RenderCamera,
   targetDistance: number,
   target = new THREE.Matrix4(),
 ): THREE.Matrix4 {

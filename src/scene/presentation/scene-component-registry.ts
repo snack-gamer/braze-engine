@@ -50,7 +50,7 @@ const presentationById = {
   },
   meshFilter: {
     family: "component", category: "Mesh", label: "Mesh Filter",
-    description: "Restore this object's intrinsic mesh source.",
+    description: "Choose the mesh geometry drawn by Mesh Renderer.",
     hierarchyIcon: "meshFilter", componentIcon: "meshFilter", surfaces: ["inspector"],
   },
   meshRenderer: {

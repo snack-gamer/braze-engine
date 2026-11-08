@@ -1,3 +1,5 @@
+import { lazy, Suspense } from "react";
+import { ProjectIdentitySettingsContext } from "../../world/application/ProjectIdentitySettingsContext";
 import { SelectedObjectAnimationProjection } from "../../animation/components/SelectedObjectAnimationProjection";
 import { AnimationClipEventInspector } from "../../animation/components/AnimationClipEventInspector";
 import type { SceneAnimationController } from "../../animation/hooks/useSceneAnimation";
@@ -27,6 +29,8 @@ import type { useSceneObjectCommands } from "../../scene/hooks/useSceneObjectCom
 import type { EnvironmentSettings, SceneObject } from "../../types";
 import type { EditorSelectionController } from "../selection/useEditorSelection";
 import type { Dispatch, SetStateAction } from "react";
+
+const ProjectTagsManager = lazy(() => import("../../world/components/ProjectTagsManager").then((module) => ({ default: module.ProjectTagsManager })));
 
 type InspectorPaneProps = {
   active: boolean;
@@ -134,6 +138,11 @@ export function InspectorPane({
   }
   return (
     <ResizableInspectorRail>
+      <ProjectIdentitySettingsContext.Provider value={(section) => selection.setInspectorTarget(section)}>
+      {(selection.inspectorTarget === "tags" || selection.inspectorTarget === "layers") && <Suspense fallback={<p>Loading Tags and Layers…</p>}>
+        <ProjectTagsManager initialTab={selection.inspectorTarget} objects={prefabModeActive ? prefab.objects : sceneObjects}
+          onClose={() => selection.setInspectorTarget("object")} />
+      </Suspense>}
       {selection.inspectorTarget === "physics" && (
         <DeferredPhysicsSettingsPanel worldSettings={physics.settings} updateWorldSettings={physics.update} />
       )}
@@ -235,6 +244,7 @@ export function InspectorPane({
             </SelectedObjectAnimationProjection>
           </HistoryTransactionProvider>
         )}
+      </ProjectIdentitySettingsContext.Provider>
     </ResizableInspectorRail>
   );
 }

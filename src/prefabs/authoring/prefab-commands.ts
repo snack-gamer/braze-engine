@@ -34,7 +34,8 @@ export function executePrefabCommands(input: unknown, commands: unknown, options
   const document = decodePrefabDocument(input, { name: "Prefab", filename: "Prefab.braze-prefab.json" });
   const result = executeObjectCommands(document.objects, commands, { ...options, requireCamera: false });
   const next = { ...document, objects: result.objects };
-  return { document: { ...input as object, ...encodePrefabDocument(next) }, changedIds: result.changedIds, ...diagnostics(next) };
+  const encoded = encodePrefabDocument(next);
+  return { document: { ...input as object, ...encoded }, changedIds: result.changedIds, ...diagnostics({ ...next, objects: next.objects.map(({ assetMeshBinding: _derivedMesh, ...object }) => object) }) };
 }
 
 export function createPrefab(name: unknown, commands: unknown, options?: ObjectCommandOptions) {

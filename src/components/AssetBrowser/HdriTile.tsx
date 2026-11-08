@@ -56,6 +56,7 @@ export function HdriTile({
           <EditorIcon name={assetIconNames.hdri} size="preview" />
         )}
       </span>
+      {active && <EditorIcon name="status" size="status" className="asset-assigned" filled aria-label="Assigned" />}
       <span className="asset-tile__name">{displayName}</span>
       <span className="hdri-tile__meta">{formatBytes(hdri.sizeBytes)}</span>
     </div>

@@ -1,3 +1,4 @@
+import type { RenderCamera } from "../../camera/adapters/render-camera";
 import type { MutableRefObject } from "react";
 import * as THREE from "three";
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -33,7 +34,7 @@ type Callbacks = {
 
 type PointerArgs = {
   canvas: HTMLCanvasElement;
-  camera: THREE.PerspectiveCamera;
+  camera: RenderCamera;
   controls: OrbitControls;
   transformControls: TransformControls;
   objectRoot: THREE.Group;
@@ -172,12 +173,14 @@ export function installPointer(args: PointerArgs): { dispose: () => void } {
     const hits = raycaster.intersectObjects(objectRoot.children, true);
     // Locked objects shouldn't be selectable from the viewport — same UX as
     // C4D's locked column. Users can still pick them from the LeftRail list.
-    const hit = hits.find((item) => {
+    const selectable = (item: THREE.Intersection) => {
       const id = item.object.userData.objectId;
       if (typeof id !== "string") return false;
       const obj = objectsRef.current.find((o) => o.id === id);
       return !!obj && !obj.locked;
-    });
+    };
+    // Camera glyphs draw over geometry, so picking follows their visible order.
+    const hit = hits.find((item) => item.object.userData.cameraGlyph && selectable(item)) ?? hits.find(selectable);
     if (hit?.object.userData.objectId) {
       const runtime = runtimeRef.current;
       const handleSelection = handleSelectionFromObject(hit.object);

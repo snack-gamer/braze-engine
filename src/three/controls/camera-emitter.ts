@@ -1,10 +1,10 @@
+import type { RenderCamera } from "../../camera/adapters/render-camera";
 import type { MutableRefObject } from "react";
-import type * as THREE from "three";
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { CameraState } from "../../types";
 
 type EmitterArgs = {
-  camera: THREE.PerspectiveCamera;
+  camera: RenderCamera;
   controls: OrbitControls;
   // The latest CameraState we passed up. Stored by reference so the bootstrap
   // sync effect can compare with `===` to detect our own echoes (see the

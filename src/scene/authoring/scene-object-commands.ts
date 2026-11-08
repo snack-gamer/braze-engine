@@ -1,3 +1,5 @@
+import { captureCameraSettings } from "../../camera/domain/camera-settings";
+import { captureEntityLayer } from "../../world/domain/entity-layers";
 import { botProfilePatch, isAvatarBotObject, nextAvailableBotProfile } from "../../lib/bots";
 import { rotationToCameraTarget } from "../../lib/camera-math";
 import { applyScenePatch, markSceneOverrides } from "../../lib/prefab-authoring";
@@ -15,7 +17,8 @@ export type SceneObjectCommandResult = {
 
 export function normalizeSceneObjectPatch(patch: Partial<SceneObject>): Partial<SceneObject> {
   const safe = patch.scale ? { ...patch, scale: clampScaleVec(patch.scale) } : patch;
-  return "tags" in safe ? { ...safe, tags: captureEntityTags(safe.tags) } : safe;
+  return { ...safe, ...(safe.camera ? { camera: captureCameraSettings(safe.camera) } : {}), ...("tags" in safe ? { tags: captureEntityTags(safe.tags) } : {}),
+    ...("layer" in safe ? { layer: captureEntityLayer(safe.layer) } : {}) };
 }
 
 export function duplicateActiveSceneObject(

@@ -20,11 +20,10 @@
 
 .avatar-workspace-tabs button:first-child { border-radius: var(--r-sm) 0 0 var(--r-sm); }
 .avatar-workspace-tabs button:last-child { border-radius: 0 var(--r-sm) var(--r-sm) 0; }
-.avatar-workspace-tabs button:hover { background: var(--layer-hover); color: var(--text); }
+.avatar-workspace-tabs button:hover { background: var(--tab-hover-fill); color: var(--text); }
 .avatar-workspace-tabs button[aria-selected="true"] {
-  border-color: var(--state-on-edge);
-  background: var(--state-on-fill);
-  color: var(--state-on-ink);
-  box-shadow: inset 0 -2px 0 var(--accent-2);
+  border-color: var(--tab-active-edge);
+  background: var(--tab-active-fill);
+  color: var(--tab-active-ink);
 }
 .avatar-workspace-tabs button:focus-visible { outline: 1px solid var(--focus); outline-offset: 1px; }

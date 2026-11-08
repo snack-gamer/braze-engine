@@ -14,6 +14,7 @@ import {
 import { InspectorSection } from "./InspectorSection";
 import { createParticleEffect, normalizeParticleEffectSettings } from "../../particles/presets";
 import { serializeParticleEffect } from "../../particles/effect-state";
+import { configureParticleEditorIcons } from "../../particles/editor-icons";
 import { InspectorEffectView } from "../../particles/editor-adapter";
 import { createDefaultCollider, createDefaultEffector, createDefaultEmitter } from "../../particles/editor-defaults";
 import type { ParticleEffectSettings, SceneObject } from "../../types";
@@ -78,6 +79,7 @@ async function mountParticleEditor(
   settings: ParticleEffectSettings,
   onChange: (effect: ParticleEffect) => void,
 ): Promise<() => void> {
+  configureParticleEditorIcons();
   const effect = createParticleEffect(settings);
   const view = new InspectorEffectView(effect);
   if (settings.autoPlay) view.play();

@@ -45,12 +45,14 @@ export function HierarchyAddMenu({ addPrimitive, addCamera }: HierarchyAddMenuPr
     <div className="add-menu" ref={wrapRef}>
       <button
         type="button"
-        className={`add-menu__trigger ${open ? "open" : ""}`}
+        className={`add-menu__trigger editor-toolbar__button ${open ? "open" : ""}`}
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
+        aria-label="Create object"
+        title="Create object"
       >
-        <EditorIcon name="add" size="tree" />
-        <span>Add</span>
+        <EditorIcon name="add" size="toolbar" />
+        <EditorIcon name="disclosureOpen" size="micro" />
       </button>
       {open && (
         <div className="add-menu__popover" role="menu">

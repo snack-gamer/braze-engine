@@ -14,7 +14,6 @@ import { InspectorToggle } from "../InspectorToggle";
 import { VectorField } from "../VectorField";
 import { SceneComponentSection } from "../scene/SceneComponentPresentation";
 import {
-  RemovePhysicsComponentButton,
   patchPhysicsVector,
   type UpdateObject,
 } from "./physics-section-controls";
@@ -55,10 +54,10 @@ export function ColliderSection({ object, collider: value, updateObject, editing
         onChange: (enabled) => patch({ enabled }),
         ariaLabel: "Enable Collider",
       }}
+      onRemove={remove}
       actions={(
         <>
           {collider.shape !== "mesh" && <button className="ghost-button" type="button" title="Fit Collider to object" onClick={() => applyShape(collider.shape)}>Fit</button>}
-          <RemovePhysicsComponentButton title="Remove Collider" onClick={remove} />
         </>
       )}
     >
@@ -131,7 +130,10 @@ export function ColliderSection({ object, collider: value, updateObject, editing
         <InspectorSlider value={collider.restitution ?? 0} min={0} max={1} step={0.01} decimals={2} ariaLabel="Collider restitution" onChange={(restitution) => patch({ restitution })} />
       </InspectorRow>
       <InspectorRow label="Collision Layer">
-        <InspectorNumberInput value={collider.collisionLayer ?? 0} min={0} max={31} step={1} decimals={0} ariaLabel="Collider collision layer" onChange={(collisionLayer) => patch({ collisionLayer })} />
+        <select className="editor-select" aria-label="Collider collision layer" value={collider.collisionLayer ?? "inherit"} onChange={(event) => patch({ collisionLayer: event.currentTarget.value === "inherit" ? undefined : Number(event.currentTarget.value) })}>
+          <option value="inherit">Object layer ({object.layer ?? 0})</option>
+          {Array.from({ length: 32 }, (_, layer) => <option key={layer} value={layer}>Layer {layer}</option>)}
+        </select>
       </InspectorRow>
       <InspectorRow label="Collision Mask">
         <InspectorNumberInput value={collider.collisionMask ?? 0xffffffff} min={0} max={0xffffffff} step={1} decimals={0} ariaLabel="Collider collision mask" onChange={(collisionMask) => patch({ collisionMask })} />

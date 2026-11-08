@@ -75,6 +75,8 @@ export function AssetBrowserCatalogView(props: AssetBrowserCatalogViewProps) {
       emptyContent={emptyContent}
       dropActive={props.dropActive}
       renderItem={(entry) => (
+        <>
+        {props.favoriteKeys.has(entry.key) && <EditorIcon name="favorite" size="micro" className="asset-favorite" filled aria-label="Favorite" />}
         <AssetCatalogItem
           entry={entry}
           editing={props.editing}
@@ -95,6 +97,7 @@ export function AssetBrowserCatalogView(props: AssetBrowserCatalogViewProps) {
           onCancelEdit={props.onCancelEdit}
           onDropOnFolder={props.onDropOnFolder}
         />
+        </>
       )}
       itemClassName={(entry, index, columns) => entry.kind === "folder" ? "" : [
         "asset-wrap",

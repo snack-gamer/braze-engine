@@ -2,9 +2,24 @@ import { describe, expect, it, vi } from "vitest";
 import * as THREE from "three";
 import { createCameraGizmo, type CameraGizmo } from "../lib/camera-gizmo";
 import type { Runtime } from "./runtime";
-import { cameraGizmoWorldPose, refreshCameraGizmoWorldPosesForSubtree } from "./gizmos";
+import { cameraGizmoWorldPose, refreshCameraGizmoWorldPosesForSubtree, refreshCameraGizmoView } from "./gizmos";
 
 describe("camera gizmo world pose", () => {
+  it("hides glyph and frustum from their own viewpoint and restores them after navigating away", () => {
+    const gizmo = createCameraGizmo(), viewer = new THREE.PerspectiveCamera(), node = new THREE.Group(), body = new THREE.Group();
+    body.userData.cameraEditorBody = true; node.add(body);
+    gizmo.update({ position: [2, 3, 4], target: [0, 0, 0], fov: 52, near: .1, far: 200, aspect: 1 });
+    viewer.position.set(2, 3, 4);
+    const root = new THREE.Group(); root.add(gizmo.helper);
+    const runtime = { camera: viewer, cameraGizmoRoot: root, cameraGizmoMap: new Map([["camera", gizmo]]), objectMap: new Map([["camera", node]]) } as unknown as Runtime;
+    refreshCameraGizmoView(runtime);
+    expect(gizmo.helper.visible || body.visible).toBe(false);
+    viewer.position.z += 5; refreshCameraGizmoView(runtime);
+    expect(gizmo.helper.visible && body.visible).toBe(true);
+    root.visible = false; refreshCameraGizmoView(runtime); expect(body.visible).toBe(false);
+    gizmo.setVisible(false); gizmo.updateView(viewer); expect(gizmo.helper.visible).toBe(false);
+    gizmo.dispose();
+  });
   it("projects a parent-local camera pose into the world-level gizmo root", () => {
     const parent = new THREE.Group();
     parent.position.set(10, 2, -4);

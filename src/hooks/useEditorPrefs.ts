@@ -1,3 +1,4 @@
+import { readEditorColorToken, readEditorNumberToken } from "../ui/theme-tokens";
 import { useCallback, useEffect, useState } from "react";
 import { defaultEditorPrefs } from "../editor/domain/editor-preference-defaults";
 import type { EditorPrefs } from "../types";
@@ -11,13 +12,16 @@ const STORAGE_KEY = "tgan:editor-prefs";
 // stored prefs, so new fields added to EditorPrefs pick up sane values
 // without invalidating existing stored data.
 function readStoredPrefs(): EditorPrefs {
+  const defaults = { ...defaultEditorPrefs,
+    gridColor: readEditorColorToken("--scene-grid-color", defaultEditorPrefs.gridColor),
+    gridOpacity: readEditorNumberToken("--scene-grid-opacity", defaultEditorPrefs.gridOpacity) };
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return defaultEditorPrefs;
+    if (!raw) return defaults;
     const parsed = JSON.parse(raw) as Partial<EditorPrefs>;
-    return restoreEditorPreferences(parsed, defaultEditorPrefs);
+    return restoreEditorPreferences(parsed, defaults);
   } catch {
-    return defaultEditorPrefs;
+    return defaults;
   }
 }
 

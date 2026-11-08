@@ -1,3 +1,7 @@
+import { withCameraBackground } from "../camera/adapters/camera-presentation";
+import { refreshCameraGizmoView } from "./gizmos";
+import type { RenderCamera } from "../camera/adapters/render-camera";
+import { createEditorSceneBackground } from "./editor-scene-background";
 import type { MutableRefObject } from "react";
 import * as THREE from "three";
 import type { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -50,7 +54,7 @@ type ViewportFrameCoordinatorArgs = Readonly<{
   renderSurface: ThreeWebGpuSessionSurface;
   renderer: ViewportRenderer;
   renderPipeline: ViewportRenderPipeline;
-  camera: THREE.PerspectiveCamera;
+  camera: RenderCamera;
   controls: OrbitControls;
   directionalShadows: DirectionalShadowRuntime;
   particleBasePassBridge: Readonly<{ setEnabled: (enabled: boolean) => void }>;
@@ -101,6 +105,7 @@ export function createViewportFrameCoordinator({
   hidden,
   requestFrame,
 }: ViewportFrameCoordinatorArgs): (frame: EngineFrame) => void {
+  const withEditorBackground = createEditorSceneBackground(viewportMode);
   const lastCameraPosition = camera.position.clone();
   const lastCameraQuaternion = camera.quaternion.clone();
   const lastControlTarget = controls.target.clone();
@@ -131,9 +136,10 @@ export function createViewportFrameCoordinator({
       renderer.autoClear = true;
       renderer.setRenderTarget(null);
       const runtime = sources.runtimeRef.current;
+      if (runtime && viewportMode === "scene" && runtime.framesSinceSceneChange === 0) refreshCameraGizmoView(runtime);
       particleFrames.prepareRender();
       directionalShadows.prepareFrame(camera);
-      renderPipeline.render();
+      withEditorBackground(runtime?.scene, () => withCameraBackground(runtime, () => renderPipeline.render()));
       directionalShadows.afterRender();
       diagnostics.markRenderSubmitted();
       const submittedAt = performance.now();

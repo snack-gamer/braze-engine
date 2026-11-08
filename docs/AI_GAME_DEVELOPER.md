@@ -126,7 +126,7 @@ still validate semantics and perform edits. See [MCP setup](./OPERATIONS.md#mcp-
 | Static export | `project.export.start/status/cancel` using saved revisions and isolated output |
 
 Edits create/update/delete objects and set/remove Rigidbody, Collider, Character
-Controller, Joint, saved Behaviors, UI Canvas or Animator. Patches cover name, tags, color, visibility,
+Controller, Joint, saved Behaviors, UI Canvas or Animator. Patches cover camera settings, name, tags, color, visibility,
 hierarchy and transforms. Imported models require discovered AssetRefs.
 Prefab overrides and broader material/import-settings commands remain gaps. Discover behavior definitions with
 `editor.behaviors` before writing saved envelopes; never infer IDs from labels.
@@ -185,6 +185,14 @@ not replace open Inspector drafts: stale manual saves conflict and retain edits.
 Reload the Project/Settings view after external writes. Current Play captures stay
 unchanged; the next Play/export reads saved input. Public `context.input` consumes
 actions and provides session-only rebinds; runtime profile switching remains open.
+
+Mesh Filter is discoverable as `component: "meshFilter"` in scene, live editor and
+saved prefab batches. Set `values.mesh` to null, `{kind: "builtin", primitive:
+"cube" | "sphere" | "plane"}`, or `{kind: "asset", asset: {guid, localId}}`.
+Use indexed mesh subasset IDs from `assets.list`, not a whole model's `main` ID.
+Invalid, missing and skinned sources reject the batch without writes. Manual picker,
+clear and Project drag/drop use the same operation. See [Mesh Filter boundaries](./GAMEPLAY_RUNTIME.md#authored-mesh-filter)
+for supported objects, static export and runtime spawning limits.
 
 Animator uses `component.set`/`component.remove` with `component: "animator"`
 inside scene, live editor and saved prefab batches. Set replaces a complete
@@ -305,7 +313,7 @@ output belongs to the caller and remains on disk; clean it when no longer needed
 
 ## Keep the guides synchronized
 
-[README](../README.md) indexes eight authoritative engine guides. This guide
+[README](../README.md) indexes authoritative engine guides. This guide
 owns product/agent acceptance and tools; rulebook owns development constraints;
 architecture owns editor/persistence/rendering; gameplay owns scripting;
 character/physics own specialized semantics; operations owns commands; status
@@ -315,3 +323,16 @@ verified. Remove superseded instructions; add no parallel plans or step reports.
 History belongs in Git, run output in test artifacts. Source-local integration
 contracts remain beside their code. `npm run check:docs` checks the guide set,
 local links and routing; semantic accuracy still requires review.
+
+Object layer assignment is exposed as `layer` (integer 0 to 31) in discovered
+object authoring values for scene, live and prefab commands. Preview and apply
+through the same revision/history owner as other fields. Named layer catalog CRUD
+has the manual Tags and Layers workflow and generic project section persistence;
+a dedicated versioned automation operation for layer names remains unavailable.
+
+Camera objects expose partial `values.camera` edits through object.create/update.
+Discover projection, FOV axis, orthographic size, clipping, cullingMask and background
+schema values. These use the same validation/history path as the Inspector and
+persist in scenes/prefabs. Runtime `context.camera.setPose` accepts optional `lens`
+overrides; projection mode is authored. Verify rendered perspective/orthographic
+output, layer 31 and zero masks, resize, Stop restoration and static export.

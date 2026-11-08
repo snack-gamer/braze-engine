@@ -1,3 +1,5 @@
+import { encodeCameraSettings } from "../../camera/serialization/camera-settings-codec";
+import { captureEntityLayer } from "../../world/domain/entity-layers";
 import { encodeJoint } from "../../physics/serialization/joint-codec";
 import { serializeModifiers } from "../../modifiers/serialization";
 import { encodeAnimatorComponent } from "../../character/serialization/animator-component-codec";
@@ -46,6 +48,7 @@ export function serializeSceneObject(object: SceneObject) {
     id: object.id,
     name: object.name,
     ...(object.tags === undefined ? {} : { tags: captureEntityTags(object.tags) }),
+    ...(object.layer === undefined ? {} : { layer: captureEntityLayer(object.layer) }),
     source_type: serializedPrimitive(object),
     dimension: object.dimension ?? null,
     parent_id: object.parentId ?? null,
@@ -66,7 +69,7 @@ export function serializeSceneObject(object: SceneObject) {
     },
     material_id: object.materialId ?? null,
     imported_material_bindings: object.importedMaterialBindings ?? null,
-    mesh_filter: object.meshFilter ? { enabled: object.meshFilter.enabled !== false } : null,
+    mesh_filter: object.meshFilter ? { enabled: object.meshFilter.enabled !== false, ...(object.meshFilter.empty ? { empty: true } : {}) } : null,
     mesh_renderer: object.meshRenderer
       ? {
           enabled: object.meshRenderer.enabled !== false,
@@ -78,14 +81,7 @@ export function serializeSceneObject(object: SceneObject) {
     prefab_link: serializePrefabLink(object.prefabLink),
     asset: serializeAsset(object),
     bot_profile_id: object.botProfileId ?? null,
-    camera: object.camera
-      ? {
-          target: object.camera.target,
-          fov_degrees: object.camera.fov,
-          near: object.camera.near,
-          far: object.camera.far,
-        }
-      : null,
+    camera: encodeCameraSettings(object.camera),
     directional_light: object.directionalLight
       ? {
           enabled: object.directionalLight.enabled !== false,

@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import { IconAssetTile } from "./IconAssetTile";
 import { modelSubAssetPresentation } from "../model-subasset-presentation";
 import { writeAnimationClipDrag } from "../../character/components/animation-clip-drag-data";
+import { writeMeshDrag } from "../../mesh/components/mesh-drag";
 
 type Props = Readonly<{
   asset: LibraryAsset;
@@ -74,6 +75,8 @@ export function ModelSubAssetTile({
       onDragStart={draggableClip ? (event) => writeAnimationClipDrag(event.dataTransfer, {
         clipRef: { guid: asset.guid!, localId: subAsset.localId },
         name: subAsset.name.trim() || presentation.label,
+      }) : subAsset.kind === "mesh" && asset.guid ? (event) => writeMeshDrag(event.dataTransfer, {
+        kind: "asset", asset: { guid: asset.guid!, localId: subAsset.localId },
       }) : undefined}
     />
   );

@@ -1,4 +1,5 @@
 import { defaultJoint } from "../../physics/domain/joint";
+import { assignMeshPatch } from "../../mesh/application/mesh-assignment";
 import { createUiCanvas } from "../../game-ui/domain/ui-document";
 import { addBehaviorComponent } from "../../behaviors/application/behavior-authoring";
 import { defaultDepthOfFieldComponent } from "../../constants";
@@ -135,7 +136,7 @@ const INTRINSIC_COMPONENT_OPERATIONS: SceneComponentOperation[] = [
     disabledReason: (object) => isMeshRenderObject(object) && isComponentRemoved(object, "meshFilter")
       ? undefined
       : "Mesh Filter is already present or unsupported.",
-    createPatch: (object) => restoreComponentPatch(object, "meshFilter"),
+    createPatch: (object) => assignMeshPatch(object, null),
   },
   {
     id: "meshRenderer",

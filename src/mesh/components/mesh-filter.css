@@ -1,0 +1,22 @@
+.mesh-picker {
+  width: min(380px, calc(100vw - 2 * var(--sp-3)));
+  max-height: calc(100vh - 2 * var(--sp-3));
+  padding: 0;
+  color: var(--text);
+  background: var(--layer-component);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-float);
+}
+.mesh-picker::backdrop { background: rgb(0 0 0 / 25%); }
+.mesh-picker__content { display: flex; flex-direction: column; gap: var(--sp-2); padding: var(--sp-2); }
+.mesh-picker header { display: flex; align-items: center; justify-content: space-between; padding-bottom: var(--sp-1); border-bottom: 1px solid var(--hairline); }
+.mesh-picker header strong { font-size: var(--fs-sm); font-weight: var(--fw-medium); }
+.mesh-picker__list { max-height: min(340px, 60vh); overflow: auto; }
+.mesh-picker__list button { display: flex; align-items: center; gap: var(--sp-2); width: 100%; padding: var(--sp-1) var(--sp-2); text-align: left; border: 0; background: transparent; color: var(--text); }
+.mesh-picker__list button:hover { background: var(--bg-hover); }
+.mesh-picker__list button[aria-selected="true"] { background: var(--selection-fill); }
+.mesh-picker__list button:focus-visible { outline: 1px solid var(--focus); outline-offset: -1px; }
+.mesh-picker__list button > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.mesh-picker small { display: block; color: var(--text-3); font-size: var(--fs-xs); overflow: hidden; text-overflow: ellipsis; }
+.mesh-picker p, .mesh-filter-feedback { margin: var(--sp-1) 0; color: var(--text-2); font-size: var(--fs-xs); }

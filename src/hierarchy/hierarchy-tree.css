@@ -1,17 +1,17 @@
 /* Feature-owned hierarchy presentation layered over shared editor chrome.
  * Glyph colors come from category tones in theme.css (`.tone-*`) and glyph
  * sizes from its `--icon-size-*` roles. Every row metric is a `--hierarchy-*`
- * token in theme.css so the density toggle can swap the whole set. Rows are
- * separated by hairlines; selection is a filled row, never an accent edge. */
+ * token in theme.css so the density toggle can swap the whole set. Neutral
+ * rows keep attention on names, nesting and the selected row. */
 .object-row {
+  grid-template-columns: minmax(0, 1fr) max-content max-content;
   height: var(--hierarchy-row-h);
   min-height: var(--hierarchy-row-h);
-  box-shadow: inset 0 -1px var(--hairline-soft);
+  box-shadow: none;
 }
 
-.object-row[data-hierarchy-depth="0"] {
-  box-shadow: inset 0 -1px var(--hairline);
-}
+.object-row:nth-child(even) { background: var(--hierarchy-row-alternate); }
+.object-row:hover { background: var(--bg-hover); }
 
 .object-row.selected,
 .object-row.selected:nth-child(even) {
@@ -27,7 +27,7 @@
 .object-row__lead {
   position: relative;
   gap: var(--hierarchy-lead-gap);
-  padding: 0 var(--sp-2) 0 calc(var(--hierarchy-inset) + var(--row-depth, 0) * var(--hierarchy-indent));
+  padding: 0 var(--sp-2) 0 calc(var(--hierarchy-root-indent, 0px) + var(--hierarchy-inset) + var(--row-depth, 0) * var(--hierarchy-indent));
 }
 
 .object-name,
@@ -48,19 +48,9 @@
   height: var(--hierarchy-action-size);
 }
 
-/* Duotone glyphs: outline in the tone, closed shapes washed with the same hue. */
-.object-row__type-icon,
-.modifier-tag .editor-icon {
-  fill: color-mix(in srgb, currentColor var(--glyph-wash), transparent);
-}
-
 .object-row__type-icon {
-  color: var(--tone, var(--text-2));
+  color: var(--hierarchy-icon-ink);
   opacity: 1;
-}
-
-.object-row__type-icon.tone-prefab {
-  fill: color-mix(in srgb, currentColor var(--glyph-wash-solid), transparent);
 }
 
 /* Only the active render camera shows at full strength. */
@@ -104,6 +94,7 @@
 }
 
 .object-row .row-icon {
+  flex-shrink: 0;
   width: var(--hierarchy-action-size);
   height: var(--hierarchy-action-size);
 }
@@ -120,7 +111,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  left: calc(var(--hierarchy-inset) + var(--hierarchy-chevron) / 2 + var(--guide-depth, 0) * var(--hierarchy-indent));
+  left: calc(var(--hierarchy-root-indent, 0px) + var(--hierarchy-inset) + var(--hierarchy-chevron) / 2 + var(--guide-depth, 0) * var(--hierarchy-indent));
   width: calc(var(--hierarchy-indent) - var(--hierarchy-chevron) / 2);
   border-left: 1px solid var(--hairline-strong);
 }
@@ -138,12 +129,11 @@
   bottom: 50%;
 }
 
-/* Component indicators form their own column behind a hairline splitter. Each
- * is a full-strength tone glyph; hover lifts it onto a tinted chip. */
+/* Component indicators share the tree's neutral ink and compact spacing. */
 .modifier-tags {
-  gap: 2px;
-  padding: 0 var(--sp-2) 0 var(--sp-1);
-  border-left: 1px solid var(--hairline);
+  gap: 0;
+  padding: 0;
+  border-left: 0;
 }
 
 .modifier-tag {
@@ -153,13 +143,13 @@
   border: 0;
   border-radius: var(--r-md);
   background: transparent;
-  color: var(--tone, var(--text-3));
+  color: var(--hierarchy-icon-ink);
   opacity: 1;
 }
 
 .modifier-tag:hover {
-  background: color-mix(in srgb, var(--tone, var(--text-3)) 20%, transparent);
-  color: var(--tone, var(--text-1));
+  background: var(--bg-hover);
+  color: var(--text-1);
   opacity: 1;
 }
 
@@ -178,7 +168,7 @@
   height: var(--hierarchy-count-size);
   padding: 0 3px;
   place-items: center;
-  border-radius: 7px;
+  border-radius: var(--r-md);
   background: var(--tone, var(--text-2));
   color: var(--on-accent);
   font-size: var(--hierarchy-count-font);
@@ -186,12 +176,7 @@
   line-height: 1;
 }
 
-/* The density toggle matches the Search field's height in the toolbar. */
-.hierarchy-toolbar .hierarchy-density-button {
-  flex: 0 0 auto;
-  width: var(--h-control-compact);
-  height: var(--h-control-compact);
-}
+.hierarchy-toolbar .hierarchy-density-button { flex: 0 0 auto; }
 
 .hierarchy-tail-drop-zone {
   position: relative;
@@ -238,3 +223,6 @@
   color: var(--text-1);
   opacity: 1;
 }
+
+/* Keep the component/action boundary on the same icon pitch as each group. */
+.object-row .object-actions { padding-left: 0; }

@@ -16,6 +16,9 @@ type InspectorObjectFieldProps = {
   title?: string;
   disabled?: boolean;
   onPick?: () => void;
+  pickLabel?: string;
+  onReveal?: () => void;
+  onClear?: () => void;
 };
 
 export function InspectorObjectField({
@@ -25,22 +28,33 @@ export function InspectorObjectField({
   title,
   disabled = false,
   onPick,
+  pickLabel = "Select reference",
+  onReveal,
+  onClear,
 }: InspectorObjectFieldProps) {
   const empty = !name;
   return (
     <div
       className={`object-field ${empty ? "is-empty" : ""} ${disabled ? "is-disabled" : ""}`}
       title={title ?? name ?? placeholder}
+      tabIndex={onPick && !disabled ? 0 : undefined}
+      onKeyDown={(event) => {
+        if (event.target !== event.currentTarget || disabled) return;
+        if (event.key === "Enter") { event.preventDefault(); event.stopPropagation(); onPick?.(); }
+        if ((event.key === "Delete" || event.key === "Backspace") && onClear) { event.preventDefault(); event.stopPropagation(); onClear(); }
+      }}
     >
       {icon && <span className="object-field__icon" aria-hidden="true">{icon}</span>}
-      <span className="object-field__name">{name || placeholder}</span>
+      {onReveal ? <button type="button" className="object-field__name-button" title={`Reveal ${name} in Project`}
+        aria-label={`Reveal ${name} in Project`} onClick={onReveal}>{name || placeholder}</button>
+        : <span className="object-field__name">{name || placeholder}</span>}
       {onPick && (
         <button
           type="button"
           className="object-field__pick"
           disabled={disabled}
           title="Select"
-          aria-label="Select reference"
+          aria-label={pickLabel}
           onClick={onPick}
         >
           <EditorIcon name="objectPicker" size="control" />

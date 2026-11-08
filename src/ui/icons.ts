@@ -1,6 +1,13 @@
 import {
+  Tags,
+  Clock,
   Type,
   Activity,
+  ArrowUp,
+  ArrowDown,
+  ArrowRight,
+  Minus,
+  EllipsisVertical,
   AlertTriangle,
   Aperture,
   Box,
@@ -12,7 +19,6 @@ import {
   Circle,
   Clapperboard,
   Copy,
-  createLucideIcon,
   Crosshair,
   DiamondPlus,
   Droplets,
@@ -20,6 +26,7 @@ import {
   EyeOff,
   ExternalLink,
   Film,
+  Focus,
   Folder,
   FolderOpen,
   Gamepad2,
@@ -75,25 +82,25 @@ import {
   ZoomIn,
   ZoomOut,
   X,
-  type LucideIcon,
-} from "lucide-react";
+  type IconNode,
+} from "lucide";
 import type { PrimitiveKind } from "../types";
 
 // Same Lucide geometry as PanelTopBottomDashed (introduced after our pinned
 // package), compressed into two SVG nodes to preserve the bundle budget.
-const MeshFilterIcon = createLucideIcon("panel-top-bottom-dashed", [
-  ["path", { d: "M14 15h1m-1-6h1m4 6h2m-2-6h2M3 15h2M3 9h2m4 6h1M9 9h1", key: "guides" }],
-  ["rect", { x: "3", y: "3", width: "18", height: "18", rx: "2", key: "frame" }],
-]);
+const MeshFilterIcon: IconNode = ["svg", Box[1], [
+  ["path", { d: "M14 15h1m-1-6h1m4 6h2m-2-6h2M3 15h2M3 9h2m4 6h1M9 9h1" }],
+  ["rect", { x: "3", y: "3", width: "18", height: "18", rx: "2" }],
+]];
 
 // A ball, not a ring: the body takes the duotone wash while the front equator,
 // a faint back equator (depth) and a specular arc stay line-only.
-const SphereIcon = createLucideIcon("sphere", [
-  ["circle", { cx: "12", cy: "12", r: "9.5", key: "body" }],
-  ["path", { d: "M2.5 12a9.5 3.6 0 0 0 19 0", fill: "none", key: "equator-front" }],
-  ["path", { d: "M2.5 12a9.5 3.6 0 0 1 19 0", fill: "none", opacity: ".35", key: "equator-back" }],
-  ["path", { d: "M6.6 7.4A6.6 6.6 0 0 1 10.6 4.6", fill: "none", key: "highlight" }],
-]);
+const SphereIcon: IconNode = ["svg", Box[1], [
+  ["circle", { cx: "12", cy: "12", r: "9.5" }],
+  ["path", { d: "M2.5 12a9.5 3.6 0 0 0 19 0", fill: "none" }],
+  ["path", { d: "M2.5 12a9.5 3.6 0 0 1 19 0", fill: "none", opacity: ".35" }],
+  ["path", { d: "M6.6 7.4A6.6 6.6 0 0 1 10.6 4.6", fill: "none" }],
+]];
 
 /**
  * Semantic glyph registry for editor chrome. Components refer to meaning,
@@ -123,6 +130,7 @@ export const editorIcons = {
   renderSettings: Globe,
   keyboardShortcuts: Keyboard,
   inspector: SlidersHorizontal,
+  identitySettings: Tags,
   editorLayout: LayoutGrid,
   autoArrange: LayoutGrid,
   maximizePane: Maximize2,
@@ -136,7 +144,14 @@ export const editorIcons = {
   disclosureClosed: ChevronRight,
   search: Search,
   add: Plus,
+  remove: Minus,
+  moveUp: ArrowUp,
+  moveDown: ArrowDown,
+  transition: ArrowRight,
+  status: Circle,
   close: X,
+  more: EllipsisVertical,
+  stop: Square,
   check: Check,
   save: Save,
   visible: Eye,
@@ -145,7 +160,8 @@ export const editorIcons = {
   unlocked: Unlock,
   solo: Star,
   favorite: Star,
-  cameraView: Eye,
+  recent: Clock,
+  cameraView: Focus,
   focus: Crosshair,
   alignView: Crosshair,
   setActiveCamera: Camera,
@@ -158,7 +174,10 @@ export const editorIcons = {
   warning: AlertTriangle,
   error: AlertTriangle,
   openExternal: ExternalLink,
-  objectPicker: Circle,
+  objectPicker: ["svg", Circle[1], [
+    ["circle", { cx: "12", cy: "12", r: "7" }],
+    ["circle", { cx: "12", cy: "12", r: "1.7", fill: "currentColor", stroke: "none" }],
+  ]],
   dragHandle: GripVertical,
   objectLink: Link2,
   prefabLink: GitBranch,
@@ -234,7 +253,7 @@ export const editorIcons = {
   toneMapping: Sun,
   world: Globe,
   sceneDocument: Clapperboard,
-} as const satisfies Record<string, LucideIcon>;
+} as const satisfies Record<string, IconNode>;
 
 export type EditorIconName = keyof typeof editorIcons;
 

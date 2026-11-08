@@ -11,7 +11,7 @@ import { InspectorSegmented } from "../InspectorSegmented";
 import { InspectorSlider } from "../InspectorSlider";
 import { InspectorToggle } from "../InspectorToggle";
 import { SceneComponentSection } from "../scene/SceneComponentPresentation";
-import { RemovePhysicsComponentButton, type UpdateObject } from "./physics-section-controls";
+import { type UpdateObject } from "./physics-section-controls";
 
 const MASS_MODE_OPTIONS: Array<{ id: RigidbodyMassMode; label: string }> = [
   { id: "automatic", label: "Automatic" },
@@ -30,11 +30,9 @@ export function RigidbodySection({ object, updateObject }: { object: SceneObject
       id="object.rigidbody"
       meta={rigidbody.enabled ? rigidbody.bodyType : "off"}
       defaultOpen
-      actions={<RemovePhysicsComponentButton title="Remove Rigidbody" onClick={() => updateObject(object.id, { rigidbody: undefined })} />}
+      enable={{ checked: rigidbody.enabled, onChange: (enabled) => patch({ enabled }), ariaLabel: "Enable Rigidbody" }}
+      onRemove={() => updateObject(object.id, { rigidbody: undefined })}
     >
-      <InspectorRow label="Enabled">
-        <InspectorToggle checked={rigidbody.enabled} ariaLabel="Enable Rigidbody" onChange={(enabled) => patch({ enabled })} />
-      </InspectorRow>
       <InspectorRow label="Body Type">
         <InspectorSegmented
           options={RIGIDBODY_TYPE_OPTIONS}

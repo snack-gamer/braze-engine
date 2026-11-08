@@ -110,6 +110,7 @@ function mergeOverrides(base: SceneObject, existing: SceneObject | undefined, al
   const next: SceneObject = { ...base };
   if (overrides.has("name")) next.name = existing.name;
   if (overrides.has("tags")) next.tags = existing.tags;
+  if (overrides.has("layer")) next.layer = existing.layer;
   if (overrides.has("color")) next.color = existing.color;
   if (overrides.has("visibility")) next.visible = existing.visible;
   if (overrides.has("lock")) {
@@ -125,9 +126,8 @@ function mergeOverrides(base: SceneObject, existing: SceneObject | undefined, al
     next.parentId = existing.parentId;
   }
   if (overrides.has("asset")) {
-    next.assetName = existing.assetName;
-    next.assetUrl = existing.assetUrl;
-    next.assetNote = existing.assetNote;
+    Object.assign(next, { primitive: existing.primitive, assetName: existing.assetName, assetUrl: existing.assetUrl,
+      assetNote: existing.assetNote, assetRef: existing.assetRef, assetMissing: existing.assetMissing, assetMeshBinding: existing.assetMeshBinding, meshFilter: existing.meshFilter });
   }
   if (overrides.has("botProfile")) next.botProfileId = existing.botProfileId;
   if (overrides.has("materialId")) next.materialId = existing.materialId;
@@ -280,12 +280,13 @@ export function prefabOverrideKeysForPatch(patch: Partial<SceneObject>): PrefabO
   const keys = new Set<PrefabOverrideKey>();
   if ("name" in patch) keys.add("name");
   if ("tags" in patch) keys.add("tags");
+  if ("layer" in patch) keys.add("layer");
   if ("color" in patch) keys.add("color");
   if ("visible" in patch) keys.add("visibility");
   if ("locked" in patch || "transformLocked" in patch) keys.add("lock");
   if ("position" in patch || "rotation" in patch || "scale" in patch) keys.add("transform");
   if ("parentId" in patch) keys.add("hierarchy");
-  if ("assetName" in patch || "assetUrl" in patch || "assetNote" in patch) keys.add("asset");
+  if ("primitive" in patch || "assetRef" in patch || "meshFilter" in patch || "assetName" in patch || "assetUrl" in patch || "assetNote" in patch) keys.add("asset");
   if ("botProfileId" in patch) keys.add("botProfile");
   if ("materialId" in patch) keys.add("materialId");
   if ("importedMaterialBindings" in patch) keys.add("importedMaterialBindings");

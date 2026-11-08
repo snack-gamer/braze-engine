@@ -77,7 +77,7 @@ function bindView(
   const individual: GpuPoseBinding[] = [];
   const roots = new Set(candidates.map((candidate) => candidate.node));
   const hierarchies = new Map(candidates.map((candidate) => [candidate.bodyIndex, captureGpuPoseHierarchy(candidate.node, roots)]));
-  const instanced = buildInstancedBodyGroups(candidates, buffers, runtime.objectRoot);
+  const instanced = buildInstancedBodyGroups(candidates, buffers, runtime.objectRoot, runtime);
   const restore = () => {
     instanced.restore();
     for (const binding of individual) binding.restore();

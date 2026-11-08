@@ -1,5 +1,6 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { EditorIcon } from "../../ui/EditorIcon";
+import { InspectorSectionMenu } from "./InspectorSectionMenu";
 import { EditorCheckbox } from "../../ui/controls/EditorCheckbox";
 
 const STORAGE_PREFIX = "tgan.inspector.section.";
@@ -31,9 +32,8 @@ type InspectorSectionProps = {
   children?: ReactNode;
   className?: string;
   defaultOpen?: boolean;
-  // "grid" packs the body's property rows two-up (InspectorGrid rules) instead
-  // of one full-width row per parameter. Sub-titles, vector rows and groups
-  // still span the whole width — see .inspector-grid in inspector.css.
+  // "grid" uses the shared single-column property stack. Vector rows reflow
+  // with the Inspector pane width; functional groups remain explicit.
   layout?: "list" | "grid";
   // Unity-style component enable checkbox in the header. Present only on
   // components that can be disabled (renderers, behaviours) — omit for
@@ -43,7 +43,7 @@ type InspectorSectionProps = {
     onChange: (checked: boolean) => void;
     ariaLabel?: string;
   };
-  // Component options surfaced via right-click on the header (Unity-style).
+  // Component options share a visible menu and header context menu.
   // Provide onRemove to make the component removable; onReset to reset it.
   onRemove?: () => void;
   onReset?: () => void;
@@ -65,46 +65,41 @@ export function InspectorSection({
   onReset,
 }: InspectorSectionProps) {
   const [open, setOpen] = useInspectorSectionOpen(id, defaultOpen);
-  const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
+  const [menu, setMenu] = useState<{ x: number; y: number; returnFocus: HTMLElement } | null>(null);
+  const disclosure = useRef<HTMLButtonElement>(null);
   const titleLabel = label ?? (typeof title === "string" ? title : "section");
   const toggle = () => setOpen((value) => !value);
   const hasMenu = Boolean(onRemove || onReset);
 
-  useEffect(() => {
-    if (!menu) return;
-    const close = () => setMenu(null);
-    window.addEventListener("mousedown", close);
-    window.addEventListener("blur", close);
-    return () => {
-      window.removeEventListener("mousedown", close);
-      window.removeEventListener("blur", close);
-    };
+  const closeMenu = useCallback((restoreFocus: boolean) => {
+    if (restoreFocus) menu?.returnFocus.focus();
+    setMenu(null);
   }, [menu]);
 
   return (
     <section className={`rail-section inspector-section ${open ? "open" : "closed"} ${className}`}>
       <div
         className="inspector-section__head"
-        role="button"
-        tabIndex={0}
-        aria-expanded={open}
         title={open ? `Collapse ${titleLabel}` : `Expand ${titleLabel}`}
         onClick={toggle}
         onContextMenu={hasMenu ? (event) => {
           event.preventDefault();
           event.stopPropagation();
-          setMenu({ x: event.clientX, y: event.clientY });
+          setMenu({ x: event.clientX, y: event.clientY, returnFocus: disclosure.current! });
         } : undefined}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            toggle();
-          }
-        }}
       >
-        <span className="inspector-section__toggle" aria-hidden="true">
+        <button type="button" ref={disclosure} className="inspector-section__toggle"
+          aria-label={titleLabel} aria-expanded={open}
+          onClick={(event) => { event.stopPropagation(); toggle(); }}
+          onKeyDown={(event) => {
+            if (hasMenu && (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10"))) {
+              event.preventDefault();
+              const rect = event.currentTarget.getBoundingClientRect();
+              setMenu({ x: rect.left, y: rect.bottom, returnFocus: event.currentTarget });
+            }
+          }}>
           <EditorIcon name={open ? "disclosureOpen" : "disclosureClosed"} size="micro" />
-        </span>
+        </button>
         <span className="inspector-section__title">
           {enable && (
             <EditorCheckbox
@@ -119,10 +114,16 @@ export function InspectorSection({
           {icon && <span className="inspector-section__title-icon" aria-hidden="true">{icon}</span>}
           <span>{title}</span>
         </span>
-        {meta && <span className="rail-meta">{meta}</span>}
-        {actions && (
+        {(meta || actions || hasMenu) && (
           <div className="rail-actions" onClick={(event) => event.stopPropagation()}>
+            {meta && <span className="rail-meta">{meta}</span>}
             {actions}
+            {hasMenu && <button type="button" className="icon-button inspector-section__menu-button"
+              aria-label={`${titleLabel} options`} aria-haspopup="menu" aria-expanded={Boolean(menu)}
+              title={`${titleLabel} options`} onClick={(event) => {
+                const rect = event.currentTarget.getBoundingClientRect();
+                setMenu(menu ? null : { x: rect.left, y: rect.bottom, returnFocus: event.currentTarget });
+              }}><EditorIcon name="more" size="compact" /></button>}
           </div>
         )}
       </div>
@@ -131,35 +132,8 @@ export function InspectorSection({
           {children}
         </div>
       )}
-      {menu && (
-        <div
-          className="component-menu"
-          role="menu"
-          style={{ left: menu.x, top: menu.y }}
-          onMouseDown={(event) => event.stopPropagation()}
-        >
-          {onReset && (
-            <button
-              type="button"
-              className="component-menu__item"
-              role="menuitem"
-              onClick={() => { setMenu(null); onReset(); }}
-            >
-              <EditorIcon name="reset" size="control" /> Reset
-            </button>
-          )}
-          {onRemove && (
-            <button
-              type="button"
-              className="component-menu__item component-menu__item--danger"
-              role="menuitem"
-              onClick={() => { setMenu(null); onRemove(); }}
-            >
-              <EditorIcon name="delete" size="control" /> Remove Component
-            </button>
-          )}
-        </div>
-      )}
+      {menu && <InspectorSectionMenu position={menu} label={titleLabel} trigger={menu.returnFocus}
+        onReset={onReset} onRemove={onRemove} onClose={closeMenu} />}
     </section>
   );
 }

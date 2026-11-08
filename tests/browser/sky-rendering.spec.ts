@@ -5,6 +5,8 @@ test("a newly opened sky uses its authored sun and preserves the visible disc af
   const id = `sky-${crypto.randomUUID()}`, source = createSceneTemplate("Sky Sun");
   const environment = source.environment as { sky: Record<string, unknown> };
   const scene = { ...source, camera: { position: [0, 5, 10], target: [5, 11.634139, 4.433296], fov_degrees: 52 },
+    // Aim the fixture's authored sun at this camera, independently of preset changes.
+    objects: source.objects.map((object) => object.source_type === "directionalLight" ? { ...object, transform: { ...object.transform as Record<string, unknown>, rotation_degrees: [50, -30, 0] } } : object),
     environment: { ...environment, sky: { ...environment.sky, cloudsCoverage: 0 } } };
   await request.put(`/api/scenes/${id}`, { data: { baseRevision: null, scene } });
   await page.goto(`/?scene=${id}`);
@@ -26,9 +28,13 @@ test("a newly opened sky uses its authored sun and preserves the visible disc af
   await expect.poll(sunBrightness).toBeGreaterThan(5);
 });
 
-test("Basic sky has a continuous horizon and ground gradient instead of a flat lower hemisphere", async ({ page, request }) => {
+test("a clear procedural sky has a continuous horizon and ground gradient instead of a flat lower hemisphere", async ({ page, request }) => {
   const id = `ground-${crypto.randomUUID()}`, source = createSceneTemplate("Daylight");
-  const scene = { ...source, camera: { position: [0, 10, 20], target: [0, 0, 10], fov_degrees: 52 } };
+  const environment = source.environment as { sky: Record<string, unknown> };
+  const scene = { ...source, camera: { position: [0, 10, 20], target: [0, 0, 10], fov_degrees: 52 },
+    // Isolate the atmosphere gradient from the Basic preset's fog and clouds.
+    environment: { ...environment, sky: { ...environment.sky, scatteringIntensity: 0, fogDensity: 0, fogSkyCoverage: 0, cloudsCoverage: 0 } },
+    objects: source.objects.map((object) => object.source_type === "directionalLight" ? { ...object, transform: { ...object.transform as Record<string, unknown>, rotation_degrees: [50, -30, 0] } } : object) };
   await request.put(`/api/scenes/${id}`, { data: { baseRevision: null, scene } });
   await page.goto(`/?scene=${id}`);
   const viewport = page.getByLabel("3D scene viewport", { exact: true });

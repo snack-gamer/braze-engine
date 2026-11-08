@@ -5,7 +5,7 @@ import {
 import {
   el, makeColorSwatch, makeDropdown, makeSlider,
 } from './widgets';
-
+import { iconClose } from './icons';
 export interface GradientEditorOptions {
   width?: number;
   height?: number;
@@ -504,7 +504,7 @@ export function openGradientEditor(
   title.textContent = opts.title ?? 'Gradient Editor';
   const closeBtn = el('button', 'pi-modal-close') as HTMLButtonElement;
   closeBtn.type = 'button';
-  closeBtn.innerHTML = '&times;';
+  closeBtn.appendChild(iconClose()); closeBtn.title = 'Close gradient editor';
   titlebar.append(title, closeBtn);
   modal.appendChild(titlebar);
 

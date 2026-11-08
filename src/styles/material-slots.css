@@ -2,16 +2,6 @@
  * These selectors are deliberately feature-owned; other Inspector components
  * keep the shared Braze component chrome. */
 
-.rail-right .rail-scroll > .mesh-filter-section,
-.rail-right .rail-scroll > .mesh-renderer-section {
-  margin-top: 3px;
-  border-radius: 2px;
-}
-
-.rail-right .rail-scroll > .mesh-renderer-section > .inspector-section__body {
-  padding: 0 8px 7px;
-}
-
 /* Foldouts use the same labelled-divider language as InspectorGroup
  * (inspector.css): label, then a hairline rule filling the row. */
 .mesh-renderer-foldout {
@@ -25,7 +15,7 @@
 
 .mesh-renderer-foldout__head {
   display: grid;
-  grid-template-columns: 12px minmax(0, 1fr) auto;
+  grid-template-columns: var(--icon-size-disclosure) minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--sp-1);
   width: 100%;
@@ -43,15 +33,13 @@
   display: none;
 }
 
-.mesh-renderer-foldout__head::before {
+.mesh-renderer-foldout__chevron {
   color: var(--muted-2);
-  font-size: var(--fs-2xs);
-  content: "\25B6";
-  transform: scale(0.72);
+  transition: transform var(--t-base) var(--ease);
 }
 
-.mesh-renderer-foldout[open] > .mesh-renderer-foldout__head::before {
-  transform: rotate(90deg) scale(0.72);
+.mesh-renderer-foldout[open] > .mesh-renderer-foldout__head > .mesh-renderer-foldout__chevron {
+  transform: rotate(90deg);
 }
 
 .mesh-renderer-foldout__head:hover {
@@ -87,8 +75,8 @@
   min-width: 35px;
   height: 18px;
   padding: 0 6px;
-  border: 1px solid var(--well-border);
-  border-radius: var(--r-xs);
+  border: 1px solid var(--inspector-field-border);
+  border-radius: var(--inspector-field-radius);
   background: var(--inspector-input);
   color: var(--text-2);
   font-size: var(--fs-xs);
@@ -97,15 +85,11 @@
 
 .mesh-renderer-foldout__body {
   min-width: 0;
-  padding: 0 0 7px 12px;
+  padding: 0 0 var(--inspector-body-padding) var(--inspector-nest-indent);
 }
 
 .mesh-renderer-settings .mesh-renderer-foldout__body {
-  padding-left: 12px;
-}
-
-.mesh-renderer-settings .inspector-row {
-  --inspector-row-label-w: 116px;
+  padding-left: var(--inspector-nest-indent);
 }
 
 .mesh-renderer-settings .inspector-row__control > .editor-checkbox {
@@ -116,7 +100,7 @@
   display: grid;
   min-width: 0;
   padding: 3px;
-  border: 1px solid var(--well-border);
+  border: 1px solid var(--inspector-field-border);
   background: var(--layer-well);
 }
 
@@ -161,10 +145,10 @@
   display: grid;
   grid-template-columns: 23px minmax(0, 1fr) 23px;
   min-width: 0;
-  height: 24px;
+  height: var(--inspector-input-h);
   overflow: visible;
-  border: 1px solid var(--well-border);
-  border-radius: var(--r-xs);
+  border: 1px solid var(--inspector-field-border);
+  border-radius: var(--inspector-field-radius);
   background: var(--inspector-input);
   color: var(--text-1);
   padding: 0;
@@ -174,7 +158,7 @@
 
 .mesh-renderer-material-field:hover,
 .mesh-renderer-material-field:focus-within {
-  border-color: var(--well-border-hover);
+  border-color: var(--inspector-field-hover-border);
   background: var(--bg-input-2);
 }
 
@@ -188,14 +172,14 @@
   display: inline-block;
   width: 18px;
   height: 18px;
-  border: 1px solid rgba(0, 0, 0, 0.68);
+  border: 1px solid var(--component-outline);
   border-radius: 50%;
   background: var(--material-color);
   box-shadow: none;
 }
 
 .mesh-renderer-material-field.is-empty .mesh-renderer-material-field__swatch {
-  border-color: var(--well-border-hover);
+  border-color: var(--inspector-field-hover-border);
   background: transparent;
   box-shadow: none;
 }
@@ -212,7 +196,7 @@
   display: inline-grid;
   place-items: center;
   height: 22px;
-  border-left: 1px solid var(--well-border);
+  border-left: 1px solid var(--inspector-field-border);
   color: var(--muted-2);
 }
 

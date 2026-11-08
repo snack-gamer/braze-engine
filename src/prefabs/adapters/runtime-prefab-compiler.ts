@@ -43,7 +43,7 @@ export function compileRuntimePrefabLibrary(sources: readonly RuntimePrefabSourc
       return objects.map((object): EntityCommand => {
         const transform = captureEntityTransform(object), pose = poses.get(object.id)!;
         if (pose.hasShear) throw new EntityWorldError("invalid-command", `${object.name}: sheared prefab transforms are unsupported.`);
-        const base = { op: "create" as const, key: object.id, name: object.name, tags: object.tags, behaviors: object.behaviors, parentKey: object.parentId, transform };
+        const base = { op: "create" as const, key: object.id, name: object.name, layer: object.layer, tags: object.tags, behaviors: object.behaviors, parentKey: object.parentId, transform };
         if (object.primitive === "transform") return base;
         const imported = ["gltf", "fbx", "usdz"].includes(object.primitive);
         const rotation = new Euler().setFromQuaternion(new Quaternion(...pose.orientation));

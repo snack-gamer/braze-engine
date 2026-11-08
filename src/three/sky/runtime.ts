@@ -71,6 +71,8 @@ export class WebGpuSkyRuntime {
     this.applyAtmosphericFog(this.latestSettings);
   }
 
+  setBackgroundVisible(visible: boolean): void { this.mesh.visible = visible; }
+
   update(): void {
     this.mesh.visible = true;
     this.mesh.position.copy(this.runtime.camera.position);

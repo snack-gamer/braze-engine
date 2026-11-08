@@ -67,7 +67,7 @@ export function InspectorRow({
             />
           )}
           {icon && <span className="inspector-row__icon">{icon}</span>}
-          {label !== undefined && <span className="inspector-row__label">{label}</span>}
+          {label !== undefined && <span className="inspector-row__label" title={typeof label === "string" ? label : undefined}>{label}</span>}
           {actions && <span className="inspector-row__actions">{actions}</span>}
         </div>
       )}

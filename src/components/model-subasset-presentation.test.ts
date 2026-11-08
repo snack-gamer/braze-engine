@@ -10,7 +10,7 @@ describe("model sub-asset presentation", () => {
     expect(KNOWN_MODEL_SUBASSET_KINDS.map((kind) => modelSubAssetPresentation(kind))).toEqual([
       {
         label: "Mesh",
-        icon: "assetModel",
+        icon: "meshFilter",
         filters: ["all", "models"],
       },
       {

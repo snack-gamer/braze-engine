@@ -171,7 +171,8 @@ export function compileAuthoredPhysicsScene(
     const transform = transforms.get(object.id);
     if (!transform) continue;
     const colliders = (object.colliders ?? [])
-      .map((collider, index) => normalizeCollider(collider, object, `${object.id}-collider-${index + 1}`))
+      .map((collider, index) => ({ ...normalizeCollider(collider, object, `${object.id}-collider-${index + 1}`),
+        collisionLayer: collider.collisionLayer ?? object.layer ?? 0 }))
       .filter((collider) => collider.enabled);
     if (colliders.length === 0) continue;
     if (transform.hasShear && !shearReported.has(object.id)) {

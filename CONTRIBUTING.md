@@ -1,7 +1,7 @@
 # Contributing to Braze
 
 Braze is in early development. Start with the [README](README.md),
-[AGENTS.md](AGENTS.md) and the eight guides linked there. The current priorities
+[AGENTS.md](AGENTS.md) and the authoritative guides linked there. The current priorities
 and limitations live in [STATUS.md](docs/STATUS.md).
 
 ## Issues and changes

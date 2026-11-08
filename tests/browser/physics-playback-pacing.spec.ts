@@ -83,7 +83,7 @@ test("Play Mode completes fixed steps without frame-gated solver stages", async 
   await page.goto("/");
   const viewport = page.getByLabel("3D scene viewport");
   await expect(viewport).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Falling cube", exact: true })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "Object name", exact: true })).toHaveValue("Falling cube");
   await page.getByLabel("Enter Play Mode").click();
   await expect(viewport).toHaveAttribute("data-physics-status", "running", { timeout: 30_000 });
 

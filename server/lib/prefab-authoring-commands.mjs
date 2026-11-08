@@ -7,7 +7,7 @@ import { sourceDestination, sourceImportLocation, unusedSourceDestination } from
 import { DocumentConflictError, serializeJsonDocument } from "./json-document-store.mjs";
 import { safeName } from "./encoding.mjs";
 import { ASSETS_ROOT, BACKUPS_ROOT } from "./paths.mjs";
-import { animatorCommandOptions } from "./automation/animator-command-options.mjs";
+import { importedAssetCommandOptions } from "./automation/imported-asset-command-options.mjs";
 
 const MAX_BYTES = 1024 * 1024;
 function bounded(document) {
@@ -43,7 +43,7 @@ export function createPrefabAuthoringCommands(overrides = {}) {
     if (request.apply !== undefined && typeof request.apply !== "boolean") throw new Error("apply must be boolean; omitted means preview.");
     const authoring = await services.loadAuthoring(), apply = request.apply === true;
     if (request.operation === "prefab.create") {
-      const result = authoring.createPrefab(request.name, request.commands, await animatorCommandOptions(request.commands, services.refreshAssetDatabase));
+      const result = authoring.createPrefab(request.name, request.commands, await importedAssetCommandOptions(request.commands, services.refreshAssetDatabase));
       const folder = request.folder === undefined || request.folder === "" ? "" : sourceDestination(request.folder);
       const filename = await unusedSourceDestination(services.root, `${folder ? `${folder}/` : ""}${safeName(result.document.name)}${PREFAB_CANONICAL_EXT}`);
       await sourceImportLocation(services.root, filename);
@@ -61,7 +61,7 @@ export function createPrefabAuthoringCommands(overrides = {}) {
     }
     if (typeof request.baseRevision !== "string") throw new Error("prefab.edit requires baseRevision from prefab.inspect.");
     if (request.baseRevision !== current.revision) throw new DocumentConflictError(request.baseRevision, current.revision);
-    const { document, ...summary } = authoring.executePrefabCommands(current.value, request.commands, await animatorCommandOptions(request.commands, services.refreshAssetDatabase));
+    const { document, ...summary } = authoring.executePrefabCommands(current.value, request.commands, await importedAssetCommandOptions(request.commands, services.refreshAssetDatabase));
     bounded(document);
     const receipt = { ...summary, asset: current.asset, baseRevision: current.revision, revision: current.revision, applied: false };
     if (!apply) return receipt;

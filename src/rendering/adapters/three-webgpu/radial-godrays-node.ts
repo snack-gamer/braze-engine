@@ -1,3 +1,4 @@
+import type { RenderCamera } from "../../../camera/adapters/render-camera";
 import * as THREE from "three";
 import {
   HalfFloatType,
@@ -71,7 +72,7 @@ export class RadialGodraysNode extends TempNode {
 
   constructor(
     private readonly sourceMaskNode: TextureNode,
-    private readonly camera: THREE.PerspectiveCamera,
+    private readonly camera: RenderCamera,
     private readonly light: THREE.DirectionalLight,
     private readonly rendererStateOperations: RendererStateOperations = RendererUtils,
   ) {

@@ -121,6 +121,7 @@ export function clonerSignature(
   });
   return JSON.stringify({
     cloner: cloner.cloner,
+    layer: cloner.layer ?? 0,
     visible: cloner.visible,
     clonerWorld: clonerNode ? clonerNode.matrixWorld.toArray() : null,
     effectors,

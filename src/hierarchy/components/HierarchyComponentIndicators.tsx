@@ -15,7 +15,7 @@ export function HierarchyComponentIndicators({ object }: { object: SceneObject }
           title={`${indicator.label}${indicator.count > 1 ? ` ×${indicator.count}` : ""}${indicator.enabled ? "" : " — disabled"}`}
           data-hierarchy-component-id={indicator.id}
         >
-          <EditorIcon name={indicator.icon} size="indicator" weight="strong" />
+          <EditorIcon name={indicator.icon} size="indicator" />
           {indicator.count > 1 && <span className="hierarchy-component-count">{indicator.count}</span>}
         </span>
       ))}
